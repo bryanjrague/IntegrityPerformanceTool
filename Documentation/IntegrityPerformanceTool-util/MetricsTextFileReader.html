@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+    <title>MetricsTextFileReader</title>
+  </head>
+  <body>
+    <h2>Class com.xerox.integrityperformancetool.util.MetricsTextFileReader</h2>
+    <hr style="width: 100%; height: 2px; color: #598059;">
+    <p>java.lang.Object</p>
+    <p>A java object which is capable of parsing a Server Metrics .txt file for
+      specific metric names and storing them as individual IntegrityMetricBean
+      objects. This class uses the GNU grep method to search for metric names,
+      and then retrieves the value of the metric by following the formatting of
+      the Server Metrics .txt file.</p>
+    <p>NOTE: The formatting of the Server Metrics .txt file is not ideal or
+      efficient for parsing values via a dynamic algorithm. Therefore, a
+      best-effort static algorithm is used to retrieve a given metric's value
+      once GNU grep has found the literal string.&nbsp;In the case that future
+      Integrity versions change the way that this data is presented, this class
+      will need to be updated accordingly.</p>
+    <p>A <span style="font-family: Courier New,Courier,monospace;">MetricTextFileReader
+        </span>object has the following private properties:</p>
+    <ul>
+      <li><span style="font-family: Courier New,Courier,monospace;">mapSize</span>
+        (java.lang.Integer) - The byte size used by the GNU grep search function
+        to scan the Server Metrics .txt file for metric String names. This value
+        can be changed to a higher or lower value to determine how much of the <span
+          style="font-family: Courier New,Courier,monospace;">metricsFilePath</span>
+        file is sent to GNU grep at a time while searching for the target String
+        (the metric name). The default value is TBD (10K).</li>
+      <li><span style="font-family: Courier New,Courier,monospace;">metricsFilePath</span>
+        (java.lang.String) - The .txt file path on the local machine which will
+        be searched for metric String names. The default value is "None".</li>
+      <li><span style="font-family: Courier New,Courier,monospace;">retrieveAllMetrics</span>
+        (java.lang.Boolean) - When true, all available metrics will be retrieved
+        from the Server Metrics .txt file. Review the XXXX document for
+        information on what data type each individual metric is returned as. The
+        default value is false.<br>
+        <span style="font-family: Courier New,Courier,monospace;"></span></li>
+      <li><span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+        (java.util.ArrayList&lt;String&gt;) -The
+        java.util.ArrayList&lt;String&gt; of metric names which will be searched
+        for in the <span style="font-family: Courier New,Courier,monospace;">metricsFilePath</span>
+        file provided. The default value is an empty
+        java.lang.ArrayList&lt;String&gt;. Review the XXXX document for
+        information on what data type each individual metric is returned as.</li>
+    </ul>
+    <p><span style="font-weight: bold;">Class Architecture Views:</span></p>
+    <p><span style="font-weight: bold;">TBD<br>
+      </span></p>
+    <table style="width: 80%; height: 324px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td><span style="font-weight: bold;">Constructor Summary</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader()</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates a MetricsTextFileReader
+              object with all properties set to the defaults.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader(java.lang.Integer
+              mapSize) </span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates a MetricsTextFileReader
+              object with the following properties set: </div>
+            <ul>
+              <li><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader.mapSize</span>
+                = mapSize (java.lang.Integer<span style="font-family: Courier New,Courier,monospace;">)</span></li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader(java.lang.Integer
+              mapSize, java.lang.String filePath) </span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates an IntegrityMetricBean
+              object with the following properties set: </div>
+            <ul>
+              <li><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader.mapSize</span>
+                = mapSize (java.lang.Integer<span style="font-family: Courier New,Courier,monospace;">)</span></li>
+              <li><span style=" font-family: Courier New,Courier,monospace;">MetricsTextFileReader.metricsFilePath
+                  = </span>filePath (java.lang.String)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader(java.lang.Integer
+              mapSize, java.lang.String filePath,
+              java.util.ArrayList&lt;String&gt; metrics) </span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates an IntegrityMetricBean
+              object with the following properties set: </div>
+            <ul>
+              <li><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader.mapSize</span>
+                = mapSize (java.lang.Integer<span style="font-family: Courier New,Courier,monospace;">)</span></li>
+              <li><span style=" font-family: Courier New,Courier,monospace;">MetricsTextFileReader.metricsFilePath
+                  = </span>filePath (java.lang.String)</li>
+              <li><span style="font-family: Courier New,Courier,monospace;">MetricsTextFileReader.metricsToRetrieve</span>
+                = metrics (java.util.ArrayList&lt;String&gt;)</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <table style="width: 100%;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td colspan="3" rowspan="1"><span style="font-weight: bold;">Method
+              Summary</span></td>
+        </tr>
+        <tr>
+          <td><span style="text-decoration: underline;">Method Name</span></td>
+          <td style="width: 205.333px;"><span style="text-decoration: underline;">Argument
+              or Return Type<br>
+            </span></td>
+          <td style="width: 452.133px;"><span style="text-decoration: underline;">Brief
+              Description</span></td>
+        </tr>
+        <tr>
+          <td style="width: 190.15px;"><span style="font-family: Courier New,Courier,monospace;"><a
+                target="main" href="./MetricsTextFileReader.html#addMetric">addMetric()</a><br>
+            </span></td>
+          <td>java.lang.String</td>
+          <td>Adds the provided metric String value to the existing <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+            ArrayList. </td>
+        </tr>
+        <tr>
+          <td style="height: 21.5px;"><a target="main" href="./MetricsTextFileReader.html#addMetrics"><span
+                style="font-family: Courier New,Courier,monospace;">addMetrics()</span></a><br>
+          </td>
+          <td>java.lang.String[]</td>
+          <td>Adds each of the String names in the String array to the existing
+            <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+            ArrayList.</td>
+        </tr>
+        <tr>
+          <td style="height: 20.5px;"><a target="main" href="./MetricsTextFileReader.html#clearMetricsToRetrieve"><span
+                style="font-family: Courier New,Courier,monospace;">clear</span></a><span
+              style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./MetricsTextFileReader.html#clearMetricsToRetrieve"><span
+                  style="font-family: Courier New,Courier,monospace;">MetricsToRetrieve</span>()</a><br>
+            </span></td>
+          <td>None.</td>
+          <td>Clears the ArrayList stored in&nbsp;<span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+            of all values.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#executeMetricsRetrieval"><span
+                style="font-family: Courier New,Courier,monospace;">executeMetricsRetrieval()</span></a></td>
+          <td>java.util.ArrayList&lt;IntegrityMericBean&gt;</td>
+          <td>Retrieves the metrics specified in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>.</td>
+        </tr>
+        <tr>
+          <td style="height: 20.5px;"><span style="font-family: Courier New,Courier,monospace;"><a
+                target="main" href="./MetricsTextFileReader.html#getMapSize">getMapSize()</a><br>
+            </span></td>
+          <td>java.lang.Integer</td>
+          <td>Returns the Integer value of the current <span style="font-family: Courier New,Courier,monospace;">mapSize</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#getMetricsFilePath"><span
+                style="font-family: Courier New,Courier,monospace;">getMetricsFilePath()</span></a></td>
+          <td>java.lang.String</td>
+          <td>Returns the String file path of the .txt file being called and
+            searched for metrics.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#getRetrieveAllMetrics"><span
+                style="font-family: Courier New,Courier,monospace;">getRetrieveAllMetrics()</span></a></td>
+          <td>java.lang.Boolean<br>
+          </td>
+          <td>Returns the Boolean value of the current <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+            property.<br>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./MetricsTextFileReader.html#getMetricsToRetrieve">getMetricsToRetrieve()</a><br>
+            </span></td>
+          <td>java.util.ArrayList&lt;String&gt;</td>
+          <td style="height: 20.5px;"><span style="font-family: Courier New,Courier,monospace;"></span>Returns
+            the ArrayList stored in the <span style="font-family: Courier New,Courier,monospace;">retrieveAllMetrics</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#removeMetric"><span
+                style="font-family: Courier New,Courier,monospace;">removeMetric()</span></a></td>
+          <td>java.lang.String</td>
+          <td>Removes the provided String from the ArrayList stored in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>.</td>
+        </tr>
+        <tr>
+          <td style="height: 20px;"><a target="main" href="./MetricsTextFileReader.html#removeMetrics"><span
+                style="font-family: Courier New,Courier,monospace;">removeMetrics()</span></a></td>
+          <td>java.lang.String[]</td>
+          <td>Removes each of the String values in the String array from the <span
+              style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+            ArrayList.</td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./MetricsTextFileReader.html#setMapSize">setMapSize()</a><br>
+            </span></td>
+          <td>java.lang.Integer</td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">mapSize</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#setMetricsFilePath"><span
+                style="font-family: Courier New,Courier,monospace;">setMetricsFilePath()</span></a></td>
+          <td>None.</td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">metricsFilePath</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./MetricsTextFileReader.html#setRetrieveAllMetrics"><span
+                style="font-family: Courier New,Courier,monospace;">setRetrieveAllMetrics()</span></a></td>
+          <td>java.lang.Boolean<br>
+          </td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">retrieveAllMetrics</span>
+            property.<br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <table style="width: 100%;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td><span style="font-weight: bold;">Method Detail</span></td>
+        </tr>
+        <tr>
+          <td style="height: 20px;"><span style="font-family: Courier New,Courier,monospace;"><a
+                name="addMetric">public void addMetric(java.lang.String
+                metricName)<br>
+              </a></span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;"><span style="font-family: Courier New,Courier,monospace;"></span>Adds
+              the String metric name to the ArrayList stored in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>.
+              If the provided String name already exists in the ArrayList, it
+              will not be added a second time and an Exception will be raised.<br>
+              <br>
+              Throws an exception in the case that a String is not provided as
+              an argument.<br>
+              <br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="addMetrics"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void addMetrics(java.lang.String[] metricNames)</span></span></a></td>
+        </tr>
+        <tr>
+          <td style="height: 20.5px;">
+            <div style="margin-left: 40px;">Adds each of the String metric names
+              to the ArrayList stored in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>.
+              If a provided String name already exists in the ArrayList, it will
+              not be added a second time and an Exception will be raised.<br>
+              <br>
+              Throws an exception in the case that a String array is not
+              provided as an argument.<br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="clearAllMetricsToRetrieve"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void clearAllMetricsToRetrieve</span>()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Clears all values from the ArrayList
+              stored in the&nbsp;<span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span></span>
+              property. The resulting value of <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              is an empty ArrayList.<br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="executeMetricsRetrieval"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void executeMetricsRetrieval</span>()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Accesses the file located in the
+              file path stored in the <span style="font-family: Courier New,Courier,monospace;">metricsFilePath</span>
+              property, and then searches for all the metric values specified in
+              the <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              property. NOTE: If the <span style="font-family: Courier New,Courier,monospace;">retrieveAllMetrics</span>
+              property is <span style="font-family: Courier New,Courier,monospace;">true</span>,
+              then the list of metrics provided in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              is ignored, and all possible metrics are retrieved from the file.
+              <br>
+              <br>
+              Returns an <span style="font-family: Courier New,Courier,monospace;">ArrayList&lt;IntegrityMetricBean&gt;</span>
+              of all metrics that were successfully found with a value. Returns
+              an empty ArrayList&lt;IntegrityMetricBean&gt; if none of the
+              specified metrics can be found.<br>
+              <br>
+              Throws exception if the metricsFilePath cannot be accessed or
+              read.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getMapSize"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.lang.Integer getMapSize()</span></span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;"> Returns the Integer value of the <span
+                style="font-family: Courier New,Courier,monospace;">mapSize </span>property.<br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getMetricsFilePath"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.lang.String </span>getMetricsFilePath()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Returns the String value of the file
+              path being referenced to search for metrics.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getRetrieveAllMetrics"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.lang.Boolean </span>geRetrieveAllMetrics()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Returns the Boolean value of the <span
+                style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              property. </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getMetricsToRetrieve"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.util.ArrayList </span>getMetricsToRetrieve()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;"> Returns the ArrayList&lt;String&gt;
+              value of the <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              property.<br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="removeMetric"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void removeMetric</span>(java.lang.String metricName)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Removes the String value from the
+              ArrayList stored in <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              property. In the case that a String value is not found in the
+              metricsToRetrieve ArrayList, the value is skipped and an exception
+              is thrown.<br>
+              <br>
+              Throws an exception in the case that a String is not provided as
+              an argument.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="removeMetrics"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void removeMetrics</span>(java.lang.String[] metricNames)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Removes each of the String values in
+              the String array from the <span style="font-family: Courier New,Courier,monospace;">metricsToRetrieve</span>
+              property. In the case that a String value is not found in the
+              metricsToRetrieve ArrayList, the value is skipped and an exception
+              is thrown.<br>
+              <br>
+              Throws an exception in the case that a String array is not
+              provided as an argument.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setMapSize"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void setMapSize</span>(java.lang.Integer mapSize)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Sets the value of the mapSize
+              property to the Integer value provided. This will overwrite any
+              pre-existing value for the property. <br>
+              <br>
+              <span style="font-weight: bold;">Caution:</span> Changing the
+              mapSize may have negative impacts on the operation of the GNU grep
+              search and the required time to search the Server Metrics .txt
+              file as a result. Only change this value if the new value has been
+              reviewed and is known to be safe.<br>
+              <br>
+              Throws an exception in the case that a positive Integer value is
+              not provided as an argument.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setMetricsFilePath"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void setMetricsFilePath</span>(java.lang.String filePath)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Sets the metricsFilePath property to
+              the String value provided. Note: this method will not check the
+              file path for validity.<br>
+              <br>
+              Throws an exception if a String is not provided as an argument.<br>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setRetrieveAllMetrics"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void setRetrieveAllMetrics</span>(java.lang.Boolean value)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Sets the retrieveAllMetrics property
+              to the boolean value provided. This will overwrite any
+              pre-existing value in the property.<br>
+              <br>
+              Throws an exception if a Boolean value is not provided as an
+              argument.<br>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+  </body>
+</html>

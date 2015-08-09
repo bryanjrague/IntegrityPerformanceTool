@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+    <title>IntegrityMetricBean</title>
+  </head>
+  <body>
+    <h2>Class com.xerox.integrityperformancetool.IntegrityMetricBean</h2>
+    <hr style="width: 100%; height: 2px; color: #598059;">
+    <p>java.lang.Object</p>
+    <p>A java bean abstracting a single metric retrieved from a Server Metrics
+      .txt file. </p>
+    <p>NOTE: The Server Metrics file can be generated from an Integrity Server
+      via the Integrity Admin Client or the CLI command "im diag diag=metrics
+      &gt; serverMetrics.txt".</p>
+    <p>An IntegrityMetricBean object has the following private properties:</p>
+    <ul>
+      <li><span style="font-family: Courier New,Courier,monospace;">customName</span>
+        (java.lang.String) - The custom name assigned to the
+        IntegrityMetricBean, which may be different than the actual metric name
+        given in the Server Metrics .txt file. This property may be used to
+        assign a more useful name to a given IntegrityMetricBean than the actual
+        name provided in the Server Metrics .txt file. The default value is "None".</li>
+      <li><span style="font-family: Courier New,Courier,monospace;">metricName</span>
+        (java.lang.String) - The name of the metric as retrieved from the Server
+        Metrics .txt file. The default value is "None".</li>
+      <li><span style="font-family: Courier New,Courier,monospace;">value</span>
+        (java.lang.Object) - The value of the metric as retrieved from the
+        Server Metrics .txt file. There is no default value.</li>
+    </ul>
+    <p><span style="font-weight: bold;">Class Architecture Views:</span></p>
+    <p><span style="font-weight: bold;">TBD<br>
+      </span></p>
+    <ul>
+    </ul>
+    <table style="width: 80%; height: 324px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td><span style="font-weight: bold;">Constructor Summary</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean()</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates an IntegrityMetricBean
+              object with all property values set to null.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean(java.lang.String
+              metricName, java.lang.Object value) </span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates an IntegrityMetricBean
+              object with the following properties set: </div>
+            <ul>
+              <li><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean.metricName</span>
+                = metricName (java.lang.String)</li>
+              <li><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean.value</span>
+                = value (java.lang.Object)</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean(java.lang.String
+              metricName, java.lang.String customName, java.lang.Object value)</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Creates an IntegrityMetricBean
+              object with the following properties set: </div>
+            <ul>
+              <li><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean.metricName</span>
+                = metricName (java.lang.String)</li>
+              <li><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean.customName</span>
+                = customName (java.lang.String)</li>
+              <li><span style="font-family: Courier New,Courier,monospace;">IntegrityMetricBean.value</span>
+                = value (java.lang.Object)</li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <table style="width: 100%;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td colspan="3" rowspan="1"><span style="font-weight: bold;">Method
+              Summary</span></td>
+        </tr>
+        <tr>
+          <td><span style="text-decoration: underline;">Method Name</span></td>
+          <td style="width: 205.333px;"><span style="text-decoration: underline;">Argument
+              or Return Type<br>
+            </span></td>
+          <td style="width: 452.133px;"><span style="text-decoration: underline;">Brief
+              Description</span></td>
+        </tr>
+        <tr>
+          <td style="width: 190.15px;"><span style="font-family: Courier New,Courier,monospace;"><a
+                target="main" href="./IntegrityMetricBean.html#getCustomName">getCustomName()</a><br>
+            </span></td>
+          <td>java.lang.String</td>
+          <td>Return the custom name.</td>
+        </tr>
+        <tr>
+          <td><a target="main" href="./IntegrityMetricBean.html#getMetricName"><span
+                style="font-family: Courier New,Courier,monospace;">getMetricName()</span></a></td>
+          <td>java.lang.String</td>
+          <td>Return the metric name.</td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./IntegrityMetricBean.html#getValue">getValue()</a><br>
+            </span></td>
+          <td>java.lang.Object</td>
+          <td>Return the value.</td>
+        </tr>
+        <tr>
+          <td style="height: 20.5px;"><span style="font-family: Courier New,Courier,monospace;"><a
+                target="main" href="./IntegrityMetricBean.html#setCustomName">setCustomName()</a><br>
+            </span></td>
+          <td>java.lang.String</td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">customName</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./IntegrityMetricBean.html#setMetricName">setMetricName()</a><br>
+            </span></td>
+          <td>java.lang.String</td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">metricName</span>
+            property.</td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a target="main"
+                href="./IntegrityMetricBean.html#setValue">setValue()</a><br>
+            </span></td>
+          <td>java.lang.Object</td>
+          <td>Assign the <span style="font-family: Courier New,Courier,monospace;">value</span>
+            property.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <table style="width: 100%;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td><span style="font-weight: bold;">Method Detail</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;"><a name="getCustomName">public
+                java.lang.String getCustomName()</a></span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px; height: 20.5px;">Returns the value of
+              the current <span style="font-family: Courier New,Courier,monospace;">customName</span>
+              property. Returns the default value if the property has not yet
+              been assigned.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getMetricName"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.lang.String </span>getMetricName()</span></a></td>
+        </tr>
+        <tr>
+          <td style="height: 20.5px;">
+            <div style="margin-left: 40px;">Returns the value of the current <span
+                style="font-family: Courier New,Courier,monospace;">metricName </span>property<span
+                style="font-family: Courier New,Courier,monospace;"></span>
+              Returns the default value if the property has not yet been
+              assigned.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="getValue"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  java.lang.Object </span>getValue()</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Returns the value of the current <span
+                style="font-family: Courier New,Courier,monospace;">value</span>
+              property. NOTE: The data type of this returned object will depend
+              on the data which was stored. Returns null if the property has not
+              yet been assigned.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setCustomName"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void </span>setCustomName(java.lang.String cn)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Assigns the value of the<span style="font-family: Courier New,Courier,monospace;">
+                customName</span> property to the string argument provided. This
+              will overwrite any pre-existing value for the property. Throws an
+              exception if a String argument is not provided.</div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setMetricName"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void </span>setMetricName(java.lang.String mn)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Assigns the value of the <span style="font-family: Courier New,Courier,monospace;">metricName</span>
+              property to the string argument provided. This will overwrite any
+              pre-existing value for the property. Throws an exception if a
+              String argument is not provided. </div>
+          </td>
+        </tr>
+        <tr>
+          <td><a name="setValue"><span style="font-family: Courier New,Courier,monospace;"><span
+                  style="font-family: Courier New,Courier,monospace;">public
+                  void </span>setValue(java.lang.Object v)</span></a></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Assigns the value of the <span style="font-family: Courier New,Courier,monospace;">value</span>
+              property to the object which is provided, where v can be any type
+              of object. A specific type is not required due to the various
+              types of metric data provided in the Server Metrics .txt file. <span
+                style="font-style: italic;">Therefore, caution must be used when
+                using this method, as all java.lang.objects are allowed. </span>This
+              method will overwrite any pre-existing value for the property.</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+  </body>
+</html>

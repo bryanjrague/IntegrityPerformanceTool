@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=windows-1252" http-equiv="content-type">
+    <title>PerformanceTool</title>
+  </head>
+  <body>
+    <p> </p>
+    <h2>Class com.xerox.integrityperformancetool.PerformanceTool</h2>
+    <hr style="width: 100%; height: 2px; color: #598059;">
+    <p>Java Class</p>
+    <p>The executable class of the Integrity Performance Tool. This class's main()
+      method can be customized as needed to utilize the Integrity Performance
+      Tool's API for data analysis, file creations, report building, etc.&nbsp;</p>
+    <p>The PerformanceTool Class has the following private properties:</p>
+    <ul>
+      <li><span style="font-family: Courier New,Courier,monospace;">runTime</span></li>
+      <li><span style=" font-family: Courier New,Courier,monospace;">loggingLevels</span></li>
+      <li><span style="  font-family: Courier New,Courier,monospace;"><br>
+        </span></li>
+    </ul>
+    <p><span style="font-weight: bold;">Class Architecture Views:</span></p>
+    <p><span style="font-weight: bold;">TBD</span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <table style="width: 694px; height: 158px;" border="1" cellpadding="1" cellspacing="1">
+      <tbody>
+        <tr>
+          <td><span style="font-weight: bold;">Execution Summary</span></td>
+        </tr>
+        <tr>
+          <td><span style="font-family: Courier New,Courier,monospace;">java
+              PerformanceTool()<br>
+            </span></td>
+        </tr>
+        <tr>
+          <td>
+            <div style="margin-left: 40px;">Executes the class PerformanceTool,
+              using the default properties of this class. (see above.)</div>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+        </tr>
+        <tr>
+          <td><br>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+    <p><span style="font-weight: bold;"></span></p>
+    <br>
+    <p><span style="font-weight: bold;"><br>
+      </span></p>
+  </body>
+</html>

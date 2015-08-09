@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="joda-time-2.8.1">
+    <CLASSES>
+      <root url="jar://C:/Program Files/JodaTime/joda-time-2.8.1/joda-time-2.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
