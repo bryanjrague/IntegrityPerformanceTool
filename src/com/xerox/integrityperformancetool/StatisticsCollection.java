@@ -7,15 +7,15 @@ import com.xerox.integrityperformancetool.util.MergeSort;
  */
 public class StatisticsCollection {
 
-    private ArrayList<IntegrityStatisticBean> collection;
-    private Long collectionAverageValue;
-    private Long collectionCountValue;
-    private ArrayList<IntegrityStatisticBean> collectionMaximumIsbObject;
-    private Long collectionMaximumValue;
-    private ArrayList<IntegrityStatisticBean> collectionMinimumIsbObject;
-    private Long collectionMinimumValue;
-    private String collectionName;
-    private Long collectionTotalCount;
+    private ArrayList<IntegrityStatisticBean> collection = new java.util.ArrayList<IntegrityStatisticBean>();
+    private Long collectionAverageValue = 0L;
+    private Long collectionCountValue = 0L;
+    private ArrayList<IntegrityStatisticBean> collectionMaximumIsbObject = new java.util.ArrayList<IntegrityStatisticBean>();
+    private Long collectionMaximumValue = 0L;
+    private ArrayList<IntegrityStatisticBean> collectionMinimumIsbObject = new java.util.ArrayList<IntegrityStatisticBean>();
+    private Long collectionMinimumValue = 0L;
+    private String collectionName = "";
+    private Long collectionTotalCount = 0L;
 
     public StatisticsCollection(){
         this("New Integrity Statistics Collection");
@@ -51,7 +51,14 @@ public class StatisticsCollection {
     }
 
     public void computeCollectionMaximumObject(){
-       
+
+       if (getCollectionSize()>1){
+           //retrieve all
+       } else if (getCollectionSize()==1){
+
+       } else {
+           //TODO: throw error/exception
+       }
     }
 
     public void computeCollectionMaximumValue() {
@@ -70,7 +77,7 @@ public class StatisticsCollection {
         } else if (getCollectionSize()==1){
             this.collectionMaximumValue = this.collection.get(0).getMax();
         } else {
-            //**TODO: throw error or assign default value?
+            //**TODO: throw error/exception
         }
         
     }
@@ -80,52 +87,64 @@ public class StatisticsCollection {
     }
 
     public void computeCollectionMinimumValue(){
+        if (getCollectionSize()>1) {
+            //retrieve all individual minimums into Long[]
+            Long[] allMinVals = new Long[getCollectionSize()];
+            for (int i = 0; i < getCollectionSize(); i++) {
+                allMinVals[i] = this.collection.get(i).getMin();
+            }
 
+            //use the Mergesort algorithm to determine the maximum value
+            MergeSort maxSorter = new MergeSort();
+            maxSorter.sort(allMinVals); //min values are now sorted lowest to highest
+            this.collectionMinimumValue = allMinVals[0];
+
+        } else if (getCollectionSize()==1){
+            this.collectionMinimumValue = this.collection.get(0).getMin();
+        } else {
+            //**TODO: throw error/exception
+        }
     }
 
     public void computeCollectionTotalCountValue(){
-
+        Long cumulativeSum = 0L;
+        for (IntegrityStatisticBean isb : this.collection){
+            cumulativeSum = cumulativeSum + isb.getTotalCount();
+        }
+        this.collectionTotalCount = cumulativeSum;
     }
 
-    //TODO populate and uncomment
-    //public ArrayList<IntegrityStatisticBean> getCollection(){ }
+    public ArrayList<IntegrityStatisticBean> getCollection(){ return this.collection; }
 
     public Long getCollectionAverageValue(){ return this.collectionAverageValue; }
 
     public Long getCollectionCountValue(){ return this.collectionCountValue; }
 
-    //TODO populate and uncomment
-    //public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbObject(){ }
+    public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbObject(){ return this.collectionMaximumIsbObject; }
 
-    //TODO populate and uncomment
-    //public Long getCollectionMaximumValue(){ }
+    public Long getCollectionMaximumValue(){ return this.collectionMaximumValue; }
 
-    //TODO populate and uncomment
-    //public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbObject(){ }
+    public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbObject(){ return this.collectionMinimumIsbObject; }
 
-    //TODO populate and uncomment
-    //public Long getCollectionMinimumValue(){ }
+    public Long getCollectionMinimumValue(){ return this.collectionMinimumValue; }
 
-    //TODO populate and uncomment
-    //public String getCollectionName(){ }
+    public String getCollectionName(){ return this.collectionName; }
 
     public int getCollectionSize(){ return this.collection.size(); }
 
-    //TODO populate and uncomment
-    //public Long getCollectionTotalCount(){ }
+    public Long getCollectionTotalCount(){ return this.collectionTotalCount; }
 
-    //TODO populate and uncomment
     //public void orderByIsbAverageValue() {
 
     //}
 
-//TODO populate and uncomment
-//public void orderByIsbCountValue() {
+    //TODO populate and uncomment
+    //public void orderByIsbCountValue() {
 
    // }
 
-            //TODO populate and uncomment
-            //public void orderByIsbNameValue() {
+    //TODO populate and uncomment
+    //public void orderByIsbNameValue() {
 
     //}
 
