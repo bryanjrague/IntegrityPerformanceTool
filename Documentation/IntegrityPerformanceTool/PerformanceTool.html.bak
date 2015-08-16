@@ -6,7 +6,7 @@
   </head>
   <body>
     <p> </p>
-    <h2>Class com.xerox.integrityperformancetool.PerformanceTool</h2>
+    <h2>Class PerformanceTool</h2>
     <hr style="width: 100%; height: 2px; color: #598059;">
     <p>Java Class</p>
     <p>The executable class of the Integrity Performance Tool. This class's main()

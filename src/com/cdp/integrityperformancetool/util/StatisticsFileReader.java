@@ -1,9 +1,11 @@
-package com.xerox.integrityperformancetool.util;
+package com.cdp.integrityperformancetool.util;
 
 import java.util.HashMap;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import com.cdp.integrityperformancetool.StatisticsCollection;
 import com.xerox.integrityperformancetool.*;
 
 /**

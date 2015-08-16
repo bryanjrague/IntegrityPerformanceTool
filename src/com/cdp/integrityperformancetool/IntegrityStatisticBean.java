@@ -1,4 +1,4 @@
-package com.xerox.integrityperformancetool;
+package com.cdp.integrityperformancetool;
 
 import org.joda.time.DateTime;
 

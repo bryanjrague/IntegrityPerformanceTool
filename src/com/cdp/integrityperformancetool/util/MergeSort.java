@@ -1,4 +1,4 @@
-package com.xerox.integrityperformancetool.util;
+package com.cdp.integrityperformancetool.util;
 
 /**
  * Created by bryan on 8/9/2015.
