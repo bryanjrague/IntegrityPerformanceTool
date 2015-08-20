@@ -1,6 +1,8 @@
 package testing;
 
-import com.xerox.integrityperformancetool.*;
+import com.cdp.integrityperformancetool.IntegrityMetricBean;
+import com.cdp.integrityperformancetool.IntegrityStatisticBean;
+import com.cdp.integrityperformancetool.*;
 import org.joda.time.DateTime;
 /**
  * Created by bryan on 8/7/2015.

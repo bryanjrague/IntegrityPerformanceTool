@@ -1,6 +1,6 @@
 package testing;
 
-import com.xerox.integrityperformancetool.util.MergeSort;
+import com.cdp.integrityperformancetool.util.MergeSort;
 
 /**
  * Created by bryan on 8/7/2015.

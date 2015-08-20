@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.cdp.integrityperformancetool.StatisticsCollection;
-import com.xerox.integrityperformancetool.*;
 
 /**
  * Created by bryan on 8/7/2015.
