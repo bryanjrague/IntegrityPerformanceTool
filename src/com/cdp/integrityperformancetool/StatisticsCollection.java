@@ -174,11 +174,11 @@ public class StatisticsCollection {
 
     public Long getCollectionCountValue(){ return this.collectionCountValue; }
 
-    public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbObject(){ return this.collectionMaximumIsbObjectArrayList; }
+    public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbArrayList(){ return this.collectionMaximumIsbObjectArrayList; }
 
     public Long getCollectionMaximumValue(){ return this.collectionMaximumValue; }
 
-    public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbObject(){ return this.collectionMinimumIsbObjectArrayList; }
+    public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbArrayList(){ return this.collectionMinimumIsbObjectArrayList; }
 
     public Long getCollectionMinimumValue(){ return this.collectionMinimumValue; }
 
@@ -398,6 +398,8 @@ public class StatisticsCollection {
     	this.collection.remove(arg_isb); 
     	this.requiresStatisticsRecompute = true;
     }
+    
+    public void setName(String arg_name) { this.collectionName = arg_name;}
 
     public void writeToFile(String arg_filePath) {
     	//write to file as CSV following the same format as the output Server Statistics .csv file
