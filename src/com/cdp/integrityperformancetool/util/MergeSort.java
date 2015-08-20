@@ -38,7 +38,8 @@ public class MergeSort {
         int current = low;
 
         while (helperLeft <= middle && helperRight <=high){
-            if(arg_helper_array[helperLeft] <= arg_helper_array[helperRight]){
+            if(arg_helper_array[helperLeft].compareTo(arg_helper_array[helperRight]) <= 0){
+            //if(arg_helper_array[helperLeft] <= arg_helper_array[helperRight]){
                 arg_array[current] = arg_helper_array[helperLeft];
                 helperLeft++;
             } else {
