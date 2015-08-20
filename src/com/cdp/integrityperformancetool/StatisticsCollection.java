@@ -47,14 +47,14 @@ public class StatisticsCollection {
         this.collectionName = arg_collectionName;
         this.collectionTotalCountValue = 0L;
         this.requiresStatisticsRecompute = false;
-        
+
         //compute all statistics if the arg_collection is not empty.
         if (getCollectionSize()>0) computeAllCollectionStatistics();
-        
+
     }
 
-    public void addToCollection(IntegrityStatisticBean arg_isb){ 
-    	this.collection.add(arg_isb); 
+    public void addToCollection(IntegrityStatisticBean arg_isb){
+    	this.collection.add(arg_isb);
     	this.requiresStatisticsRecompute = true;
     }
 
@@ -66,9 +66,9 @@ public class StatisticsCollection {
             }
             return res;
         }
-    }; 
+    };
 
-    
+
     public void clearCollection(){ this.collection.clear(); }
 
     public void computeAllCollectionStatistics(){
@@ -82,7 +82,7 @@ public class StatisticsCollection {
     	computeCollectionTotalCountValue();
     	this.requiresStatisticsRecompute = false;
     }
-    
+
     public void computeCollectionAverageValue(){
         Long cumulativeSum = 0L;
         for (IntegrityStatisticBean isb : this.collection){
@@ -127,7 +127,7 @@ public class StatisticsCollection {
         	//was called with an empty collection
             //**TODO: throw error or assign default value?
         }
-        
+
     }
 
     public void computeCollectionMinimumObject(){
@@ -135,7 +135,7 @@ public class StatisticsCollection {
     	for (IntegrityStatisticBean isb : this.collection){
     		//use known min of collection to return the object(s) equal to this min.
     		if(isb.getMin()==this.collectionMinimumValue) temp_isb_arrayList.add(isb);
-    	}	
+    	}
     	this.collectionMinimumIsbObjectArrayList = temp_isb_arrayList;
     }
 
@@ -167,7 +167,7 @@ public class StatisticsCollection {
          }
          this.collectionTotalCountValue = cumulativeSum;
     }
-    
+
     public ArrayList<IntegrityStatisticBean> getCollection(){ return this.collection; }
 
     public Long getCollectionAverageValue(){ return this.collectionAverageValue; }
@@ -181,21 +181,21 @@ public class StatisticsCollection {
     public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbObject(){ return this.collectionMinimumIsbObjectArrayList; }
 
     public Long getCollectionMinimumValue(){ return this.collectionMinimumValue; }
-    
+
     public String getCollectionName(){ return this.collectionName; }
 
     public int getCollectionSize(){ return this.collection.size(); }
 
-    public Long getCollectionTotalCount(){ return this.collectionTotalCountValue; }
+    public Long getCollectionTotalCountValue(){ return this.collectionTotalCountValue; }
 
     public Boolean getRequiresStatisticsRecompute(){ return this.requiresStatisticsRecompute; }
-    
+
     public void orderByIsbAverageValue() {
     	Hashtable<Long, ArrayList<IntegrityStatisticBean>> avgVal_isb_hashtable = new Hashtable<Long, ArrayList<IntegrityStatisticBean>>();
     	Long[] allAvgVals = new Long[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		Long currAvgVal = this.collection.get(i).getAverage();
@@ -210,7 +210,7 @@ public class StatisticsCollection {
     		}
     		temp_isb_arrayList.clear();
     	}
-    	
+
     	 MergeSort avgValSorter = new MergeSort();
          avgValSorter.sort(allAvgVals); //avg values are now sorted lowest to highest
     	//iterate through array and place isbs into new ArrayList
@@ -219,17 +219,17 @@ public class StatisticsCollection {
         	 for (IntegrityStatisticBean isb : temp_isb_arrayList){
         		 ordered_isb_arrayList.add(isb);
         	 }
-         } 
+         }
          this.collection = ordered_isb_arrayList;
          //collection is now in order of objects from lowest to highest average value
     }
-    
+
     public void orderByIsbCountValue() {
     	Hashtable<Long, ArrayList<IntegrityStatisticBean>> cntVal_isb_hashtable = new Hashtable<Long, ArrayList<IntegrityStatisticBean>>();
     	Long[] allCntVals = new Long[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		Long currAvgVal = this.collection.get(i).getCount();
@@ -244,7 +244,7 @@ public class StatisticsCollection {
     		}
     		temp_isb_arrayList.clear();
     	}
-    	
+
     	 MergeSort cntValSorter = new MergeSort();
          cntValSorter.sort(allCntVals); //count values are now sorted lowest to highest
     	//iterate through array and place isbs into new ArrayList
@@ -253,7 +253,7 @@ public class StatisticsCollection {
         	 for (IntegrityStatisticBean isb : temp_isb_arrayList){
         		 ordered_isb_arrayList.add(isb);
         	 }
-         } 
+         }
          this.collection = ordered_isb_arrayList;
          //collection is now in order of objects from lowest to highest count value
     }
@@ -263,7 +263,7 @@ public class StatisticsCollection {
     	String[] allNames = new String[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		String currName = this.collection.get(i).getName();
@@ -278,7 +278,7 @@ public class StatisticsCollection {
     		}
     		temp_isb_arrayList.clear();
     	}
-    	
+
     	Arrays.sort(allNames, ALPHABETICAL_ORDER); //TODO: check if this really works...
     	//names are now sorted alphabetically
     	//iterate through array and place isbs into new ArrayList
@@ -287,7 +287,7 @@ public class StatisticsCollection {
         	 for (IntegrityStatisticBean isb : temp_isb_arrayList){
         		 ordered_isb_arrayList.add(isb);
         	 }
-         } 
+         }
          this.collection = ordered_isb_arrayList;
          //collection is now in order of names according to alphabetical order
     }
@@ -297,7 +297,7 @@ public class StatisticsCollection {
     	Long[] allMaxVals = new Long[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		Long currAvgVal = this.collection.get(i).getMax();
@@ -312,7 +312,7 @@ public class StatisticsCollection {
     		}
     		temp_isb_arrayList.clear();
     	}
-    	
+
     	 MergeSort maxValSorter = new MergeSort();
          maxValSorter.sort(allMaxVals); //max values are now sorted lowest to highest
     	//iterate through array and place isbs into new ArrayList
@@ -321,7 +321,7 @@ public class StatisticsCollection {
         	 for (IntegrityStatisticBean isb : temp_isb_arrayList){
         		 ordered_isb_arrayList.add(isb);
         	 }
-         } 
+         }
          this.collection = ordered_isb_arrayList;
          //collection is now in order of objects from lowest to highest max value
     }
@@ -331,7 +331,7 @@ public class StatisticsCollection {
     	Long[] allMinVals = new Long[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		Long currAvgVal = this.collection.get(i).getMax();
@@ -346,7 +346,7 @@ public class StatisticsCollection {
     		}
     		temp_isb_arrayList.clear();
     	}
-    	
+
     	 MergeSort minValSorter = new MergeSort();
          minValSorter.sort(allMinVals); //min values are now sorted lowest to highest
     	//iterate through array and place isbs into new ArrayList
@@ -355,7 +355,7 @@ public class StatisticsCollection {
         	 for (IntegrityStatisticBean isb : temp_isb_arrayList){
         		 ordered_isb_arrayList.add(isb);
         	 }
-         } 
+         }
          this.collection = ordered_isb_arrayList;
          //collection is now in order of objects from lowest to highest min value
     }
@@ -365,7 +365,7 @@ public class StatisticsCollection {
     	Long[] allTotCntVals = new Long[getCollectionSize()];
     	ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
     	ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-    	
+
     	for (int i=0; i<getCollectionSize();i++){
     		IntegrityStatisticBean currIsb = this.collection.get(i);
     		Long currAvgVal = this.collection.get(i).getMax();

@@ -19,7 +19,7 @@ public class IntegrityMetricBean {
     }
 
     //constructor with  metric Name and long value
-    public IntegrityMetricBean(String arg_metricName, Long arg_value){
+    public IntegrityMetricBean(String arg_metricName, long arg_value){
         this("Default Custom Name", arg_metricName, arg_value);
     }
     
@@ -33,7 +33,7 @@ public class IntegrityMetricBean {
         this("Default Custom Name", arg_metricName, arg_value);
     }
     
-    public IntegrityMetricBean(String arg_customName, String arg_metricName, Long arg_value){
+    public IntegrityMetricBean(String arg_customName, String arg_metricName, long arg_value){
     	this.customName = arg_customName;
     	this.metricName = arg_metricName;
     	this.valueLong = arg_value;
@@ -78,7 +78,7 @@ public class IntegrityMetricBean {
 
     public void setMetricName(String arg_metricName){ this.metricName = arg_metricName; }
 
-    public void setValue(Long arg_value) {
+    public void setValue(long arg_value) {
     	//set value as long, disable all others
     	this.valueLong = arg_value;
     	this.valueType = 0;
