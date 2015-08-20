@@ -317,6 +317,12 @@ public class StatisticsCollectionTester {
 		duration = (endTime - startTime);
 		System.out.println("Took " + (duration/1000000) + "ms\n");
 		
+		System.out.println("Timing method: computeAllCollectionStatistics()");
+		startTime = System.nanoTime();
+		collection_4.computeAllCollectionStatistics();
+		endTime = System.nanoTime();
+		duration = (endTime - startTime);
+		System.out.println("Took " + (duration/1000000) + "ms\n");
 		
 		System.out.println(" END TEST CASE 4\n");
 	}  
