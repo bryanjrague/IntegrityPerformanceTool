@@ -78,6 +78,11 @@ public class IntegrityMetricBean {
 
     public void setMetricName(String arg_metricName){ this.metricName = arg_metricName; }
 
+    public void setValue(int arg_value){
+    	this.valueLong = Long.valueOf(arg_value);
+    	this.valueType = 0;
+    }
+    
     public void setValue(Long arg_value) {
     	//set value as long, disable all others
     	this.valueLong = arg_value;
