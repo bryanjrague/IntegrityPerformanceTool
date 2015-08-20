@@ -71,8 +71,16 @@ public class IntegrityStatisticBean {
     public String getUsed(){ return this.used; }
 
     public void setAverage(Long arg_average){ this.average = arg_average; }
+    
+    public void setAverage(int arg_average){ this.average = Long.valueOf(arg_average); }
+    
+    public void setAverage(String arg_average){ this.average = Long.valueOf(arg_average); }
 
     public void setCount(Long arg_count){ this.count = arg_count; }
+    
+    public void setCount(int arg_count){ this.count = Long.valueOf(arg_count); }
+    
+    public void setCount(String arg_count){ this.count = Long.valueOf(arg_count); }
 
     public void setEndDate(DateTime arg_endDate){ this.endDate = arg_endDate; }
 
@@ -81,8 +89,16 @@ public class IntegrityStatisticBean {
     public void setKind(String arg_kind){ this.kind = arg_kind; }
 
     public void setMax(Long arg_max){ this.max = arg_max; }
+    
+    public void setMax(int arg_max){ this.max = Long.valueOf(arg_max); }
+    
+    public void setMax(String arg_max){ this.max = Long.valueOf(arg_max); }
 
     public void setMin(Long arg_min){ this.min = arg_min; }
+    
+    public void setMin(int arg_min){ this.min = Long.valueOf(arg_min); }
+    
+    public void setMin(String arg_min){ this.min = Long.valueOf(arg_min); }
 
     public void setMode(String arg_mode){ this.mode = arg_mode; }
 
@@ -91,8 +107,16 @@ public class IntegrityStatisticBean {
     public void setStartDate(DateTime arg_startDate){ this.startDate = arg_startDate; }
 
     public void setSum(Long arg_sum){this.sum = arg_sum; }
+    
+    public void setSum(int arg_sum){this.sum = Long.valueOf(arg_sum); }
+    
+    public void setSum(String arg_sum){this.sum = Long.valueOf(arg_sum); }
 
     public void setTotalCount(Long arg_totalCount){ this.totalCount = arg_totalCount; }
+
+    public void setTotalCount(int arg_totalCount){ this.totalCount = Long.valueOf(arg_totalCount); }
+    
+    public void setTotalCount(String arg_totalCount){ this.totalCount = Long.valueOf(arg_totalCount); }
 
     public void setUnit(String arg_unit){ this.unit = arg_unit; }
 
