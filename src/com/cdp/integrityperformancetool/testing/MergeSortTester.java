@@ -1,4 +1,4 @@
-package testing;
+package com.cdp.integrityperformancetool.testing;
 
 import com.cdp.integrityperformancetool.util.MergeSort;
 
