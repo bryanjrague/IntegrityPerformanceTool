@@ -72,6 +72,19 @@ public class StatisticsCollection {
     	this.requireTotCntValRecompute = true;
     }
     
+    public void addToCollection(ArrayList<IntegrityStatisticBean> arg_isb_arrayList){ 
+		for(IntegrityStatisticBean isb : arg_isb_arrayList){
+			this.collection.add(isb); 
+		}
+		this.requireAvgValRecompute = true;
+    	this.requireCntValRecompute = true;
+    	this.requireMaxObjRecompute = true;
+    	this.requireMaxValRecompute = true;
+    	this.requireMinObjRecompute = true;
+    	this.requireMinValRecompute = true;
+    	this.requireTotCntValRecompute = true;
+	}
+    
     public boolean areComputationFieldsAccurate(){
     	if(!requireAvgValRecompute &&
     	   !requireCntValRecompute &&
@@ -514,6 +527,21 @@ public class StatisticsCollection {
     	this.requireMinObjRecompute = true;
     	this.requireMinValRecompute = true;
     	this.requireTotCntValRecompute = true;
+    }
+    
+    public void removeFromCollection(int[] indices){ 
+    	for(int i : indices) { this.collection.remove(i); } 
+    	this.requireAvgValRecompute = true;
+    	this.requireCntValRecompute = true;
+    	this.requireMaxObjRecompute = true;
+    	this.requireMaxValRecompute = true;
+    	this.requireMinObjRecompute = true;
+    	this.requireMinValRecompute = true;
+    	this.requireTotCntValRecompute = true;
+    }
+    
+    public void removeFromCollection(int index){ 
+    	this.collection.remove(index); 
     }
     
     public void setName(String arg_name) { this.collectionName = arg_name;}
