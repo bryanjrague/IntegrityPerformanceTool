@@ -25,7 +25,13 @@ public class MetricsCollection {
 	}
 	
 	public void addToCollection(IntegrityMetricBean arg_imb){ this.collection.add(arg_imb); }
-
+	
+	public void addToCollection(ArrayList<IntegrityMetricBean> arg_imb_arrayList){ 
+		for(IntegrityMetricBean imb : arg_imb_arrayList){
+			this.collection.add(imb); 
+		}
+	}
+	
 	public void clearCollection(){ this.collection.clear(); }
 	
 	public ArrayList<IntegrityMetricBean> getCollection(){ return this.collection; }
@@ -37,6 +43,14 @@ public class MetricsCollection {
 	public void setCollectionName(String arg_name) { this.name = arg_name; }
 	
 	public void removeFromCollection(IntegrityMetricBean arg_imb){ this.collection.remove(arg_imb); }
+	
+	public void removeFromCollection(int[] indices){ 
+    	for(int i : indices) { this.collection.remove(i); } 
+    }
+	
+	public void removeFromCollection(int index){ 
+    	this.collection.remove(index); 
+    }
 	
 	public void writeToFile(){
 		//TODO: determine method for this
