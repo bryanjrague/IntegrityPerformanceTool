@@ -35,6 +35,8 @@ public class MetricsCollection {
 	public void clearCollection(){ this.collection.clear(); }
 	
 	public ArrayList<IntegrityMetricBean> getCollection(){ return this.collection; }
+
+	public IntegrityMetricBean getCollectionObject(int index){ return this.collection.get(index); }
 	
 	public String getCollectionName(){ return this.name; }
 	
@@ -43,9 +45,13 @@ public class MetricsCollection {
 	public void setCollectionName(String arg_name) { this.name = arg_name; }
 	
 	public void removeFromCollection(IntegrityMetricBean arg_imb){ this.collection.remove(arg_imb); }
-	
-	public void removeFromCollection(int[] indices){ 
-    	for(int i : indices) { this.collection.remove(i); } 
+
+	public void removeFromCollection(int[] indicesToRemove){
+		MetricsCollection remove_collection = new MetricsCollection("temp removal collection");
+		for(int i : indicesToRemove) remove_collection.addToCollection(this.getCollectionObject(i));
+
+    	this.collection.removeAll(remove_collection.getCollection());
+		remove_collection.clearCollection();
     }
 	
 	public void removeFromCollection(int index){ 

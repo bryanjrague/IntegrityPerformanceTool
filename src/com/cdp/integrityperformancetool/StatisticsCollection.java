@@ -268,6 +268,8 @@ public class StatisticsCollection {
 
     public String getCollectionName(){ return this.collectionName; }
 
+	public IntegrityStatisticBean getCollectionObject(int index){ return this.collection.get(index); }
+
     public int getCollectionSize(){ return this.collection.size(); }
 
     public Long getCollectionTotalCountValue(){ 
@@ -528,9 +530,17 @@ public class StatisticsCollection {
     	this.requireMinValRecompute = true;
     	this.requireTotCntValRecompute = true;
     }
-    
-    public void removeFromCollection(int[] indices){ 
-    	for(int i : indices) { this.collection.remove(i); } 
+
+
+
+    public void removeFromCollection(int[] indicesToRemove){
+
+		StatisticsCollection remove_collection = new StatisticsCollection("temp removal collection");
+		for(int i : indicesToRemove) remove_collection.addToCollection(this.getCollectionObject(i));
+
+		this.collection.removeAll(remove_collection.getCollection());
+		remove_collection.clearCollection();
+
     	this.requireAvgValRecompute = true;
     	this.requireCntValRecompute = true;
     	this.requireMaxObjRecompute = true;

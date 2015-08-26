@@ -63,8 +63,8 @@ public class MetricsCollectionTester {
 		MetricsCollection collection_2 = createTestMC("large collection", 100);
 		writeToString(collection_2);
 		int[] remove = new int[50];
-		for(int i=0;i<50;i++) { remove[i] = i; }
-		collection_2.removeFromCollection(remove); //TODO: why does this only remove even indices??
+		for(int i=0;i<50;i++){ remove[i] = i; }
+		collection_2.removeFromCollection(remove);
 		writeToString(collection_2);
 		collection_2.clearCollection();
 		writeToString(collection_2);
@@ -74,7 +74,16 @@ public class MetricsCollectionTester {
 		/*
 		 * Test Case 3
 		 * time the creation of 100,000 imbs
+		 *
 		 */
+
+		System.out.println(" START TEST CASE 3");
+		System.out.println("Creating very large isb collection...");
+		long startTime = System.nanoTime();
+		MetricsCollection collection_3 = createTestMC("large collection", 100000);
+		long endTime = System.nanoTime();
+		long duration = (endTime - startTime);
+		System.out.println("Took " + (duration/1000000) + "ms to create 100,000 imb collection");
 	}
 	
 	private static void writeToString(MetricsCollection mc){
