@@ -115,20 +115,15 @@ public class StatisticsFileReader {
             String current_stats;
             int lineCount = 1;
             while ((current_stats = br.readLine()) != null) {
-                debug("Line " + lineCount);
+                current_stats.replace(",,", ", ,"); //this is to prevent null values when creating the String[]
                 if (lineCount > this.int_skipLines) {
                     String[] currStatsArray = current_stats.split(this.str_value_separator);
-                    //TODO: how to deal with blank values in the .csv file, causes nullpointer
+
                     if (currStatsArray.length > 14) {
                         currStatsArray = correctColumnFormatting(currStatsArray);
                     }
 
-                    debug("current string: ");
-                    for(int i=0;i<currStatsArray.length;i++){debug(i + "."+currStatsArray[i]);}
-
                     IntegrityStatisticBean temp_isb = arrayToIsb(currStatsArray);
-                    debug("bean: ");
-                    printState(temp_isb);
 
                     if (hashMap_stat_mapper.containsKey(temp_isb.getGroup())) {
                         hashMap_stat_mapper.get(temp_isb.getGroup()).addToCollection(temp_isb);
@@ -138,10 +133,14 @@ public class StatisticsFileReader {
                         temp_collection.addToCollection(temp_isb);
                         hashMap_stat_mapper.put(temp_isb.getGroup(), temp_collection);
                     }
-                    debug( hashMap_stat_mapper.toString());
                 }
                 lineCount +=1;
             }
+            for(StatisticsCollection sc : hashMap_stat_mapper.values()){
+                sc.computeAllCollectionStatistics();
+            }
+
+
         }catch(FileNotFoundException fnfe){
             //TODO: error catching
             System.out.println("WARNING: FILE NOT FOUND - " + fnfe);
@@ -155,7 +154,6 @@ public class StatisticsFileReader {
 
         return hashMap_stat_mapper;
     }
-
 
 
     public String getStringFilePath(){ return this.str_filePath; }
@@ -174,7 +172,7 @@ public class StatisticsFileReader {
         //TODO: remove
         System.out.println(s);
     }
-
+ /*
     private void printState(IntegrityStatisticBean isb){
         //TODO: remove
         //print current state of imb object for sanity check and debug.
@@ -195,5 +193,5 @@ public class StatisticsFileReader {
         System.out.println("unit: " + isb.getUnit());
         System.out.println("used: " + isb.getUsed());
         System.out.println(" **********************************\n");
-    }
+    }*/
 }

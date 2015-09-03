@@ -37,9 +37,23 @@ public class StatisticsFileReader_Tester {
         print("userlogin: size="+ userLogin.getCollectionSize());
         userLogin.writeToString();
         print(" END TEST CASE 1");
+
+        /**
+         * Test Case 2:
+         * - using the existing data from test case 1:
+         *      - run all the statistic computations and output for accuracy
+         *      - test getting some isb level values out of the collections
+         *      - test adding a new isb and redo the collection level computations
+         *      - test removing a isb and redo the collection level computations
+         */
+        print(" START TEST CASE 2");
+
+
     }
 
     public static void print(String s){
         System.out.println(s);
     }
+
+
 }
