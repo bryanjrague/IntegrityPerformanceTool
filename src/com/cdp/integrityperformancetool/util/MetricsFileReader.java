@@ -15,40 +15,20 @@ public class MetricsFileReader {
 
 	private static int mapSize; // 4K - make this * 1024 to 4MB in a real system.
 	private String metricsFilePath;
-	private ArrayList<String> metricsToRetrieve;
 	
 	public MetricsFileReader(){
 		mapSize = 1 * 1024;
 		metricsFilePath = "";
-		metricsToRetrieve = new ArrayList<String>();
 	}
 
-	public MetricsFileReader(String arg_metricsFilePath, ArrayList<String> arg_metricsToRetrieve){
+	public MetricsFileReader(String arg_metricsFilePath){
 		mapSize = 1 * 1024;
 		metricsFilePath = arg_metricsFilePath;
-		metricsToRetrieve = arg_metricsToRetrieve;
 	}
 	
-	public MetricsFileReader(int arg_mapSize, String arg_metricsFilePath, ArrayList<String> arg_metricsToRetrieve){
+	public MetricsFileReader(int arg_mapSize, String arg_metricsFilePath){
 		mapSize = arg_mapSize;
 		metricsFilePath = arg_metricsFilePath;
-		metricsToRetrieve = arg_metricsToRetrieve;
-	}
-	
-	public void addMetric(String arg_metric){
-		if(!metricsToRetrieve.contains(arg_metric)){
-			metricsToRetrieve.add(arg_metric);
-		}
-	}
-	
-	public void addMetrics(ArrayList<String> arg_metrics){
-		for(String m : arg_metrics){
-			addMetric(m);
-		}
-	}
-	
-	public void clearMetricsToRetrieve(){
-		metricsToRetrieve.clear();
 	}
 	
 	public MetricsCollection executeMetricsRetrieval(){
@@ -58,20 +38,6 @@ public class MetricsFileReader {
 	public int getMapSize(){ return mapSize; }
 	
 	public String getMetricsFilePath(){ return metricsFilePath;}
-	
-	public ArrayList<String> getMetricsToRetrieve(){ return metricsToRetrieve;}
-	
-	public void removeMetric(String arg_metric){
-		if(metricsToRetrieve.contains(arg_metric)){
-			metricsToRetrieve.remove(arg_metric);
-		}
-	}
-	
-	public void removeMetrics(ArrayList<String> arg_metrics){
-		for(String m : arg_metrics){
-			removeMetric(m);
-		}
-	}
 	
 	private String searchForMetric(String grepfor, Path path) throws IOException {
         final byte[] tosearch = grepfor.getBytes(StandardCharsets.UTF_8);
