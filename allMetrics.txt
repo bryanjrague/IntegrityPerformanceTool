@@ -1,0 +1,10 @@
+Code Cache
+code Cache_peak
+Code Cache_current
+Code Cache_last_gc
+Code Cache_max
+Par Eden Space
+Par Eden Space_peak
+Par Eden Space_current
+Par Eden Space_last_gc
+Par Eden Space_max
