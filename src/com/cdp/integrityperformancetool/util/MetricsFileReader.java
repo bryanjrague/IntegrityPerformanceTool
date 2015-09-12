@@ -1,9 +1,6 @@
 package com.cdp.integrityperformancetool.util;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
@@ -12,9 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Properties;
 
 import com.cdp.integrityperformancetool.IntegrityMetricBean;
 import com.cdp.integrityperformancetool.MetricsCollection;
@@ -61,13 +58,16 @@ public class MetricsFileReader {
 		return tempImb;
 	}
 	
-	public MetricsCollection executeMetricsRetrieval(){
-		MetricsCollection staticCollection = new MetricsCollection("Static Metrics from file '" + metricsFilePath + "'");
-		MetricsCollection dynamicCollection = new MetricsCollection("Dynamic Metrics from file '" + metricsFilePath + "'");
-		MetricsCollection finalCollection = new MetricsCollection("All Metrics from file '" + metricsFilePath + "'");
+	public MetricsCollection extractMetrics(){
+		MetricsCollection staticCollection = new MetricsCollection(
+				"Static Metrics from file '" + metricsFilePath + "'");
+		MetricsCollection dynamicCollection = new MetricsCollection(
+				"Dynamic Metrics from file '" + metricsFilePath + "'");
+		MetricsCollection finalCollection = new MetricsCollection(
+				"All Metrics from file '" + metricsFilePath + "'");
 		try{
-			staticCollection = getStaticMetrics();
-			//dynamicCollection = getDynamicMetrics();
+			//staticCollection = getStaticMetrics();
+			dynamicCollection = getDynamicMetrics();
 		} catch (FileNotFoundException fnfe){
 			
 		} catch (IOException ioe){
@@ -95,7 +95,6 @@ public class MetricsFileReader {
 					indexEnd = i;
 					break;
 				}
-				
 			}
 			if(indexEnd>0){
 				return arg_fullString.substring((indexStart+targetStrLength), indexEnd).trim(); 
@@ -105,7 +104,7 @@ public class MetricsFileReader {
 			return "METRIC NAME NOT FOUND - NO DATA";
 		}
 	}
-	
+
 	public MetricsCollection getStaticMetrics() throws FileNotFoundException, IOException, Exception{
 		MetricsCollection temp_collection = new MetricsCollection();
 		BufferedReader br = new BufferedReader( new FileReader(metricsFilePath));
@@ -128,26 +127,149 @@ public class MetricsFileReader {
 									extractStaticMetric(currentLine, "max=") ) );
 					break;
 				case 1:
+					temp_collection.addToCollection(
+							createImb("Eden Space: Peak", "Peak Eden Space",
+									extractStaticMetric(currentLine, "peak=") ) );
+					temp_collection.addToCollection(
+							createImb("Eden Space: Current", "Current Eden Space",
+									extractStaticMetric(currentLine, "current=") ) );
+					temp_collection.addToCollection(
+							createImb("Eden Space: last gc", "last gc Eden Space",
+									extractStaticMetric(currentLine, "last gc=") ) );
+					temp_collection.addToCollection(
+							createImb("Eden Space: max", "Max Eden Space",
+									extractStaticMetric(currentLine, "max=") ) );
+					break;
 				case 2:
+					temp_collection.addToCollection(
+							createImb("Survivor Space: Peak", "Peak Survivor Space",
+									extractStaticMetric(currentLine, "peak=") ) );
+					temp_collection.addToCollection(
+							createImb("Survivor Space: Current", "Current Survivor Space",
+									extractStaticMetric(currentLine, "current=") ) );
+					temp_collection.addToCollection(
+							createImb("Survivor Space: last gc", "last gc Survivor Space",
+									extractStaticMetric(currentLine, "last gc=") ) );
+					temp_collection.addToCollection(
+							createImb("Survivor Space: max", "Max Survivor Space",
+									extractStaticMetric(currentLine, "max=") ) );
+					break;
 				case 3:
+					temp_collection.addToCollection(
+							createImb("CMS Old Gen: Peak", "Peak CMS Old Gen",
+									extractStaticMetric(currentLine, "peak=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Old Gen: Current", "Current CMS Old Gen",
+									extractStaticMetric(currentLine, "current=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Old Gen: last gc", "last gc CMS Old Gen",
+									extractStaticMetric(currentLine, "last gc=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Old Gen: max", "Max CMS Old Gen",
+									extractStaticMetric(currentLine, "max=") ) );
+					break;
 				case 4:
+					temp_collection.addToCollection(
+							createImb("CMS Perm Gen: Peak", "Peak CMS Perm Gen",
+									extractStaticMetric(currentLine, "peak=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Perm Gen: Current", "Current CMS Perm Gen",
+									extractStaticMetric(currentLine, "current=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Perm Gen: last gc", "last gc CMS Perm Gen",
+									extractStaticMetric(currentLine, "last gc=") ) );
+					temp_collection.addToCollection(
+							createImb("CMS Perm Gen: max", "Max CMS Perm Gen",
+									extractStaticMetric(currentLine, "max=") ) );
+					break;
 				case 5:
+					temp_collection.addToCollection(
+							createImb("Copy: #gc", "Copy #gc",
+									extractStaticMetric(currentLine, "#gc=") ) );
+					temp_collection.addToCollection(
+							createImb("Copy: time", "Copy time",
+									extractStaticMetric(currentLine, "time=") ) );
+					break;
 				case 6:
+					temp_collection.addToCollection(
+							createImb("ConcurrentMarkSweep: #gc", "ConcurrentMarkSweep #gc",
+									extractStaticMetric(currentLine, "#gc=") ) );
+					temp_collection.addToCollection(
+							createImb("ConcurrentMarkSweep: time", "ConcurrentMarkSweep time",
+									extractStaticMetric(currentLine, "time=") ) );
+					break;
 				case 8:
+
+					temp_collection.addToCollection(
+							createImb("Server Time", "Server Time",
+									extractStaticMetric(currentLine, "Server Time:") ) );
+					break;
 				case 9:
+					temp_collection.addToCollection(
+							createImb("DB Time", "DB Time",
+									extractStaticMetric(currentLine, "DB Time:") ) );
+					break;
 				case 10:
+					temp_collection.addToCollection(
+							createImb("Database", "Database",
+									extractStaticMetric(currentLine, "Database:") ) );
+					break;
 				case 11:
-				case 12:
+					temp_collection.addToCollection(
+							createImb("Database Version", "Database Version",
+									extractStaticMetric(currentLine, "Database Version:") ) );
+					break;
 				case 13:
+					System.out.println(i + "DB Major: " + currentLine);
+					temp_collection.addToCollection(
+							createImb("Database Major", "Database Major",
+									extractStaticMetric(currentLine, "Database Major:") ) );
+					break;
 				case 14:
+					temp_collection.addToCollection(
+							createImb("Database Minor", "Database Minor",
+									extractStaticMetric(currentLine, "Database Minor:") ) );
+					break;
 				case 15:
+					temp_collection.addToCollection(
+							createImb("Driver Name", "Driver Name",
+									extractStaticMetric(currentLine, "Driver Name:") ) );
+					break;
 				case 16:
+					temp_collection.addToCollection(
+							createImb("Driver Version", "Driver Version",
+									extractStaticMetric(currentLine, "Driver Version:") ) );
+					break;
 				case 17:
+					temp_collection.addToCollection(
+							createImb("Driver Major", "Driver Major",
+									extractStaticMetric(currentLine, "Driver Major:") ) );
+					break;
 				case 18:
+					temp_collection.addToCollection(
+							createImb("Driver Minor", "Driver Minor",
+									extractStaticMetric(currentLine, "Driver Minor:") ) );
+					break;
 				case 19:
+					temp_collection.addToCollection(
+							createImb("JDBC Major", "JDBC Major",
+									extractStaticMetric(currentLine, "JDBC Major:") ) );
+					break;
 				case 20:
+					temp_collection.addToCollection(
+							createImb("JDBC Minor", "JDBC Minor",
+									extractStaticMetric(currentLine, "JDBC Minor:") ) );
+					break;
 				case 21:
+					temp_collection.addToCollection(
+							createImb("Database user", "Database user",
+									extractStaticMetric(currentLine, "Database user:") ) );
+					break;
 				case 36:
+					temp_collection.addToCollection(
+							createImb("DB Average Response Time", "DB Average Response Time",
+									extractStaticMetric(currentLine, "Average response time:") ) );
+					break;
 				default:
 					break;
 			}
@@ -156,63 +278,106 @@ public class MetricsFileReader {
 		return temp_collection;
 	}
 	
-	//public MetricsCollection getDynamicMetrics(Path arg_filePath) throws FileNotFoundException, IOException, Exception{
-	//	BufferedReader br = new BufferedReader( new FileReader(metricsFilePath));
-		
-	//	br.close();
-		
-	//}
+	public MetricsCollection getDynamicMetrics() throws FileNotFoundException, IOException, Exception{
+		MetricsCollection tempCollection = new MetricsCollection("Dynamic Metrics from '" +
+			metricsFilePath + "'");
+		Properties singleVals = new Properties();
+		String singleValPropFile = "C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\" +
+				"Properties\\SingleValueDynamicMetricList.properties";
+		InputStream singleValPropInput = new FileInputStream(singleValPropFile);
+		singleVals.load(singleValPropInput);
+		//singleVals.load(getClass().getClassLoader().getResourceAsStream(singleValPropInput));
+
+	//	Properties multiVals = new Properties();
+	//	String multiValPropFile = "C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\" +
+	//			"Properties\\MultiValueDynamicMetricList.properties;";
+	//	InputStream multiValPropInput = new FileInputStream(multiValPropFile);
+	//	multiVals.load(multiValPropInput);
+		//multiVals.load(getClass().getClassLoader().getResourceAsStream(multiValPropInput));
+
+		Enumeration<?> e = singleVals.propertyNames();
+		while (e.hasMoreElements()) {
+			String key = (String) e.nextElement();
+			String value = singleVals.getProperty(key);
+			System.out.println(key+": " + value);
+			String foundAt = searchForMetricName(value);
+			if(foundAt.indexOf(",")<0){
+				tempCollection.addToCollection(
+						createImb(key,value,
+								getValueAtLine(Integer.parseInt(foundAt)+2) ) );
+			} else {
+				for(String line : foundAt.split(", ")){
+					tempCollection.addToCollection(
+							createImb(key+"-"+line,value+"-"+line,
+									getValueAtLine(Integer.parseInt(line)+2) ) );
+				}
+			}
+		}
+
+		return tempCollection;
+	}
 	
 	public int getMapSize(){ return mapSize; }
 	
 	public String getMetricsFilePath(){ return metricsFilePath;}
+
+	private String getValueAtLine(int arg_targetLineNum) throws FileNotFoundException, IOException{
+		BufferedReader br = new BufferedReader( new FileReader(metricsFilePath));
+		String tempStr = "NO VALUE";
+		for(int i=0;i<arg_targetLineNum;i++){
+			tempStr = br.readLine();
+		}
+		br.close();
+		return tempStr;
+	}
 	
-	private String searchForMetric(String grepfor, Path path) throws IOException {
-        final byte[] tosearch = grepfor.getBytes(StandardCharsets.UTF_8);
+	private String searchForMetricName(String grepfor) throws IOException {
+		Path filepath = Paths.get(metricsFilePath);
+        final byte[] toSearch = grepfor.getBytes(StandardCharsets.UTF_8);
         StringBuilder report = new StringBuilder();
         int padding = 1; // need to scan 1 character ahead in case it is a word boundary.
-        int linecount = 1;
+        int lineCount = 1;
         int matches = 0;
-        boolean inword = false;
-        boolean scantolineend = false;
+        boolean inWord = false;
+        boolean scanToLineEnd = false;
         try {
-        	FileChannel channel = FileChannel.open(path, StandardOpenOption.READ);
+        	FileChannel channel = FileChannel.open(filepath, StandardOpenOption.READ);
             final long length = channel.size();
             int pos = 0;
             while (pos < length) {
                 long remaining = length - pos;
                 // int conversion is safe because of a safe MAPSIZE.. Assume a reaosnably sized tosearch.
-                int trymap = mapSize + tosearch.length + padding;
-                int tomap = (int)Math.min(trymap, remaining);
+                int tryMap = mapSize + toSearch.length + padding;
+                int toMap = (int)Math.min(tryMap, remaining);
                 // different limits depending on whether we are the last mapped segment.
-                int limit = trymap == tomap ? mapSize : (tomap - tosearch.length);
-                MappedByteBuffer buffer = channel.map(MapMode.READ_ONLY, pos, tomap);
-                System.out.println("Mapped from " + pos + " for " + tomap);
-                pos += (trymap == tomap) ? mapSize : tomap;
+                int limit = tryMap == toMap ? mapSize : (toMap - toSearch.length);
+                MappedByteBuffer buffer = channel.map(MapMode.READ_ONLY, pos, toMap);
+                System.out.println("Mapped from " + pos + " for " + toMap);
+                pos += (tryMap == toMap) ? mapSize : toMap;
                 for (int i = 0; i < limit; i++) {
                     final byte b = buffer.get(i);
-                    if (scantolineend) {
+                    if (scanToLineEnd) {
                         if (b == '\n') {
-                            scantolineend = false;
-                            inword = false;
-                            linecount ++;
+							scanToLineEnd = false;
+                            inWord = false;
+                            lineCount ++;
                         }
                     } else if (b == '\n') {
-                        linecount++;
-                        inword = false;
+                        lineCount++;
+                        inWord = false;
                     } else if (b == '\r' || b == ' ') {
-                        inword = false;
-                    } else if (!inword) {
-                        if (wordMatch(buffer, i, tomap, tosearch)) {
+                        inWord = false;
+                    } else if (!inWord) {
+                        if (wordMatch(buffer, i, toMap, toSearch)) {
                             matches++;
-                            i += tosearch.length - 1;
+                            i += toSearch.length - 1;
                             if (report.length() > 0) {
                                 report.append(", ");
                             }
-                            report.append(linecount);
-                            scantolineend = true;
+                            report.append(lineCount);
+							scanToLineEnd = true;
                         } else {
-                            inword = true;
+                            inWord = true;
                         }
                     }
                 }
@@ -220,7 +385,8 @@ public class MetricsFileReader {
         } catch (Exception e){
         	//?
         }
-        return "Times found at--" + matches + "\nWord found at--" + report;
+       // System.out.println("Times found at--" + matches + "\nWord found at--" + report);
+		return report.toString();
     }
 	
 	public void setMapSize(int arg_size){ mapSize = arg_size; }

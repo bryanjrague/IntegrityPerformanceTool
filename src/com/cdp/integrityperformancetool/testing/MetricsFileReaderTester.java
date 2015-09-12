@@ -4,19 +4,25 @@ import com.cdp.integrityperformancetool.IntegrityMetricBean;
 import com.cdp.integrityperformancetool.MetricsCollection;
 import com.cdp.integrityperformancetool.util.MetricsFileReader;
 
-public class MetricsFileReaderTest {
+public class MetricsFileReaderTester {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+		String filePath = "C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Input\\MetricsTestData01.txt";
+
 		/*
 		 * Test Case 1:
-		 * test out the extractStaticMetric method against samples of the metric file.
+		 * test out the extractStaticMetric method against single line samples of the metric file.
 		 * pull out various metrics that exist on the same line. 
 		 * store them into IntegrityMetricBeans and MetricsCollections
+		 * check the IntegrityMetricBean and MetricsCollections against expected values.
 		 */
-		String filePath = "C:\\Eclipse\\eclipse\\workspace\\IntegrityStats\\Input\\searchMe.txt";
+
+		print(" START TEST CASE 1 ");
+
 		MetricsFileReader mfr = new MetricsFileReader(filePath);
 		MetricsCollection test_collection1 = new MetricsCollection();
 		print(mfr.getMetricsFilePath());
@@ -92,8 +98,31 @@ public class MetricsFileReaderTest {
 			imb6.setValue(valueString6);
 		}
 		test_collection1.addToCollection(imb6);
-		
+
 		writeToString(test_collection1);
+		print( "END TEST CASE 1 \n");
+
+		/*
+		 *Test Case 2:
+		 * test use of the extractMetrics against only the static metrics (lines 1-37 of file)
+		 * output data for consistency check.
+		 */
+		print(" START TEST CASE 2 ");
+		MetricsFileReader mfr2 = new MetricsFileReader(filePath);
+
+		MetricsCollection test_collection2 = mfr2.extractMetrics();
+		writeToString(test_collection2);
+		print("END TEST CASE 2 \n");
+
+		/*
+		 * Test Case 3:
+		 * test extractDynamicMetric with a few test Metric names.
+		 */
+		print(" START TEST CASE 3");
+
+		MetricsFileReader mfr3 = new MetricsFileReader(filePath);
+		mfr3.extractMetrics();
+		print("END TEST CASE 3 \n");
 	}
 	
 	public static void print(String s){
