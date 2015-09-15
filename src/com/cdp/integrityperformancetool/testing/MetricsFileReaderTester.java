@@ -104,7 +104,8 @@ public class MetricsFileReaderTester {
 
 		/*
 		 *Test Case 2:
-		 * test use of the extractMetrics against only the static metrics (lines 1-37 of file)
+		 * test use of the extractMetrics against static metrics (lines 1-37 of file)
+		 * and dynamic metrics in the properties file.
 		 * output data for consistency check.
 		 */
 		print(" START TEST CASE 2 ");
@@ -114,15 +115,6 @@ public class MetricsFileReaderTester {
 		writeToString(test_collection2);
 		print("END TEST CASE 2 \n");
 
-		/*
-		 * Test Case 3:
-		 * test extractDynamicMetric with a few test Metric names.
-		 */
-		print(" START TEST CASE 3");
-
-		MetricsFileReader mfr3 = new MetricsFileReader(filePath);
-		mfr3.extractMetrics();
-		print("END TEST CASE 3 \n");
 	}
 	
 	public static void print(String s){

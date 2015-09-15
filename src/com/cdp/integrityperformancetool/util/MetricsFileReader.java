@@ -41,16 +41,25 @@ public class MetricsFileReader {
 		IntegrityMetricBean tempImb = new IntegrityMetricBean();
 		tempImb.setCustomName(arg_cName);
 		tempImb.setMetricName(arg_mName);
-		try{
-			tempImb.setValue(Long.valueOf(arg_value)); //attempt to set long
-		} catch(NumberFormatException nfe){
-			try{
+		if(arg_value.indexOf(".")>0) {
+			try {
 				tempImb.setValue(Float.valueOf(arg_value)); //attempt to set float
-			} catch(NumberFormatException nfe2){
-				try{
+			} catch (NumberFormatException nfe2) {
+				try {
 					tempImb.setValue(arg_value); //default and set to string
-				}catch(Exception e){
-					//TODO: warn in logger - error 
+				} catch (Exception e) {
+					//TODO: warn in logger - error
+					tempImb.setValue("ERROR - NO DATA");
+				}
+			}
+		} else {
+			try {
+				tempImb.setValue(Long.valueOf(arg_value)); //attempt to set long
+			} catch (NumberFormatException nfe) {
+				try {
+					tempImb.setValue(arg_value); //default and set to string
+				} catch (Exception e) {
+					//TODO: warn in logger - error
 					tempImb.setValue("ERROR - NO DATA");
 				}
 			}
@@ -297,21 +306,12 @@ public class MetricsFileReader {
 
 		Enumeration<?> e = singleVals.propertyNames();
 		while (e.hasMoreElements()) {
-			String key = (String) e.nextElement();
-			String value = singleVals.getProperty(key);
-			System.out.println(key+": " + value);
-			String foundAt = searchForMetricName(value);
-			if(foundAt.indexOf(",")<0){
-				tempCollection.addToCollection(
-						createImb(key,value,
-								getValueAtLine(Integer.parseInt(foundAt)+2) ) );
-			} else {
-				for(String line : foundAt.split(", ")){
-					tempCollection.addToCollection(
-							createImb(key+"-"+line,value+"-"+line,
-									getValueAtLine(Integer.parseInt(line)+2) ) );
-				}
-			}
+			String metricKey = (String) e.nextElement();
+			String metricName = singleVals.getProperty(metricKey);
+			System.out.println(metricKey + ": " + metricName);
+			String value = getDynamicMetricValue(metricName);
+			tempCollection.addToCollection(
+				createImb(metricKey, metricName, value));
 		}
 
 		return tempCollection;
@@ -331,10 +331,10 @@ public class MetricsFileReader {
 		return tempStr;
 	}
 	
-	private String searchForMetricName(String grepfor) throws IOException {
+	private String getDynamicMetricValue(String grepfor) throws IOException {
 		Path filepath = Paths.get(metricsFilePath);
         final byte[] toSearch = grepfor.getBytes(StandardCharsets.UTF_8);
-        StringBuilder report = new StringBuilder();
+        StringBuilder foundAtLine = new StringBuilder();
         int padding = 1; // need to scan 1 character ahead in case it is a word boundary.
         int lineCount = 1;
         int matches = 0;
@@ -352,7 +352,7 @@ public class MetricsFileReader {
                 // different limits depending on whether we are the last mapped segment.
                 int limit = tryMap == toMap ? mapSize : (toMap - toSearch.length);
                 MappedByteBuffer buffer = channel.map(MapMode.READ_ONLY, pos, toMap);
-                System.out.println("Mapped from " + pos + " for " + toMap);
+              //  System.out.println("Mapped from " + pos + " for " + toMap);
                 pos += (tryMap == toMap) ? mapSize : toMap;
                 for (int i = 0; i < limit; i++) {
                     final byte b = buffer.get(i);
@@ -371,10 +371,10 @@ public class MetricsFileReader {
                         if (wordMatch(buffer, i, toMap, toSearch)) {
                             matches++;
                             i += toSearch.length - 1;
-                            if (report.length() > 0) {
-                                report.append(", ");
+                            if (foundAtLine.length() > 0) {
+                                foundAtLine.append(", ");
                             }
-                            report.append(lineCount);
+                            foundAtLine.append(lineCount);
 							scanToLineEnd = true;
                         } else {
                             inWord = true;
@@ -383,10 +383,29 @@ public class MetricsFileReader {
                 }
             }
         } catch (Exception e){
-        	//?
+        	//TODO: warn in logger
         }
-       // System.out.println("Times found at--" + matches + "\nWord found at--" + report);
-		return report.toString();
+/*
+        int metricNameLine = Integer.parseInt(foundAtLine.toString());
+		int valueLineStart = Integer.parseInt(foundAtLine.toString()) + 2;
+		String str_values = getValueAtLine(valueLineStart);
+		String str_metrics = getValueAtLine(metricNameLine);
+		int startCol =
+
+
+
+
+		System.out.println(metricNameLine + ", " + valueLine);
+
+		for(int m=0;m<str_metrics.length;m++){
+			System.out.println(str_metrics[m] + ", " + str_values[m]);
+			if(str_metrics[m].trim().equals(grepfor)){
+				return str_values[m].trim();
+			}
+		}
+		return "METRIC NOT FOUND: " + grepfor;
+		*/
+		return "method doesn't work";
     }
 	
 	public void setMapSize(int arg_size){ mapSize = arg_size; }

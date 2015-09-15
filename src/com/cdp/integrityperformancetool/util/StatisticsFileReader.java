@@ -26,6 +26,12 @@ public class StatisticsFileReader {
     private String str_value_separator;
     private int int_skipLines;
 
+    public StatisticsFileReader(){
+        this.str_filePath = " ";
+        this.str_value_separator = ",";
+        this.int_skipLines = 1;
+    }
+
     public StatisticsFileReader(String arg_filePath){
         this.str_filePath  = arg_filePath;
     //    this.path_filePath = Paths.get(URI.create(arg_filePath));
@@ -128,8 +134,7 @@ public class StatisticsFileReader {
                     if (hashMap_stat_mapper.containsKey(temp_isb.getGroup())) {
                         hashMap_stat_mapper.get(temp_isb.getGroup()).addToCollection(temp_isb);
                     } else {
-                        StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup()
-                                + " Group Collection");
+                        StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup());
                         temp_collection.addToCollection(temp_isb);
                         hashMap_stat_mapper.put(temp_isb.getGroup(), temp_collection);
                     }
@@ -155,7 +160,6 @@ public class StatisticsFileReader {
         return hashMap_stat_mapper;
     }
 
-
     public String getStringFilePath(){ return this.str_filePath; }
 
     public int getSkipLines(){ return this.int_skipLines; }
@@ -168,30 +172,4 @@ public class StatisticsFileReader {
 
     public void setValueSeparator(String arg_separator){ this.str_value_separator = arg_separator; }
 
-    private void debug(String s){
-        //TODO: remove
-        System.out.println(s);
-    }
- /*
-    private void printState(IntegrityStatisticBean isb){
-        //TODO: remove
-        //print current state of imb object for sanity check and debug.
-        System.out.println(" ** IntegrityStatisticBean State **");
-        System.out.println(" **********************************");
-        System.out.println("average: " + isb.getAverage());
-        System.out.println("count: " + isb.getCount());
-        System.out.println("endDate: " + isb.getEndDate());
-        System.out.println("group: " + isb.getGroup());
-        System.out.println("kind: " + isb.getKind());
-        System.out.println("max: " + isb.getMax());
-        System.out.println("min: " + isb.getMin());
-        System.out.println("mode: " + isb.getMode());
-        System.out.println("name: " + isb.getName());
-        System.out.println("startDate: " + isb.getStartDate());
-        System.out.println("sum: " + isb.getSum());
-        System.out.println("totalCount: " + isb.getTotalCount());
-        System.out.println("unit: " + isb.getUnit());
-        System.out.println("used: " + isb.getUsed());
-        System.out.println(" **********************************\n");
-    }*/
 }
