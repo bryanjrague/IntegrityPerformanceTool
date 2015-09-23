@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-09-22T22:05:58 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="TriggerSummary3" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="01ab83f9-e038-48ac-82c6-136232f94007">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Test Csv File "/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="Start Date" class="java.lang.String"/>
+	<field name="End Date" class="java.lang.String"/>
+	<field name="Group" class="java.lang.String"/>
+	<field name="Statistic" class="java.lang.String"/>
+	<field name="Kind" class="java.lang.String"/>
+	<field name="Unit" class="java.lang.String"/>
+	<field name="Count" class="java.lang.String"/>
+	<field name="Total" class="java.lang.String"/>
+	<field name="Sum" class="java.lang.String"/>
+	<field name="Used" class="java.lang.String"/>
+	<field name="Min" class="java.lang.String"/>
+	<field name="Max" class="java.lang.String"/>
+	<field name="Average" class="java.lang.String"/>
+	<field name="Mode" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="23" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="10" y="0" width="790" height="20" uuid="1f3fc260-7844-42f4-b086-db09c664d243"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Report Title]]></text>
+			</staticText>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="270" height="20" uuid="15c19b58-5dd5-41ae-8a90-a4ea48b4ed94"/>
+				<text><![CDATA[Trigger Name: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="0" width="80" height="20" uuid="9bb02b90-7bcb-449b-97d5-0909104d3e6b"/>
+				<text><![CDATA[Group:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="0" width="80" height="20" uuid="0999289e-3c8f-405f-a52f-a9682bcecfe0"/>
+				<text><![CDATA[Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="0" width="70" height="20" uuid="0b5147c4-ba34-4a6d-a472-f73c3c4dd8bc"/>
+				<text><![CDATA[Kind]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="80" height="20" uuid="1abbda44-9954-4428-bd30-3fee779663e1"/>
+				<text><![CDATA[Total Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="580" y="0" width="70" height="20" uuid="5e4c6609-af2a-4434-9036-35a91a949091"/>
+				<text><![CDATA[Min]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="650" y="0" width="70" height="20" uuid="6e21d731-0eb0-4d40-9190-c80580b8e547"/>
+				<text><![CDATA[Max]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="720" y="0" width="70" height="20" uuid="2624217d-466c-49a6-b12f-348f1c0a6c6d"/>
+				<text><![CDATA[Avg]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="270" y="0" width="80" height="20" uuid="87502246-8a84-469f-8cf8-c407ac9ba1e7"/>
+				<textFieldExpression><![CDATA[$F{Group}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="70" height="20" uuid="76bf1504-86a1-4861-abaa-7e9e767e238b"/>
+				<textFieldExpression><![CDATA[$F{Kind}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="0" width="80" height="20" uuid="09addb06-7421-4a08-9103-7fb53d5fa6df"/>
+				<textFieldExpression><![CDATA[$F{Count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="0" width="80" height="20" uuid="7576b387-a990-466c-a609-176471edd2cf"/>
+				<textFieldExpression><![CDATA[$F{Total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="0" width="70" height="20" uuid="8adfac21-b079-4f8d-9542-760199af90c7"/>
+				<textFieldExpression><![CDATA[$F{Min}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="650" y="0" width="70" height="20" uuid="ea17e080-27e6-49b8-baac-23ab1e188fce"/>
+				<textFieldExpression><![CDATA[$F{Max}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="720" y="0" width="70" height="20" uuid="f04bd0bc-7e4e-4b32-9e5e-c30d6942ee7e"/>
+				<textFieldExpression><![CDATA[$F{Average}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="270" height="20" uuid="4f4c47b8-0d05-4e93-9d0a-07381ffb8bd8"/>
+				<textFieldExpression><![CDATA[$F{Statistic}
+]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

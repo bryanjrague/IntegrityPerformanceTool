@@ -1,6 +1,7 @@
 package com.cdp.integrityperformancetool.testing;
 
 import com.cdp.integrityperformancetool.StatisticsCollection;
+import com.cdp.integrityperformancetool.StatisticsLibrary;
 import com.cdp.integrityperformancetool.util.StatisticsFileReader;
 
 import java.util.HashMap;
@@ -26,11 +27,11 @@ public class StatisticsFileReader_Tester {
         print(""+myReader.getSkipLines());
         print(myReader.getValueSeparator());
         print("executing get stats...");
-        HashMap<String, StatisticsCollection> allStats = myReader.executeStatisticsRetrieval();
+       StatisticsLibrary allStats = myReader.executeStatisticsRetrieval();
         print("full: " + allStats.toString());
 
-        StatisticsCollection triggers = allStats.get("Trigger");
-        StatisticsCollection userLogin = allStats.get("User Login");
+        StatisticsCollection triggers = allStats.getStatisticsGroupName("Trigger");
+        StatisticsCollection userLogin = allStats.getStatisticsGroupName("User Login");
         print("stats collected...");
         print("triggers: size =" + triggers.getCollectionSize());
         triggers.writeToString();

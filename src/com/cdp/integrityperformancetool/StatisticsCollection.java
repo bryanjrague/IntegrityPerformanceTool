@@ -561,6 +561,7 @@ public class StatisticsCollection {
     	//write to file as CSV following the same format as the output Server Statistics .csv file
     	//cols: Start Date, End Date, Group, Statistic (Name), Kind, Unit, Count, total, Sum, Min, Max, Average, Mode
     	StringBuffer fileContents = new StringBuffer();
+		fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
     	for(IntegrityStatisticBean isb : this.collection){
     		fileContents.append(isb.getStartDate() + ","
     				+ isb.getEndDate() + "," 
@@ -584,11 +585,12 @@ public class StatisticsCollection {
 	    	
 	    	try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset)) {
 	    	    writer.write(fileContents.toString(), 0, fileContents.toString().length());
+				writer.close();
 	    	} catch (IOException x) {
 	    	    System.out.format("IOException: %s%n", x);
 	    	}
     	} else {
-
+			System.out.println("WARNING: EMPTY DATA WRITTEN TO FILE...");
     		//fileContents is empty
     		//TODO: throw error or warn?
     	}

@@ -140,7 +140,13 @@ public class IntegrityStatisticBean {
         }
     }
     
-    public void setSum(String arg_sum){this.sum = Long.valueOf(arg_sum); }
+    public void setSum(String arg_sum){
+        try{
+            this.sum = Long.valueOf(arg_sum);
+        } catch(NumberFormatException nfe) {
+            this.sum = 0L;
+        }
+    }
 
     public void setTotalCount(Long arg_totalCount){ this.totalCount = arg_totalCount; }
 

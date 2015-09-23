@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.cdp.integrityperformancetool.StatisticsLibrary;
 import org.joda.time.Instant;
 import org.joda.time.DateTime;
 
@@ -111,9 +113,9 @@ public class StatisticsFileReader {
     }
 
     //returns hashmap{statisticsCollection.group, arraylist<isb>}
-    public HashMap<String, StatisticsCollection> executeStatisticsRetrieval() {
+    public StatisticsLibrary executeStatisticsRetrieval() {
 
-        HashMap<String, StatisticsCollection> hashMap_stat_mapper = new HashMap<String, StatisticsCollection>();
+        StatisticsLibrary lib_stat_mapper = new StatisticsLibrary();
         try {
             InputStream is = new FileInputStream(new File(str_filePath));
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -131,17 +133,17 @@ public class StatisticsFileReader {
 
                     IntegrityStatisticBean temp_isb = arrayToIsb(currStatsArray);
 
-                    if (hashMap_stat_mapper.containsKey(temp_isb.getGroup())) {
-                        hashMap_stat_mapper.get(temp_isb.getGroup()).addToCollection(temp_isb);
+                    if (lib_stat_mapper.containsGroupName(temp_isb.getGroup())) {
+                        lib_stat_mapper.getStatisticsGroupName(temp_isb.getGroup()).addToCollection(temp_isb);
                     } else {
                         StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup());
                         temp_collection.addToCollection(temp_isb);
-                        hashMap_stat_mapper.put(temp_isb.getGroup(), temp_collection);
+                        lib_stat_mapper.addToLibrary(temp_isb.getGroup(), temp_collection);
                     }
                 }
                 lineCount +=1;
             }
-            for(StatisticsCollection sc : hashMap_stat_mapper.values()){
+            for(StatisticsCollection sc : lib_stat_mapper.getAllValues()){
                 sc.computeAllCollectionStatistics();
             }
 
@@ -157,7 +159,7 @@ public class StatisticsFileReader {
             System.out.println("WARNING: GENERAL EXCEPTION - " + e);
         }
 
-        return hashMap_stat_mapper;
+        return lib_stat_mapper;
     }
 
     public String getStringFilePath(){ return this.str_filePath; }

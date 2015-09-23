@@ -1,0 +1,420 @@
+Code Cache: peak=21490304, current=21467584, last gc=?, max=50331648
+Eden Space: peak=69795840, current=62740400, last gc=0, max=69795840
+Survivor Space: peak=8716288, current=5198464, last gc=5198464, max=8716288
+CMS Old Gen: peak=980142648, current=813570344, last gc=520126104, max=986513408
+CMS Perm Gen: peak=123417440, current=123417440, last gc=119808016, max=201326592
+Copy: #gc=19867, time=221121ms
+ConcurrentMarkSweep: #gc=75, time=4698ms
+
+Server Time:	Wed May 20 11:23:14 PDT 2015
+DB Time:	20-MAY-15 11.23.14.626757 AM -07:00
+Database:	Oracle
+Database Version:	Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+Database Major:	11
+Database Minor:	2
+Driver Name:	Oracle JDBC driver
+Driver Version:	11.2.0.1.0
+Driver Major:	11
+Driver Minor:	2
+JDBC Major:	11
+JDBC Minor:	2
+Database user:	MKSD
+
+Response Times: 427Ms,426Ms,390Ms,348Ms,399Ms,338Ms,404Ms,511Ms,
+		334Ms,359Ms,433Ms,470Ms,374Ms,336Ms,391Ms,346Ms,
+		500Ms,531Ms,358Ms,339Ms,430Ms,319Ms,401Ms,426Ms,
+		425Ms,356Ms,394Ms,337Ms,373Ms,419Ms,325Ms,415Ms,
+		325Ms,412Ms,415Ms,433Ms,399Ms,737Ms,335Ms,512Ms,
+		330Ms,432Ms,433Ms,406Ms,337Ms,397Ms,339Ms,399Ms,
+		340Ms,392Ms,657Ms,484Ms,455Ms,518Ms,469Ms,385Ms,
+		356Ms,399Ms,353Ms,383Ms,339Ms,390Ms,348Ms,403Ms,
+		337Ms,410Ms,338Ms,418Ms,315Ms,411Ms,459Ms,399Ms,
+		339Ms,392Ms,343Ms,402Ms,339Ms,386Ms,349Ms,394Ms,
+		341Ms,394Ms,350Ms,394Ms,340Ms,429Ms,340Ms,403Ms,
+		456Ms,394Ms,336Ms,910Ms,718Ms,919Ms,442Ms,354Ms,
+		450Ms,403Ms,368Ms,502Ms
+Average response time: 412Ms
+
+
+===============================================================================
+
+Metrics for Schema Class: class mks.frame.security.server.FrameworkSchema
+
+ACLs       ACL Entries Avg Entries per ACL
+---------- ----------- -------------------
+10         116         11.6               
+
+Audit Entries
+-------------
+42652        
+
+Statistics
+----------
+2334      
+
+ViewSets  
+----------
+15        
+
+MKS Domain Users MKS Domain Groups Group Members
+---------------- ----------------- -------------
+24               2259              11515        
+
+
+===============================================================================
+
+Metrics for Schema Class: class mks.ci.server.schema.IM12Schema
+
+ISSUES     DELTAS     ATOMS      Average Deltas Fields per Delta Max #Deltas
+---------- ---------- ---------- -------------- ---------------- -----------
+715914     5840127    27690963   8.2            4.7              1499       
+
+#Annotations
+------------
+49338       
+
+Annotation      #         
+--------------- ----------
+Add Label       38314     
+FVA Edit        11152     
+Drop Label      43        
+Delete Item     1         
+
+Total Attachments Active Attachments InActive Attachments
+----------------- ------------------ --------------------
+400936            382742             18194               
+
+Total Relationships Active Relationships InActive Relationships
+------------------- -------------------- ----------------------
+2631138             665871               1965267               
+
+Average # of Att. Maximum # of Att. Total Size Average Att. Size
+----------------- ----------------- ---------- -----------------
+2.1               351               120442016439 300399.9         
+
+Average # of Att on Top 1%
+--------------------------
+23.8                      
+
+Bucket    #Att       Total Size
+--------- ---------- ----------
+ <1M      361346     47082976017
+  1M- 5M  18373      39712605990
+  5M- 10M 2181       16205838879
+ 10M- 25M 845        10939655366
+
+Fields     Types      States     Projects   CPTypes    Triggers  
+---------- ---------- ---------- ---------- ---------- ----------
+509        27         41         38         2          447       
+
+#Issues Tables #Pick Entries #Pick Fields Avg Picks  #Text Fields
+-------------- ------------- ------------ ---------- ------------
+1              930           108          8.61111111111111111111111111111111111111 75          
+
+Type                 #Items     # Prop     Flags     
+-------------------- ---------- ---------- ----------
+Request - Service    193634     0          0         
+Request - Incident   121166     0          0         
+Approval             102958     0          0         
+Work Order           84585      0          256       
+Request For Change   63719      0          256       
+Request - Action     60548      0          0         
+Request - Access     32129      0          0         
+Finding              21740      0          0         
+Approval Rule        10555      0          256       
+Routing Rule         6997       0          0         
+IT Service Version   5519       0          256       
+Account              3558       0          0         
+Custom Pick Value    3539       0          0         
+Approval Matrix      3037       0          256       
+User Group           2339       0          0         
+IT Standard Service  1627       0          256       
+Component            1541       0          0         
+IT Service           1284       0          256       
+Project              518        0          0         
+Performance Metric   453        0          0         
+Availability Window  304        0          0         
+Release              198        0          0         
+IT Service Group     118        0          256       
+User Profile         75         0          0         
+IT Service Contract  69         0          0         
+Program              24         0          0         
+Vendor               11         0          0         
+Problem              6          0          0         
+
+State                #         
+-------------------- ----------
+Closed               540331    
+Approved             98599     
+Created In Error     18869     
+Active               15848     
+Retired              11163     
+New                  8465      
+In Process           5251      
+Inactive             4452      
+Published            4023      
+Pending Acceptance   3126      
+Waiting              2183      
+Reviewing            1904      
+Expired              1358      
+Assigned             1319      
+In Production        873       
+Unspecified          597       
+In Scoping           466       
+Post Implementation  430       
+Pending Validation   414       
+Ready to Deploy      388       
+Need Information     355       
+Pending Approval     318       
+Classifying          311       
+Cancelled            245       
+Open                 233       
+Created              220       
+Managing Content     135       
+Deploying            106       
+Defining             61        
+Reject               58        
+Deliver              32        
+In Development       28        
+Develop              26        
+Design               15        
+Pre-Approval         11        
+Demonstrate          8         
+Propose              7         
+Initiate             7         
+Content Frozen       5         
+Planning             5         
+Email Approved       4         
+Work Started         2         
+
+ProjectID            #         
+-------------------- ----------
+-- empty --          711704    
+178393               1949      
+178882               1539      
+252850               1526      
+174821               1345      
+174825               852       
+177694               710       
+254192               453       
+177702               365       
+177690               356       
+177703               276       
+174826               231       
+177698               164       
+177699               106       
+177688               102       
+177704               98        
+174823               89        
+174824               82        
+177705               81        
+174822               61        
+177687               34        
+206723               30        
+177701               22        
+267947               21        
+
+Queries Q/U   Reports R/U   Charts C/U   Dashboards D/U   Users Groups
+------- ----- ------- ----- ------ ----- ---------- ----- ----- ------
+40473   3     6439    1     30     0     3          0     12578 2390  
+
+User            TOTAL Qu    Rpt   Chrt  Dsbd 
+--------------- ----- ----- ----- ----- -----
+USX21943        139   113   7     17    2    
+USX13776        54    37    5     11    1    
+
+Change Packages Change Package Entries Avg CPE    Max CPEs Per CP
+--------------- ---------------------- ---------- ---------------
+0               0                      0          -- empty --    
+
+Labels     Unique Labels Labels Per Issue
+---------- ------------- ----------------
+36017      6316          .1              
+
+Branches   Branches Per Issue
+---------- ------------------
+0          0                 
+
+Time Entries Time Entries Per User
+------------ ---------------------
+0            -- empty --          
+
+# Test Results Test Results Per Session # of Test Verdicts
+-------------- ------------------------ ------------------
+0              -- empty --              4                 
+
+# Of Test Sessions w. Results
+-----------------------------
+0                            
+
+Bucket    #TR Att    Total Size
+--------- ---------- ----------
+
+IssuesTableNumber # of fields
+----------------- -----------
+0                 338        
+
+TextTable  # of fields
+---------- -----------
+3          28         
+1          4          
+2          10         
+0          24         
+4          8          
+
+FIELDID    Count Text 0
+---------- ------------
+437        564508      
+435        2336        
+378        4           
+463        442         
+476        12290       
+436        2252        
+373        5           
+441        205         
+1          601161      
+389        15          
+376        4           
+453        623         
+14         173324      
+13         9529        
+15         34075       
+452        623         
+
+FIELDID    Count Text 1
+---------- ------------
+12         340739      
+448        814         
+270        610         
+61         101039      
+
+FIELDID    Count Text 2
+---------- ------------
+16         201         
+145        88          
+-39        5030        
+169        1356        
+11         99425       
+
+FIELDID    Count Text 3
+---------- ------------
+244        25685       
+433        15016       
+380        4           
+367        3           
+446        551         
+-10        721235      
+395        1424        
+471        2           
+284        104152      
+285        15078       
+391        389         
+365        8           
+364        4           
+366        2           
+392        161         
+412        915         
+301        57          
+363        5           
+256        80893       
+333        334         
+269        606         
+396        1424        
+368        3           
+21         444         
+483        9           
+381        2           
+
+FIELDID    Count Text 4
+---------- ------------
+109        890         
+165        351         
+32         15347       
+69         45895       
+49         69708       
+166        388         
+
+# of Structure Entries
+----------------------
+0                     
+
+
+===============================================================================
+
+Metrics for Schema Class: class mks.si.brain.cmnative.schema.DummySchema
+
+# Labels  
+----------
+0         
+
+# of Members
+------------
+195         
+
+# of Archives
+-------------
+192          
+
+# of Proj.
+----------
+43        
+
+# of Top Level Proj.
+--------------------
+1                   
+
+Max Members in Proj.
+--------------------
+55                  
+
+Max Subproj. in Proj.
+---------------------
+8                    
+
+# of Devpath inc. main
+----------------------
+1                     
+
+Max Devpath in Proj. inc. main
+------------------------------
+1                             
+
+Total # of Revs.
+----------------
+381             
+
+Max # of Revs. in an Archive
+----------------------------
+8                           
+
+# of Non Exclusive Locks
+------------------------
+0                       
+
+# of Exclusive Locks
+--------------------
+0                   
+
+# of Configured Subproj.
+------------------------
+0                       
+
+
+===============================================================================
+
+Metrics for Schema Class: class mks.si.brain.api.SISchema
+
+Earliest cache journal entry
+----------------------------
+null                        
+
+Number of Subprojects
+---------------------
+42                   
+
+Number of SubReverse entries
+----------------------------
+42                          
+
+

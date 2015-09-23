@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1triggersSubSetA" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="acac2570-ed03-4f6d-b101-5d99e034f184">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="Statistic" class="java.lang.String"/>
+	<field name="Unit" class="java.lang.String"/>
+	<field name="Total Count" class="java.lang.String"/>
+	<field name="Absolute Average" class="java.lang.String"/>
+	<field name="Average Minimum" class="java.lang.String"/>
+	<field name="Average Maximum" class="java.lang.String"/>
+	<field name="Absolute Minimum" class="java.lang.String"/>
+	<field name="Absolute Maximum" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement x="0" y="0" width="217" height="20" backcolor="#00FFFF" uuid="c3ed775a-e2c6-46ec-9d81-282db4a2d472"/>
+				<text><![CDATA[Trigger Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="0" width="100" height="20" backcolor="#00FFFF" uuid="a2842093-b9f4-42a6-8265-cb6bcaae8b15"/>
+				<text><![CDATA[Total Count]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="317" y="0" width="100" height="20" backcolor="#00FFFF" uuid="db6b9b74-318a-43b6-8415-7121eaa8d007"/>
+				<text><![CDATA[Absolute Average]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="0" width="100" height="20" backcolor="#00FFFF" uuid="2eefbdf4-7d4c-4778-9e8b-1748cc28fff3"/>
+				<text><![CDATA[Absolute Maximum]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="517" y="0" width="38" height="20" uuid="f46f8c7a-a42e-4771-853e-f7899812627b"/>
+				<text><![CDATA[Unit]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="217" height="20" uuid="86a529ef-6d24-4902-a34a-408d6a5419ea"/>
+				<textFieldExpression><![CDATA[$F{Statistic}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="217" y="0" width="100" height="20" uuid="6526d96a-df6b-4800-b3c2-199e05e361eb"/>
+				<textFieldExpression><![CDATA[$F{Total Count}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="317" y="0" width="100" height="20" uuid="2bce515f-dbea-4524-bbbc-eff6ebd489a6"/>
+				<textFieldExpression><![CDATA[$F{Absolute Average}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="0" width="100" height="20" uuid="eae135e3-e0fd-4764-8e46-6fba444e9a06"/>
+				<textFieldExpression><![CDATA[$F{Absolute Maximum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="517" y="0" width="38" height="20" uuid="b3e55d28-5a16-48c6-8482-295a662f7bdd"/>
+				<textFieldExpression><![CDATA[$F{Unit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

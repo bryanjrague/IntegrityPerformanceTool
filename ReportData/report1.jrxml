@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5eda15cb-7cfc-4c60-afde-bc7a4cade054">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="144"/>
+	<field name="Statistic" class="java.lang.String"/>
+	<field name="Unit" class="java.lang.String"/>
+	<field name="Total Count" class="java.lang.String"/>
+	<field name="Absolute Average" class="java.lang.String"/>
+	<field name="Average Minimum" class="java.lang.String"/>
+	<field name="Average Maximum" class="java.lang.String"/>
+	<field name="Absolute Minimum" class="java.lang.String"/>
+	<field name="Absolute Maximum" class="java.lang.String"/>
+	<group name="Total Count">
+		<groupExpression><![CDATA[$F{Total Count}]]></groupExpression>
+		<groupHeader>
+			<band height="50"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="Absolute Average">
+		<groupExpression><![CDATA[$F{Absolute Average}]]></groupExpression>
+		<groupHeader>
+			<band height="50"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<group name="Absolute Maximum">
+		<groupExpression><![CDATA[$F{Absolute Maximum}]]></groupExpression>
+		<groupHeader>
+			<band height="50"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="125" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report4" language="groovy" pageWidth="300" pageHeight="300" whenNoDataType="AllSectionsNoDetail" columnWidth="260" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7d060462-1b55-499c-be8c-f60606135764">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="Statistic" class="java.lang.String"/>
+	<field name="Unit" class="java.lang.String"/>
+	<field name="Total Count" class="java.lang.Integer"/>
+	<field name="Absolute Average" class="java.lang.String"/>
+	<field name="Average Minimum" class="java.lang.String"/>
+	<field name="Average Maximum" class="java.lang.String"/>
+	<field name="Absolute Minimum" class="java.lang.String"/>
+	<field name="Absolute Maximum" class="java.lang.String"/>
+	<field name="Date" class="java.lang.String"/>
+	<detail>
+		<band height="106">
+			<barChart>
+				<chart>
+					<reportElement x="0" y="0" width="260" height="106" uuid="df6e7915-5915-481e-a80f-50f35b47b73b"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Total Executions by Date"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{Date}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{Total Count}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+	</detail>
+</jasperReport>
