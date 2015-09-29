@@ -1,10 +1,10 @@
 package com.cdp.integrityperformancetool;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.*;
+
 import com.cdp.integrityperformancetool.util.MergeSort;
-import java.util.Comparator;
+import org.joda.time.DateTime;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -109,15 +109,83 @@ public class StatisticsCollection {
 
     public void clearCollection(){ this.collection.clear(); }
 
+	public void collapseStatistic(String arg_statName, String arg_statGroup){
+		//this method identifies all statistics that have identical names and groups.
+		//for each, the statistics are combined into a single statistic in the collection
+		//deleting all the other instances. the minimum start date and maximum end date
+		//are stored for this collapsed statistic
+
+		StatisticsCollection temp_collection = new StatisticsCollection();
+		Long cumulative_count = 0L;
+		Long cumulative_totalCount = 0L;
+		Long cumulative_sum = 0L;
+		ArrayList<IntegrityStatisticBean> remove_isbs = new ArrayList<IntegrityStatisticBean>();
+		int counter = 1;
+		DateTime startDate = new DateTime();
+		DateTime endDate = new DateTime();
+
+
+		for(IntegrityStatisticBean isb : this.collection){
+			if (isb.getName().equals(arg_statName) && isb.getGroup().equals(arg_statGroup)){
+				temp_collection.addToCollection(isb);
+				cumulative_count =+ isb.getCount();
+				cumulative_totalCount =+ isb.getTotalCount();
+				cumulative_sum =+ isb.getSum();
+				remove_isbs.add(isb);
+			}
+			if(counter==1){
+				startDate = isb.getStartDate();
+				endDate = isb.getEndDate();
+			} else{
+				if(isb.getStartDate().getMillis()<startDate.getMillis()){
+					startDate = isb.getStartDate();
+				}
+				if(isb.getEndDate().getMillis()>endDate.getMillis()){
+					endDate = isb.getEndDate();
+				}
+			}
+		}
+
+		temp_collection.computeAllCollectionStatistics();
+		IntegrityStatisticBean collapsedStatistic = temp_collection.getCollectionMaximumIsbArrayList().get(0);
+		collapsedStatistic.setAverage(temp_collection.getCollectionAverageValue());
+		collapsedStatistic.setCount(cumulative_count);
+		collapsedStatistic.setGroup(arg_statGroup);
+		collapsedStatistic.setName(arg_statName);
+		collapsedStatistic.setMin(temp_collection.getCollectionMinimumValue());
+		collapsedStatistic.setMax(temp_collection.getCollectionMaximumValue());
+		collapsedStatistic.setTotalCount(cumulative_totalCount);
+		collapsedStatistic.setStartDate(startDate);
+		collapsedStatistic.setEndDate(endDate);
+
+		for(int isb=0;isb<remove_isbs.size();isb++){
+			removeFromCollection(remove_isbs.get(isb));
+		}
+
+		addToCollection(collapsedStatistic);
+		remove_isbs.clear();
+	}
+
+	public void collapseAllStatistics(){
+		//performs the same operation as collapseStatistic, except for all Statistics
+		//in the collection.
+
+		HashMap<String, String> allNames = getAllUniqueNameGroupPairs();
+		for(String name : allNames.keySet()){
+			collapseStatistic(name, allNames.get(name));
+		}
+
+	}
+
     public void computeAllCollectionStatistics(){
     	//run all computation methods so that the collection has updated field values.
-    	computeCollectionAverageValue();
-    	computeCollectionCountValue();
-    	computeCollectionMaximumValue();
-    	computeCollectionMaximumObject();
-    	computeCollectionMinimumValue();
-    	computeCollectionMinimumObject();
-    	computeCollectionTotalCountValue();
+    	this.computeCollectionAverageValue();
+    	this.computeCollectionCountValue();
+    	this.computeCollectionMaximumValue();
+    	this.computeCollectionMaximumObject();
+    	this.computeCollectionMinimumValue();
+    	this.computeCollectionMinimumObject();
+    	this.computeCollectionTotalCountValue();
     }
 
     public void computeCollectionAverageValue(){
@@ -224,7 +292,19 @@ public class StatisticsCollection {
 
     public ArrayList<IntegrityStatisticBean> getCollection(){ return this.collection; }
 
-    public Long getCollectionAverageValue(){ 
+    public HashMap<String, String> getAllUniqueNameGroupPairs(){
+		//returns a HashMap of all unique statistic {name: group} pairs in the collection
+		HashMap<String, String> uniqueNames = new HashMap<String, String>();
+
+		for(IntegrityStatisticBean isb : this.collection) {
+			if (!uniqueNames.containsKey(isb.getName())) {
+				uniqueNames.put(isb.getName(), isb.getGroup());
+			}
+		}
+		return uniqueNames;
+	}
+
+	public Long getCollectionAverageValue(){
     	if(this.requireAvgValRecompute) {
     		computeCollectionAverageValue();
     	}

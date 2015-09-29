@@ -13,14 +13,13 @@ public class PerformanceTool {
     public static void main(String args[]){
 
         StatisticsFileReader testData02 = new StatisticsFileReader();
-        testData02.setFilePath("C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Input\\TestData_02.csv");
+        testData02.setFilePath("C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Input\\TestData_01.csv");
         testData02.setValueSeparator(",");
         testData02.setSkipLines(1);
 
-        //TODO: have a class that abstracts the Hashmap for ease of use
         StatisticsLibrary masterDataLib = testData02.executeStatisticsRetrieval();
-        StatisticsCollection triggers = masterDataLib.getStatisticsGroupName("Triggers");
-
+        StatisticsCollection triggers_raw = masterDataLib.getStatisticsGroupName("Triggers");
+        /*
         triggers.setName("Triggers Data");
         print("name: " + triggers.getCollectionName());
         print("avg val: " + triggers.getCollectionAverageValue().toString());
@@ -57,8 +56,27 @@ public class PerformanceTool {
 
         print("total count: " + triggers_cleaned.getCollectionTotalCountValue().toString());
         print("collection size: " + triggers_cleaned.getCollectionSize()+"");
+        */
 
+        StatisticsCollection triggers = new StatisticsCollection("Triggers - Unique/Cumulative only");
+        for(IntegrityStatisticBean isb : triggers_raw.getCollection()){
+            if(isb.getMode().equals("cumulative")){
+                triggers.addToCollection(isb);
+            }
+        }
 
+        triggers.collapseAllStatistics();
+        print("name: " + triggers.getCollectionName());
+        print("avg val: " + triggers.getCollectionAverageValue().toString());
+        print("count val: " + triggers.getCollectionCountValue().toString());
+        print("max isb arraylist: " + triggers.getCollectionMaximumIsbArrayList().toString());
+        print("max val: " + triggers.getCollectionMaximumValue().toString());
+        print("min isb arraylist: " + triggers.getCollectionMinimumIsbArrayList().toString());
+        print("min val: " + triggers.getCollectionMinimumValue().toString());
+
+        print("total count: " + triggers.getCollectionTotalCountValue().toString());
+        print("collection size: " + triggers.getCollectionSize()+"");
+        triggers.writeToString();
 
     }
 
