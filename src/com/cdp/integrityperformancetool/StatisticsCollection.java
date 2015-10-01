@@ -128,35 +128,43 @@ public class StatisticsCollection {
 		for(IntegrityStatisticBean isb : this.collection){
 			if (isb.getName().equals(arg_statName) && isb.getGroup().equals(arg_statGroup)){
 				temp_collection.addToCollection(isb);
-				cumulative_count =+ isb.getCount();
-				cumulative_totalCount =+ isb.getTotalCount();
-				cumulative_sum =+ isb.getSum();
+				cumulative_count = cumulative_count + isb.getCount();
+				cumulative_totalCount = cumulative_totalCount + isb.getTotalCount();
+				cumulative_sum = cumulative_sum + isb.getSum();
 				remove_isbs.add(isb);
-			}
-			if(counter==1){
-				startDate = isb.getStartDate();
-				endDate = isb.getEndDate();
-			} else{
-				if(isb.getStartDate().getMillis()<startDate.getMillis()){
+
+				if(counter==1){
 					startDate = isb.getStartDate();
-				}
-				if(isb.getEndDate().getMillis()>endDate.getMillis()){
 					endDate = isb.getEndDate();
+				} else{
+					if(isb.getStartDate().getMillis()<startDate.getMillis()){
+						startDate = isb.getStartDate();
+					}
+					if(isb.getEndDate().getMillis()>endDate.getMillis()){
+						endDate = isb.getEndDate();
+					}
+
 				}
+				counter++;
 			}
 		}
-
+		temp_collection.writeToString();
 		temp_collection.computeAllCollectionStatistics();
 		IntegrityStatisticBean collapsedStatistic = temp_collection.getCollectionMaximumIsbArrayList().get(0);
 		collapsedStatistic.setAverage(temp_collection.getCollectionAverageValue());
+		System.out.println("avg: " + temp_collection.getCollectionAverageValue());
 		collapsedStatistic.setCount(cumulative_count);
 		collapsedStatistic.setGroup(arg_statGroup);
 		collapsedStatistic.setName(arg_statName);
 		collapsedStatistic.setMin(temp_collection.getCollectionMinimumValue());
+		System.out.println("min: " + temp_collection.getCollectionMinimumValue());
 		collapsedStatistic.setMax(temp_collection.getCollectionMaximumValue());
+		System.out.println("max: " +temp_collection.getCollectionMaximumValue());
 		collapsedStatistic.setTotalCount(cumulative_totalCount);
 		collapsedStatistic.setStartDate(startDate);
 		collapsedStatistic.setEndDate(endDate);
+		System.out.println("start:" + startDate + ", endDate: " + endDate);
+		collapsedStatistic.setSum(cumulative_sum);
 
 		for(int isb=0;isb<remove_isbs.size();isb++){
 			removeFromCollection(remove_isbs.get(isb));
@@ -164,6 +172,7 @@ public class StatisticsCollection {
 
 		addToCollection(collapsedStatistic);
 		remove_isbs.clear();
+		writeToString();
 	}
 
 	public void collapseAllStatistics(){
@@ -171,6 +180,7 @@ public class StatisticsCollection {
 		//in the collection.
 
 		HashMap<String, String> allNames = getAllUniqueNameGroupPairs();
+
 		for(String name : allNames.keySet()){
 			collapseStatistic(name, allNames.get(name));
 		}
