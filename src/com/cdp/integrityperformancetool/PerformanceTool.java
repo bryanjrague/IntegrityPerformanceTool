@@ -13,7 +13,7 @@ public class PerformanceTool {
     public static void main(String args[]){
 
         StatisticsFileReader testData02 = new StatisticsFileReader();
-        testData02.setFilePath("C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Input\\TestData_01.csv");
+        testData02.setFilePath("C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool\\Input\\TestData_01.csv");
         testData02.setValueSeparator(",");
         testData02.setSkipLines(1);
 
