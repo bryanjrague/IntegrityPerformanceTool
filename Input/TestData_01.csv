@@ -1,6 +1,6 @@
 Start Date,End Date,Group,Statistic,Kind,Unit,Count,Total,Sum,Used,Min,Max,Average,Mode
-Sat Aug 29 19:46:32 EST 2015,Sun Aug 30 19:46:32 EST 2015,Triggers,Trigger A,Kind A,ms,12,87,55,usedA,2,3,4,cumulative
-Sun Aug 30 19:46:32 EST 2015,Mon Aug 31 19:46:32 EST 2015,Triggers,TriggerB, using, commas, crap,Kind B,ms,2,2,66,,5,7,6,cumulative
-Mon Aug 31 19:46:32 EST 2015,Tue Sep 1 19:46:32 EST 2015,Triggers,TriggerB, using, commas, crap,Kind B,ms,1,1,1,,1,5,3,cumulative
+Sat Aug 29 19:46:32 EST 2015,Fri Sep 4 19:46:32 EST 2015,Triggers,Trigger A,Kind A,ms,12,87,55,usedA,2,3,4,cumulative
+Sun Aug 30 19:46:32 EST 2015,Tue Sep 1 19:46:32 EST 2015,Triggers,TriggerB, using, commas, crap,Kind B,ms,2,2,66,,5,7,6,cumulative
+Mon Aug 31 19:46:32 EST 2015,Mon Aug 31 19:46:32 EST 2015,Triggers,TriggerB, using, commas, crap,Kind B,ms,1,1,1,,1,5,3,cumulative
 Tue Sep 1 19:46:32 EST 2015,Wed Sep 2 19:46:32 EST 2015,User Login,usx25908,Kind C,logins,18,257755,88,usedC,132,567,275,cumulative
 Wed Sep 2 19:46:32 EST 2015,Thu Sep 3 30 19:46:32 EST 2015,User Login,usx98789,Kind D,logins,35653756711,256776777777712,99,usedD,3453363,45757435,4547467456,cumulative

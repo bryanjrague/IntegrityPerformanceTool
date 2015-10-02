@@ -1,5 +1,8 @@
 package com.cdp.integrityperformancetool;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import com.cdp.integrityperformancetool.util.MergeSort;
@@ -148,22 +151,23 @@ public class StatisticsCollection {
 				counter++;
 			}
 		}
-		temp_collection.writeToString();
+
+		//temp_collection.writeToString();
 		temp_collection.computeAllCollectionStatistics();
 		IntegrityStatisticBean collapsedStatistic = temp_collection.getCollectionMaximumIsbArrayList().get(0);
 		collapsedStatistic.setAverage(temp_collection.getCollectionAverageValue());
-		System.out.println("avg: " + temp_collection.getCollectionAverageValue());
+		//System.out.println("avg: " + temp_collection.getCollectionAverageValue());
 		collapsedStatistic.setCount(cumulative_count);
 		collapsedStatistic.setGroup(arg_statGroup);
 		collapsedStatistic.setName(arg_statName);
 		collapsedStatistic.setMin(temp_collection.getCollectionMinimumValue());
-		System.out.println("min: " + temp_collection.getCollectionMinimumValue());
+		//System.out.println("min: " + temp_collection.getCollectionMinimumValue());
 		collapsedStatistic.setMax(temp_collection.getCollectionMaximumValue());
-		System.out.println("max: " +temp_collection.getCollectionMaximumValue());
+		//System.out.println("max: " +temp_collection.getCollectionMaximumValue());
 		collapsedStatistic.setTotalCount(cumulative_totalCount);
 		collapsedStatistic.setStartDate(startDate);
 		collapsedStatistic.setEndDate(endDate);
-		System.out.println("start:" + startDate + ", endDate: " + endDate);
+		//System.out.println("start:" + startDate + ", endDate: " + endDate);
 		collapsedStatistic.setSum(cumulative_sum);
 
 		for(int isb=0;isb<remove_isbs.size();isb++){
@@ -172,7 +176,7 @@ public class StatisticsCollection {
 
 		addToCollection(collapsedStatistic);
 		remove_isbs.clear();
-		writeToString();
+		//writeToString();
 	}
 
 	public void collapseAllStatistics(){
@@ -650,9 +654,12 @@ public class StatisticsCollection {
     	
     	//write to file as CSV following the same format as the output Server Statistics .csv file
     	//cols: Start Date, End Date, Group, Statistic (Name), Kind, Unit, Count, total, Sum, Min, Max, Average, Mode
+
+		File file = new File(arg_filePath);
     	StringBuffer fileContents = new StringBuffer();
-		fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
-    	for(IntegrityStatisticBean isb : this.collection){
+		if(!file.exists()) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
+
+		for(IntegrityStatisticBean isb : this.collection){
     		fileContents.append(isb.getStartDate() + ","
     				+ isb.getEndDate() + "," 
     				+ isb.getGroup() + ","
@@ -672,10 +679,16 @@ public class StatisticsCollection {
     	if (fileContents.toString().length()!=0){
 	    	Charset charset = Charset.forName("US-ASCII");
 	    	Path filePath = Paths.get(arg_filePath);
-	    	
-	    	try (BufferedWriter writer = Files.newBufferedWriter(filePath, charset)) {
-	    	    writer.write(fileContents.toString(), 0, fileContents.toString().length());
-				writer.close();
+
+
+	    	try {
+
+				if(file.exists()){
+					Files.write(filePath, fileContents.toString().getBytes(), StandardOpenOption.APPEND);
+				} else{
+					Files.write(filePath, fileContents.toString().getBytes());
+				}
+
 	    	} catch (IOException x) {
 	    	    System.out.format("IOException: %s%n", x);
 	    	}
