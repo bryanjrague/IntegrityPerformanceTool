@@ -107,22 +107,22 @@ public class PerformanceTool {
 
         triggersTotalStatistics.collapseAllStatistics();
 
-        //sort by average value and save to file
+     //   //sort by average value and save to file
         String avgValFile = sortedTotalsFileBase + "All Triggers - Total Results - By Average Value";
         triggersTotalStatistics.orderByIsbAverageValue();
         triggersTotalStatistics.writeToFile(avgValFile);
 
         //sort by maximum value and save to file
-    //    String maxValFile = sortedTotalsFileBase+ "All Triggers - Total Results - By Maximum Value";
-    //    triggersTotalStatistics.orderByIsbMaximumValue();
-    //    triggersTotalStatistics.writeToFile(maxValFile);
+        String maxValFile = sortedTotalsFileBase+ "All Triggers - Total Results - By Maximum Value";
+        triggersTotalStatistics.orderByIsbMaximumValue();
+        triggersTotalStatistics.writeToFile(maxValFile);
 
         //sort by count value and save to file
-    //    String cntValFile = sortedTotalsFileBase + "All Triggers - Total Results - By Total Count Value";
-    //    triggersTotalStatistics.orderByIsbTotalCountValue();
-    //    triggersTotalStatistics.writeToFile(cntValFile);
+        String cntValFile = sortedTotalsFileBase + "All Triggers - Total Results - By Total Count Value";
+        triggersTotalStatistics.orderByIsbTotalCountValue();
+        triggersTotalStatistics.writeToFile(cntValFile);
 
-        StatisticsFileReader sortedAvgValsFile = new StatisticsFileReader(avgValFile);
+    /*    StatisticsFileReader sortedAvgValsFile = new StatisticsFileReader(avgValFile);
         StatisticsLibrary sortedAvgValLib = sortedAvgValsFile.executeStatisticsRetrieval();
         StatisticsCollection sortedAvgValStats = sortedAvgValLib.getStatisticsGroupName("Triggers");
 
@@ -139,6 +139,7 @@ public class PerformanceTool {
         } while(index>(sortedAvgValStats.getCollectionSize()-1)-int_topTenPercent);
         String topTenFile = sortedTotalsFileBase + "Top Ten Longest Average Value Triggers.csv";
         topTenPercentLongestTriggers.writeToFile(topTenFile);
+    */
     }
 
     public static void print(String arg_str) {
