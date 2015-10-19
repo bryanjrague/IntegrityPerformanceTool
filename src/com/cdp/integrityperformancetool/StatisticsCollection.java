@@ -806,33 +806,36 @@ public class StatisticsCollection {
         Hashtable<Long, ArrayList<IntegrityStatisticBean>> totCntVal_isb_hashtable = new Hashtable<Long, ArrayList<IntegrityStatisticBean>>();
         Long[] allTotCntVals = new Long[this.getCollectionSize()];
         ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-        ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+
 
         for (int i=0; i<this.getCollectionSize();i++){
             IntegrityStatisticBean currIsb = this.collection.get(i);
-            Long currTotCntVal = this.collection.get(i).getTotalCount();
-            allTotCntVals[i] = currTotCntVal;
-            if (totCntVal_isb_hashtable.containsKey(currTotCntVal)){
-                temp_isb_arrayList = totCntVal_isb_hashtable.get(currTotCntVal);
+            allTotCntVals[i] = this.collection.get(i).getTotalCount();
+
+            if (totCntVal_isb_hashtable.containsKey(allTotCntVals[i])){
+                ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+                temp_isb_arrayList = totCntVal_isb_hashtable.get(allTotCntVals[i]);
                 temp_isb_arrayList.add(currIsb);
-                totCntVal_isb_hashtable.put(currTotCntVal, temp_isb_arrayList);
+                totCntVal_isb_hashtable.put(allTotCntVals[i], temp_isb_arrayList);
             } else {
+                ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
                 temp_isb_arrayList.add(currIsb);
-                totCntVal_isb_hashtable.put(currTotCntVal, temp_isb_arrayList);
+                totCntVal_isb_hashtable.put(allTotCntVals[i], temp_isb_arrayList);
             }
-            temp_isb_arrayList.clear();
         }
 
         MergeSort totCntSorter = new MergeSort();
         totCntSorter.sort(allTotCntVals); //total count values are now sorted lowest to highest
         //iterate through array and place isbs into new ArrayList
         for (int j=0;j<this.getCollectionSize();j++){
-            temp_isb_arrayList = totCntVal_isb_hashtable.get(allTotCntVals[j]);
+            ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+            temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>(totCntVal_isb_hashtable.get(allTotCntVals[j]));
             for (IntegrityStatisticBean isb : temp_isb_arrayList){
                 ordered_isb_arrayList.add(isb);
             }
             temp_isb_arrayList.clear();
         }
+
         for (int k=0;k<this.getCollectionSize();k++) this.collection.set(k, ordered_isb_arrayList.get(k));
         ordered_isb_arrayList.clear();
 
