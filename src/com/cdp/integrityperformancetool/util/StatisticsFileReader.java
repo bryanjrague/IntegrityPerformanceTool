@@ -63,6 +63,7 @@ public class StatisticsFileReader {
     }
 
     private IntegrityStatisticBean arrayToIsb(String[] arg_str_array){
+
         IntegrityStatisticBean isb = new IntegrityStatisticBean();
         Instant start_instant = new Instant().parse(arg_str_array[0],
                 DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss zzz YYYY"));
@@ -120,10 +121,10 @@ public class StatisticsFileReader {
             InputStream is = new FileInputStream(new File(str_filePath));
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            String current_stats;
+            String current_line;
             int lineCount = 1;
-            while ((current_stats = br.readLine()) != null) {
-                current_stats.replace(",,", ", ,"); //this is to prevent null values when creating the String[]
+            while ((current_line = br.readLine()) != null) {
+                String current_stats = current_line.replace(",,", ", ,").replace("\"", ""); //this is to prevent null values when creating the String[]
                 if (lineCount > this.int_skipLines) {
                     String[] currStatsArray = current_stats.split(this.str_value_separator);
 
@@ -173,5 +174,4 @@ public class StatisticsFileReader {
     public void setSkipLines(int arg_numLines) { this.int_skipLines = arg_numLines; }
 
     public void setValueSeparator(String arg_separator){ this.str_value_separator = arg_separator; }
-
 }

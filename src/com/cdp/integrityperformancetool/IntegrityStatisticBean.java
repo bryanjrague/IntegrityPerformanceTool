@@ -42,6 +42,24 @@ public class IntegrityStatisticBean {
 
     }
 
+    private static String cleanString(String arg_s){
+        //removes chars that are illegal for filenames
+        //used to remove illegal chars from trigger/query/report/etc names used in file names
+        //so that the names can be saved
+        arg_s = arg_s.replace(":", "");
+        arg_s = arg_s.replace(",", "");
+        arg_s = arg_s.replace("\"", "");
+        arg_s = arg_s.replace(".", "");
+        arg_s = arg_s.replace("/", "");
+        arg_s = arg_s.replace("(", "");
+        arg_s = arg_s.replace(")", "");
+        arg_s = arg_s.replace(">", "");
+        arg_s = arg_s.replace("<", "");
+        arg_s = arg_s.replace("=", "");
+        arg_s = arg_s.replace(".", "");
+        return arg_s;
+    }
+
     public Long getAverage(){ return this.average; }
 
     public Long getCount(){ return this.count; }
@@ -69,6 +87,25 @@ public class IntegrityStatisticBean {
     public String getUnit(){ return this.unit; }
 
     public String getUsed(){ return this.used; }
+
+    public void printState(){
+        StringBuilder statStr = new StringBuilder();
+        statStr.append(this.getStartDate().toString() + ","
+                + this.getEndDate().toString() + ","
+                + this.getGroup() + ",'"
+                + this.getName() + "',"
+                + this.getKind() + ","
+                + this.getUnit() + ","
+                + this.getCount() + ","
+                + this.getTotalCount() + ","
+                + this.getSum() + ","
+                + this.getUsed() + ","
+                + this.getMin() + ","
+                + this.getMax() + ","
+                + this.getAverage()  + ","
+                + this.getMode() + "\n");
+        System.out.println(statStr);
+    }
 
     public void setAverage(Long arg_average){ this.average = arg_average; }
     
@@ -126,7 +163,7 @@ public class IntegrityStatisticBean {
 
     public void setMode(String arg_mode){ this.mode = arg_mode; }
 
-    public void setName(String arg_name){ this.name = arg_name; }
+    public void setName(String arg_name){ this.name = cleanString(arg_name); }
 
     public void setStartDate(DateTime arg_startDate){ this.startDate = arg_startDate; }
 
@@ -163,4 +200,5 @@ public class IntegrityStatisticBean {
     public void setUnit(String arg_unit){ this.unit = arg_unit; }
 
     public void setUsed(String arg_used){ this.used = arg_used; }
+
 }
