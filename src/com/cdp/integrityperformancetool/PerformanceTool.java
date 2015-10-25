@@ -2,13 +2,8 @@ package com.cdp.integrityperformancetool;
 
 import com.cdp.integrityperformancetool.reporting.ReportBuilder;
 import com.cdp.integrityperformancetool.util.StatisticsFileReader;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.format.DateTimeFormat;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
 /**
@@ -16,22 +11,39 @@ import java.util.HashMap;
  */
 public class PerformanceTool {
 
-    private static DateTime runTime = new DateTime();
-    private static String runTimeStr = runTime.toString().replace(":","_").replace(".","_");
-    private static String dirBase = "C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\";
-
     public static void main(String args[]){
 
-        //////////////////////////////////////////////
-        //// Get all statistics from the master data file
-        /////////////////////////////////////////////
+        StatisticsFileReader testData02 = new StatisticsFileReader();
+        testData02.setFilePath("C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Input\\TestData_02.csv");
+        testData02.setValueSeparator(",");
+        testData02.setSkipLines(1);
 
+        StatisticsLibrary masterDataLib = testData02.executeStatisticsRetrieval();
+        StatisticsCollection triggers_raw = masterDataLib.getStatisticsGroupName("Triggers");
 
+        StatisticsCollection triggers_cumulative = new StatisticsCollection("All Triggers - Cumulative only");
+        for(IntegrityStatisticBean isb : triggers_raw.getCollection()){
+            if(isb.getMode().equals("cumulative")){
+                triggers_cumulative.addToCollection(isb);
+            }
+        }
+        //get all unique names for cumulative trigger stats
+        HashMap<String,String> cumulativeUniqueNames = triggers_cumulative.getAllUniqueNameGroupPairs();
+        for(String name : cumulativeUniqueNames.keySet()){
+            StatisticsCollection temp_collection = new StatisticsCollection("Trigger: " + name + " Cumulative Stats");
+            for(IntegrityStatisticBean isb : triggers_cumulative.getCollection()){
+                if(isb.getName().equals(name)) temp_collection.addToCollection(isb);
+            }
+            StringBuilder filePath = new StringBuilder("C:\\Users\\bryan\\IdeaProjects\\Integrity Performance Tool\\Output\\");
+            filePath.append("Triggers\\");
+            filePath.append("Cumulative Entries\\");
+            File temp_dir = new File(filePath.toString());
+            if (!temp_dir.exists()) temp_dir.mkdirs();
+            filePath.append(cleanString(name));
+            filePath.append(".csv");
 
-        String masterFilePath = dirBase + "\\Input\\Statistics_PROD_10-1-2015_10-14-2015.csv";
-        StatisticsLibrary masterDataLib = getStatsLibraryFromFile(masterFilePath, ",",1);
-
-        processStatisticsGroup("Triggers", masterDataLib);
+            temp_collection.writeToFile(filePath.toString());
+        }
 
     }
 
@@ -39,7 +51,7 @@ public class PerformanceTool {
         System.out.println(arg_str + "\n");
     }
 
-    private static String cleanString(String arg_s){
+    public static String cleanString(String arg_s){
         //removes chars that are illegal for filenames
         //used to remove illegal chars from trigger/query/report/etc names used in file names
         //so that the names can be saved
@@ -54,7 +66,6 @@ public class PerformanceTool {
         arg_s = arg_s.replace("<", "");
         arg_s = arg_s.replace("=", "");
         arg_s = arg_s.replace(".", "");
-        arg_s = arg_s.replace("?", "");
         return arg_s;
     }
 
@@ -69,162 +80,5 @@ public class PerformanceTool {
 
 	}
      */
-
-    private static StatisticsLibrary getStatsLibraryFromFile(String arg_fileName, String arg_valSeparator, int arg_skipLines){
-
-        StatisticsFileReader temp_fileReader = new StatisticsFileReader(arg_fileName,
-                                                                        arg_valSeparator,
-                                                                        arg_skipLines);
-        return temp_fileReader.executeStatisticsRetrieval();
-
-    }
-
-    private static void processStatisticsGroup(String arg_grpName, StatisticsLibrary arg_library){
-
-        ///////////////////////////////////////////////
-        /// Get only the specific Statistic Group data from the master lib
-        ///////////////////////////////////////////////
-        StatisticsCollection statGrp_raw = arg_library.getStatisticsGroupName(arg_grpName);
-
-        ///////////////////////////////////////////////
-        /// Get only the cumulative data from the Collection, create new collection to store them
-        ///////////////////////////////////////////////
-        StatisticsCollection statGrp_cumulative = new StatisticsCollection("All " + arg_grpName + " - Cumulative only");
-        for(IntegrityStatisticBean isb : statGrp_raw.getCollection()){
-            if(isb.getMode().equals("cumulative")){
-                statGrp_cumulative.addToCollection(isb);
-            }
-        }
-
-        ////////////////////////////////////////////////
-        /// For each unique statistic name in the cumulative only collection, create and store a file of all stat entries
-        //// If file already exists in output, append to the bottom of the existing file.
-        ///////////////////////////////////////////////
-
-        //get all unique names for cumulative trigger stats
-        HashMap<String,String> cumulativeUniqueNames = statGrp_cumulative.getAllUniqueNameGroupPairs();
-        int counter = 0;
-        for(String name : cumulativeUniqueNames.keySet()){
-            StatisticsCollection temp_collection = new StatisticsCollection("Trigger: " + name + " Cumulative Stats");
-            for(IntegrityStatisticBean isb : statGrp_cumulative.getCollection()){
-                if(isb.getName().equals(name)) temp_collection.addToCollection(isb);
-            }
-            StringBuilder filePath = new StringBuilder(dirBase + "Output\\");
-            //StringBuilder filePath = new StringBuilder("C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool\\Output\\");
-            filePath.append(arg_grpName+"\\");
-            filePath.append("Cumulative Entries\\");
-            File temp_dir = new File(filePath.toString());
-            if (!temp_dir.exists()) temp_dir.mkdirs();
-            filePath.append(cleanString(name));
-            filePath.append(".csv");
-            counter++;
-            temp_collection.writeToFile(filePath.toString());
-        }
-
-        String sortedTotalsFileBase = dirBase + "Output\\"+arg_grpName+"\\Totals\\";
-        File dir = new File(sortedTotalsFileBase);
-        if(!dir.exists()) dir.mkdir();
-
-        String topTenFileBase = dirBase + "Output\\"+arg_grpName+"\\TopTenPercent\\";
-        dir = new File(topTenFileBase);
-        if(!dir.exists()) dir.mkdir();
-
-        //////////////////////////////////////////////////
-        /// Gather all individual cumulative statistic totals and store in single file:
-        //////////////////////////////////////////////////
-
-        String currStatTotalsFile = sortedTotalsFileBase + "All " + arg_grpName + " - Total Results - No Sort.csv";
-        StatisticsCollection currCumulativeStats;
-
-        for(String name : cumulativeUniqueNames.keySet()){
-            StringBuilder currFilePath = new StringBuilder(dirBase + "Output\\");
-            currFilePath.append(arg_grpName+"\\");
-            currFilePath.append("Cumulative Entries\\");
-
-            dir = new File(currFilePath.toString());
-            if(!dir.exists()) dir.mkdir();
-
-            currFilePath.append(cleanString(name) + ".csv");
-
-            StatisticsFileReader currCumulativeStatsFile = new StatisticsFileReader(currFilePath.toString());
-            StatisticsLibrary currCumulativeLibrary = currCumulativeStatsFile.executeStatisticsRetrieval();
-            currCumulativeStats = currCumulativeLibrary.getStatisticsGroupName(arg_grpName);
-            currCumulativeStats.collapseAllStatistics();
-            currCumulativeStats.computeAllCollectionStatistics();
-            currCumulativeStats.writeCollectionTotalsToFile(currStatTotalsFile);
-        }
-
-
-        ///////////////////////////////////////////////////
-        //// Gather unsorted total statistics and sort. run various sort functions. save output as files.
-        ///////////////////////////////////////////////////
-        StatisticsFileReader unsortedTotalsStatsFile = new StatisticsFileReader(currStatTotalsFile);
-        StatisticsLibrary unsortedTotalsLibrary = unsortedTotalsStatsFile.executeStatisticsRetrieval();
-        StatisticsCollection unsortedStatistics = unsortedTotalsLibrary.getStatisticsGroupName(arg_grpName);
-
-        unsortedStatistics.collapseAllStatistics();
-
-        //   //sort by average value and save to file
-        String avgValFile = sortedTotalsFileBase + "All " + arg_grpName + " - Total Results - By Average Value - " + runTimeStr + ".csv";
-        unsortedStatistics.orderByIsbAverageValue();
-        unsortedStatistics.writeToFile(avgValFile);
-        //create file holding the top ten percent greatest avg val triggers
-        String topTenAvgValFile = topTenFileBase + arg_grpName + " - Top Ten Percent by Greatest Avg Val - " + runTimeStr + ".csv";
-        computeTopTen(avgValFile, topTenAvgValFile, arg_grpName);
-
-        //sort by maximum value and save to file
-        String maxValFile = sortedTotalsFileBase+ "All " + arg_grpName + " - Total Results - By Maximum Value - " + runTimeStr + ".csv";
-        unsortedStatistics.orderByIsbMaximumValue();
-        unsortedStatistics.writeToFile(maxValFile);
-        //create file holding the top ten percent greatest avg val triggers
-        String topTenMaxValFile = topTenFileBase + arg_grpName + " - Top Ten Percent by Greatest Max Val - " + runTimeStr + ".csv";
-        computeTopTen(maxValFile, topTenMaxValFile, arg_grpName);
-
-        //sort by count value and save to file
-        String cntValFile = sortedTotalsFileBase + "All " + arg_grpName + " - Total Results - By  Count Value - " + runTimeStr + ".csv";
-        unsortedStatistics.orderByIsbCountValue();
-        unsortedStatistics.writeToFile(cntValFile);
-        //create file holding the top ten percent greatest avg val triggers
-        String topTenCntValFile = topTenFileBase + arg_grpName + " - Top Ten Percent by Greatest Count Val - " + runTimeStr + ".csv";
-        computeTopTen(cntValFile, topTenCntValFile, arg_grpName);
-
-        //sort by total count value and save to file
-        String totCntValFile = sortedTotalsFileBase + "All " + arg_grpName + " - Total Results - By Total Count Value - " + runTimeStr + ".csv";
-        unsortedStatistics.orderByIsbTotalCountValue();
-        unsortedStatistics.writeToFile(totCntValFile);
-        //create file holding the top ten percent greatest avg val triggers
-        String topTenTotCntValFile = topTenFileBase + arg_grpName + " - Top Ten Percent by Greatest Total Count Val - " + runTimeStr + ".csv";
-        computeTopTen(totCntValFile, topTenTotCntValFile, arg_grpName);
-    }
-
-    private static void computeTopTen(String arg_srcFile, String arg_destFile, String arg_grpName){
-
-        //compute and save the top 10% of statistic grp with the longest average runnning time which are not scheduled
-        // triggers.
-        StatisticsFileReader sortedFile = new StatisticsFileReader(arg_srcFile);
-        StatisticsLibrary sortedLib = sortedFile.executeStatisticsRetrieval();
-        StatisticsCollection sortedStats = sortedLib.getStatisticsGroupName(arg_grpName);
-
-        StatisticsCollection topTenPercent = new StatisticsCollection();
-
-        double dbl_topTenPercent = (sortedStats.getCollectionSize()-1) * .10;
-        int int_topTenPercent = (int) dbl_topTenPercent;
-        int index = sortedStats.getCollectionSize()-1;
-        int endIndex = ((sortedStats.getCollectionSize()-1)-int_topTenPercent);
-        while(index>endIndex){
-            if (arg_grpName.equals("Triggers")) {
-                if (!sortedStats.getCollectionObject(index).getName().contains("Scheduled")) {
-                    topTenPercent.addToCollection(sortedStats.getCollectionObject(index));
-                } else{
-                    --endIndex;
-                }
-            } else {
-                topTenPercent.addToCollection(sortedStats.getCollectionObject(index));
-            }
-            --index;
-        }
-        topTenPercent.writeToFile(arg_destFile);
-
-    }
 
 }
