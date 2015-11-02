@@ -1,132 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-02T14:53:43 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ipt_report_topTenPercent_avg" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f4f89cab-bad4-468a-9cd3-0ef502ce0d55">
+<!-- 2015-11-02T16:43:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ipt_topTenPercent_avg" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="af0fb571-9f47-413f-8cec-6d0cfd7fa788">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="IPT_OUTPUT_READER.xml"/>
+	<parameter name="ReportName" class="java.lang.String"/>
+	<parameter name="ReportDescription" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
 	<field name="Statistic" class="java.lang.String"/>
-	<field name="Count" class="java.lang.String"/>
-	<field name="Min" class="java.lang.String"/>
-	<field name="Max" class="java.lang.String"/>
 	<field name="Average" class="java.lang.String"/>
-	<group name="Group1">
-		<groupHeader>
-			<band height="33">
-				<staticText>
-					<reportElement mode="Opaque" x="0" y="0" width="100" height="32" forecolor="#666666" backcolor="#E6E6E6" uuid="3e2d761e-29f7-4ea0-8597-ea79143ba77c"/>
-					<textElement>
-						<font size="12"/>
-					</textElement>
-					<text><![CDATA[G1Label]]></text>
-				</staticText>
-				<textField>
-					<reportElement mode="Opaque" x="100" y="0" width="455" height="32" forecolor="#006699" backcolor="#E6E6E6" uuid="b7cff4e9-4ba6-4db0-9fab-e7fc671ba199"/>
-					<textElement>
-						<font size="24" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["G1Field"]]></textFieldExpression>
-				</textField>
-				<line>
-					<reportElement x="-20" y="32" width="595" height="1" forecolor="#666666" uuid="22a9dd9a-ae6d-4fc6-bfae-d182d1ddcb8e"/>
-				</line>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band/>
-		</groupFooter>
-	</group>
-	<group name="Group2">
-		<groupHeader>
-			<band height="32">
-				<textField>
-					<reportElement x="100" y="0" width="455" height="32" forecolor="#006699" uuid="1cb6ea78-49c1-48da-8696-44d04c30a726"/>
-					<textElement>
-						<font size="22" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["G2Field"]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666" uuid="e89339a0-7969-4cfc-9871-cc31a2ff0636"/>
-					<textElement>
-						<font size="12"/>
-					</textElement>
-					<text><![CDATA[G2Label]]></text>
-				</staticText>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band/>
-		</groupFooter>
-	</group>
-	<group name="Group3">
-		<groupHeader>
-			<band height="32">
-				<textField>
-					<reportElement x="100" y="0" width="455" height="32" forecolor="#006699" uuid="b6e0be1a-58fc-4bf8-9f3f-786a17b66f48"/>
-					<textElement>
-						<font size="20" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["G3Field"]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666" uuid="7118f8ef-0650-4d5f-b8f5-63013a5c4b48"/>
-					<textElement>
-						<font size="12"/>
-					</textElement>
-					<text><![CDATA[G3Label]]></text>
-				</staticText>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band/>
-		</groupFooter>
-	</group>
-	<group name="Group4">
-		<groupHeader>
-			<band height="32">
-				<textField>
-					<reportElement x="100" y="0" width="455" height="32" forecolor="#006699" uuid="eef08958-02f3-465b-b206-abd9d949dc93"/>
-					<textElement>
-						<font size="16" isBold="true"/>
-					</textElement>
-					<textFieldExpression><![CDATA["G4Field"]]></textFieldExpression>
-				</textField>
-				<staticText>
-					<reportElement x="0" y="0" width="100" height="20" forecolor="#666666" uuid="273ef5bd-30ff-4e41-891a-6dde7ae1320e"/>
-					<textElement>
-						<font size="12"/>
-					</textElement>
-					<text><![CDATA[G4Label]]></text>
-				</staticText>
-			</band>
-		</groupHeader>
-		<groupFooter>
-			<band/>
-		</groupFooter>
-	</group>
+	<field name="Count" class="java.lang.String"/>
+	<field name="Unit" class="java.lang.String"/>
 	<background>
 		<band/>
 	</background>
 	<title>
 		<band height="72">
 			<frame>
-				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="f1ba3bef-8a0c-4ca5-a66e-458028a9260c"/>
-				<staticText>
-					<reportElement x="20" y="20" width="234" height="43" forecolor="#FFFFFF" uuid="a98413cc-ced1-4281-bbff-3e905c2fda52"/>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="92" backcolor="#006699" uuid="21701709-a0cf-4691-8437-71c634b76761"/>
+				<textField>
+					<reportElement x="20" y="10" width="555" height="50" forecolor="#FAF7F7" uuid="76fee400-7f06-4e5b-96b6-d91cf1b0b3fd"/>
 					<textElement>
-						<font size="34" isBold="true"/>
+						<font size="20"/>
 					</textElement>
-					<text><![CDATA[TITLE]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="395" y="43" width="180" height="20" forecolor="#FFFFFF" uuid="573b89d3-9ff0-4d82-813c-c9d512ee50e8"/>
-					<textElement textAlignment="Right">
-						<font size="14" isBold="false"/>
-					</textElement>
-					<text><![CDATA[Add a description here]]></text>
-				</staticText>
+					<textFieldExpression><![CDATA[$P{ReportName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="20" y="60" width="555" height="30" forecolor="#FCFAFA" uuid="be1113d3-0010-4d37-833c-ea045323ab34"/>
+					<textFieldExpression><![CDATA[$P{ReportDescription}]]></textFieldExpression>
+				</textField>
 			</frame>
 		</band>
 	</title>
@@ -136,84 +39,63 @@
 	<columnHeader>
 		<band height="21">
 			<line>
-				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="90c3dc84-106b-44bd-b0ae-85654451f323"/>
+				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="e420db58-332f-4d15-bd1c-afc5303db313"/>
 			</line>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="891e1d42-1c88-4d70-a5fc-fffb3b98343e"/>
+				<reportElement mode="Opaque" x="0" y="0" width="270" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="07e87cda-efd5-4ad4-a0a4-b87c56d02317"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Statistic]]></text>
+				<text><![CDATA[Trigger Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="111" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="a1f7335f-8b30-4c88-a1ab-4d12efd15ab0"/>
+				<reportElement mode="Opaque" x="270" y="0" width="188" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="a911ec7a-a95b-44cc-a74f-f54ee6a6fbd5"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Count]]></text>
+				<text><![CDATA[Avg. Execution Time]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="222" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="6fe342bc-bcdc-47b6-aea1-d4263e4b5d1b"/>
+				<reportElement mode="Opaque" x="457" y="0" width="98" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="8e2572aa-ee30-48ad-b8db-1fad60424665"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Min]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="333" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="035cdbc8-bd5c-4f71-a05d-543339720f7c"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Max]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="444" y="0" width="111" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="0a6eec3f-8a12-4794-b762-2dbc707fab3c"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Average]]></text>
+				<text><![CDATA[Num. Exec.]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20">
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="91fe079e-b351-44b9-9b81-e697ed24a146"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="b7d88d88-451f-4368-b2f6-8c6a698463af"/>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="111" height="20" uuid="231d09d3-d0c2-4416-9da9-76352920321c"/>
+				<reportElement x="0" y="0" width="270" height="20" uuid="c02d2b28-fae5-44f7-9caa-1c057fcc52cc"/>
 				<textElement>
-					<font size="14"/>
+					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Statistic}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="111" y="0" width="111" height="20" uuid="274b6dac-30de-45b4-8a81-d415194f1444"/>
+				<reportElement x="270" y="-1" width="132" height="20" uuid="872be5b9-9d5b-4e4d-8a2b-1dbc2b043e14"/>
 				<textElement>
-					<font size="14"/>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{Average}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="458" y="0" width="96" height="20" uuid="e7946913-71a4-4661-af33-67b7080df434"/>
+				<textElement>
+					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{Count}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="222" y="0" width="111" height="20" uuid="9ffcb7f9-2c9b-47fb-81c7-74cc866610fb"/>
+				<reportElement x="403" y="-1" width="55" height="20" uuid="7effa634-60c9-4b0b-ae63-9839b2c72136"/>
 				<textElement>
-					<font size="14"/>
+					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{Min}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="333" y="0" width="111" height="20" uuid="b75436f6-5469-417c-a385-361273ae0517"/>
-				<textElement>
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{Max}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="444" y="0" width="111" height="20" uuid="57a9a11c-2827-4f01-a2ed-77c1d16de009"/>
-				<textElement>
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{Average}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{Unit})]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -223,16 +105,16 @@
 	<pageFooter>
 		<band height="17">
 			<textField>
-				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="c5f5341a-0a15-4d13-9198-7022889d58f7"/>
+				<reportElement mode="Opaque" x="0" y="4" width="515" height="13" backcolor="#E6E6E6" uuid="0012565a-a21d-4810-a3d5-c233aebb01cd"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="6161181c-63f5-400d-a1ad-61bbf132d318"/>
+				<reportElement mode="Opaque" x="515" y="4" width="40" height="13" backcolor="#E6E6E6" uuid="35993de6-2df2-4551-84ff-7e300bb357e6"/>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField pattern="EEEEE dd MMMMM yyyy">
-				<reportElement x="0" y="4" width="100" height="13" uuid="7ba5b5a8-9604-4d2f-b242-0eafc4e41f18"/>
+				<reportElement x="0" y="4" width="100" height="13" uuid="cb6d467a-f215-4cd2-8053-1dc2ca713046"/>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 		</band>
