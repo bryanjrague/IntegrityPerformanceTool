@@ -19,7 +19,9 @@ import com.cdp.integrityperformancetool.StatisticsCollection;
 import org.joda.time.format.DateTimeFormat;
 
 /**
- * Created by bryan on 8/7/2015.
+ * The StatisticsFileReader class reads a provided .csv file and converts it to a StatisticsLibrary, containing a
+ * StatisticsCollection for every unique "Group" column in the source .csv file. See the <i>executeStatisticsRetrieval</i>
+ * method for more information about the output StatisticsLibrary object.
  */
 public class StatisticsFileReader {
 
@@ -36,32 +38,33 @@ public class StatisticsFileReader {
 
     public StatisticsFileReader(String arg_filePath){
         this.str_filePath  = arg_filePath;
-    //    this.path_filePath = Paths.get(URI.create(arg_filePath));
+        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
         this.str_value_separator = ",";
         this.int_skipLines = 1;
     }
 
     public StatisticsFileReader(String arg_filePath, String arg_value_separator){
         this.str_filePath  = arg_filePath;
-   //     this.path_filePath = Paths.get(URI.create(arg_filePath));
+        //     this.path_filePath = Paths.get(URI.create(arg_filePath));
         this.str_value_separator = arg_value_separator;
         this.int_skipLines = 1;
     }
 
     public StatisticsFileReader(String arg_filePath, int arg_skipLines){
         this.str_filePath  = arg_filePath;
-    //    this.path_filePath = Paths.get(URI.create(arg_filePath));
+        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
         this.str_value_separator = ",";
         this.int_skipLines = arg_skipLines;
     }
 
     public StatisticsFileReader(String arg_filePath, String arg_value_separator, int arg_skipLines){
         this.str_filePath  = arg_filePath;
-    //    this.path_filePath = Paths.get(URI.create(arg_filePath));
+        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
         this.str_value_separator = arg_value_separator;
         this.int_skipLines = arg_skipLines;
     }
 
+    //takes in a String[] created from a single .csv file line and creates a new isb item from the data.
     private IntegrityStatisticBean arrayToIsb(String[] arg_str_array){
 
         IntegrityStatisticBean isb = new IntegrityStatisticBean();
@@ -88,6 +91,9 @@ public class StatisticsFileReader {
         return isb;
     }
 
+    //accounts for some statistic names containing the str_value_separator. in this case, the name may be
+    //split into more than one column unnecessarily, which creates more columns than expected causing issues
+    //later on with data processing. This method reconfigures the columns to correct for the situation.
     private String[] correctColumnFormatting(String[] arg_stringArray){
         int combineThrough = (arg_stringArray.length-14)+3;
         //combineThrough represents the highest column number which the name of the statistic
@@ -100,7 +106,7 @@ public class StatisticsFileReader {
 
         for(int col=4;col<arg_stringArray.length;col++){
             if(col<=combineThrough){
-                arg_stringArray[3] = arg_stringArray[3] + "," + arg_stringArray[col];
+                arg_stringArray[3] = arg_stringArray[3] + this.str_value_separator + arg_stringArray[col];
                 offset += 1;
             } else arg_stringArray[col-offset] = arg_stringArray[col];
         }
@@ -113,7 +119,15 @@ public class StatisticsFileReader {
         return arg_stringArray;
     }
 
-    //returns hashmap{statisticsCollection.group, arraylist<isb>}
+    /**
+     * Reads the .csv file stored as the StatisticsFileReader class' "str_filePath" attribute. Processes all the
+     * statistics and exports them as a single StatisticsLirary object. Contained within the StatisticsLibrary is
+     * a StatisticsCollection object for each unique Group name in the source file. Each StatisticsCollection object
+     * contains IntegrityStatisticBean objects of the group name, where each IntegrityStatisticBean object holds data from a
+     * single line of the source .csv file.
+     * @return (StatisticsLibrary) - the processed statistics in the form of a StatisticsLibrary, holding StatisticsCollection
+     * objects, each holding IntegrityStatisticBean Objects.
+     */
     public StatisticsLibrary executeStatisticsRetrieval() {
 
         StatisticsLibrary lib_stat_mapper = new StatisticsLibrary();
@@ -163,15 +177,40 @@ public class StatisticsFileReader {
         return lib_stat_mapper;
     }
 
+    /**
+     * Returns the current filepath to the source .csv file.
+     * @return (String) - filepath to the source file that will be read.
+     */
     public String getStringFilePath(){ return this.str_filePath; }
 
+    /**
+     * Returns the integer number of lines that will be skipped when the source file is read,
+     * starting from the first line of the source file.
+     * @return (int) - number of lines that will be skipped.
+     */
     public int getSkipLines(){ return this.int_skipLines; }
 
+    /**
+     * Returns the String being recognized as the value separator in the source .csv file.
+     * @return (Sting) - the .csv file value separator String
+     */
     public String getValueSeparator() { return this.str_value_separator; }
 
+    /**
+     * Sets the .csv filepath to be read.
+     * @param arg_filePath (String) - the full filepath to the source .csv file to be read.
+     */
     public void setFilePath(String arg_filePath){ this.str_filePath = arg_filePath; }
 
+    /**
+     * Sets the number of lines to skip reading in the source .csv file.
+     * @param arg_numLines (int) - the number of lines to skip when reading the source file.
+     */
     public void setSkipLines(int arg_numLines) { this.int_skipLines = arg_numLines; }
 
+    /**
+     * Sets the String that will be recognized as the .csv value separator in the source file.
+     * @param arg_separator (String) - the value to be recognized as the value separator.
+     */
     public void setValueSeparator(String arg_separator){ this.str_value_separator = arg_separator; }
 }

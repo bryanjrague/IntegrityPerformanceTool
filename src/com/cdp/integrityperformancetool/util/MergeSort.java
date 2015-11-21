@@ -1,8 +1,6 @@
 package com.cdp.integrityperformancetool.util;
 
 /**
- * Created by bryan on 8/9/2015.
- *
  * Class implementing the Mergesort algorithm for use with Long[] arrays.
  */
 public class MergeSort {
@@ -39,7 +37,7 @@ public class MergeSort {
 
         while (helperLeft <= middle && helperRight <=high){
             if(arg_helper_array[helperLeft].compareTo(arg_helper_array[helperRight]) <= 0){
-            //if(arg_helper_array[helperLeft] <= arg_helper_array[helperRight]){
+                //if(arg_helper_array[helperLeft] <= arg_helper_array[helperRight]){
                 arg_array[current] = arg_helper_array[helperLeft];
                 helperLeft++;
             } else {
