@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Integrity Performance Tool.iml" filepath="$PROJECT_DIR$/Integrity Performance Tool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/IntegrityPerformanceTool.iml" filepath="$PROJECT_DIR$/IntegrityPerformanceTool.iml" />
     </modules>
   </component>
 </project>

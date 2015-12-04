@@ -71,11 +71,9 @@ public class ReportBuilder {
         this.reportParams.put("STATISTIC_NAME", arg_statName);
         this.reportParams.put("STATISTIC_GROUP", arg_statGrp);
         this.reportParams.put("GRP_COUNT", arg_grpComputeVals[0]);
-        this.reportParams.put("GRP_TOT_COUNT", arg_grpComputeVals[1]);
-        this.reportParams.put("GRP_SUM", arg_grpComputeVals[2]);
-        this.reportParams.put("GRP_MIN", arg_grpComputeVals[3]);
-        this.reportParams.put("GRP_MAX", arg_grpComputeVals[4]);
-        this.reportParams.put("GRP_AVG", arg_grpComputeVals[5]);
+        this.reportParams.put("GRP_MIN", arg_grpComputeVals[1]);
+        this.reportParams.put("GRP_MAX", arg_grpComputeVals[2]);
+        this.reportParams.put("GRP_AVG", arg_grpComputeVals[3]);
         this.reportParams.put("STATISTIC_UNIT", arg_unit);
 
 

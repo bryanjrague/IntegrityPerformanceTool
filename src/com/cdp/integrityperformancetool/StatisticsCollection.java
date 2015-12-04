@@ -283,6 +283,97 @@ public class StatisticsCollection {
 	}
 
 	/**
+	 * groups IntegrityStatisticBeans by start and end date. Those that have the same start and end date are combined
+	 * into a single IntegrityStatisticBean.
+	 */
+	public void collapseStatisticsByDate(){
+
+		StatisticsCollection temp_collection = new StatisticsCollection();
+
+		for(int i=0;i<getCollectionSize();i++){
+			DateTime endDate = getCollectionObject(i).getEndDate();
+			DateTime startDate = getCollectionObject(i).getStartDate();
+			DateTime next_endDate;
+			DateTime next_startDate;
+
+			int[] endDateID_array = {endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth()};
+			int[] startDateID_array = {startDate.getYear(), startDate.getMonthOfYear(), startDate.getDayOfMonth()};
+			int[] nextEndDateID_array = new int[3];
+			int[] nextStartDateID_array = new int[3];
+
+			if((i+1)<getCollectionSize()){
+				int increment = 1;
+				do {
+					next_endDate = getCollectionObject(i + increment).getEndDate();
+					next_startDate = getCollectionObject(i + increment).getStartDate();
+
+					nextEndDateID_array[0] = next_endDate.getYear();
+					nextEndDateID_array[1] = next_endDate.getMonthOfYear();
+					nextEndDateID_array[2] = next_endDate.getDayOfMonth();
+
+					nextStartDateID_array[0] = next_startDate.getYear();
+					nextStartDateID_array[1] = next_startDate.getMonthOfYear();
+					nextStartDateID_array[2] = next_startDate.getDayOfMonth();
+
+					increment += 1;
+
+				} while(endDateID_array[0]==nextEndDateID_array[0] &&
+						endDateID_array[1]==nextEndDateID_array[1] &&
+						endDateID_array[2]==nextEndDateID_array[2] &&
+						startDateID_array[0]==nextStartDateID_array[0] &&
+						startDateID_array[1]==nextStartDateID_array[1] &&
+						startDateID_array[2]==nextStartDateID_array[2] &&
+						(i+increment)<getCollectionSize());
+
+				int endIndex = i + increment - 1;
+				//System.out.println("i: " + i +  ", increment: " + increment + ", endIndex: " + endIndex);
+
+				if(endIndex>i){ //then combine the IntegrityStatisticBeans
+					StatisticsCollection temp_collection2 = new StatisticsCollection();
+					for(int j=i;j<endIndex;j++) { temp_collection2.addToCollection(getCollectionObject(j)); }
+
+					IntegrityStatisticBean temp_isb = new IntegrityStatisticBean();
+
+					temp_isb.setStartDate(temp_collection2.getCollectionEarliestStartDate());
+					temp_isb.setEndDate(temp_collection2.getCollectionLatestEndDate());
+					temp_isb.setGroup(getCollectionObject(i).getGroup());
+					temp_isb.setName(getCollectionObject(i).getName());
+					temp_isb.setKind(getCollectionObject(i).getKind());
+					temp_isb.setUnit(getCollectionObject(i).getUnit());
+
+					Long runningCount = 0L;
+					for(IntegrityStatisticBean isb : temp_collection2.getCollection()) {
+						runningCount += isb.getCount();
+					}
+
+					temp_isb.setCount(runningCount);
+					temp_isb.setTotalCount(temp_collection2.getCollectionTotalCountValue());
+					temp_isb.setSum(temp_collection2.getCollectionSumValue());
+					temp_isb.setUsed(getCollectionObject(i).getUsed());
+					temp_isb.setMin(temp_collection2.getCollectionMinimumValue());
+					temp_isb.setMax(temp_collection2.getCollectionMaximumValue());
+					temp_isb.setAverage(temp_collection2.getCollectionAverageValue());
+					temp_isb.setMode(getCollectionObject(i).getMode());
+					//System.out.println("wrote to temp");
+					temp_collection.addToCollection(temp_isb);
+
+					i = endIndex-1;
+
+				} else { //just add the single Integrity StatisticBean back
+					temp_collection.addToCollection(getCollectionObject(i));
+				}
+			}
+		}
+		//finally, replace the collapsed collection as this.collection
+		this.clearCollection();
+		for(IntegrityStatisticBean isb : temp_collection.getCollection()) { this.addToCollection(isb); }
+		//System.out.println(" ** ** temp ** **");
+		//temp_collection.writeToString();
+		//System.out.println(" ** ** temp ** **");
+		//this.writeToString();
+	}
+
+	/**
 	 * Executes all StatisticsCollection group computation methods.
 	 */
 	public void computeAllCollectionStatistics(){
