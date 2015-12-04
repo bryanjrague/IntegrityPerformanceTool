@@ -2,15 +2,19 @@ package com.cdp.integrityperformancetool;
 
 import com.cdp.integrityperformancetool.reporting.ReportBuilder;
 import com.cdp.integrityperformancetool.util.StatisticsFileReader;
+import org.apache.pdfbox.util.PDFMergerUtility;
 import org.joda.time.DateTime;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -25,39 +29,30 @@ import org.joda.time.format.DateTimeFormatter;
 public class PerformanceTool {
 
     private static DateTime runTime = new DateTime();
-    private static String runTimeStr = runTime.toString().replace(":","_").replace(".","_");
+    private static String runTimeStr = runTime.toString().replace(":","-").replace(".","_").replace("T"," @ ");
 
     //logging via log4j
     private static Logger masterLog = Logger.getLogger("PerformanceTool");
 
-    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("MMM-dd-YYYY");
+    private static DateTimeFormatter fmt = DateTimeFormat.forPattern("EEE MMM-dd-yyyy HH:mm:ss");
 
     ////////////////////////////////////////////////
     ///// Make sure to change this directory to the local machine directory
     ////////////////////////////////////////////////
-    private static String masterDir = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool";
+    //private static String masterDir = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool";
+    private static String masterDir = "C:\\Users\\bryan\\IdeaProjects\\IntegrityPerformanceTool";
 
     private static ArrayList<String> allTopTenStatNames = new ArrayList<String>(); //stores all stats which appear on any of the top ten % lists
     private static ArrayList<IntegrityStatisticBean> targetListStats =  new ArrayList<IntegrityStatisticBean>();; //stores any stats which appear on more than one of the top ten % lists
 
     //report building variables holding filepaths to the .jrxml files used to create reports.
-    private static String topTenAvgValReportJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\ipt_topTenPercent_avg.jrxml";
-    private static String topTenMaxValReportJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\ipt_topTenPercent_max.jrxml";
-    private static String topTenCountReportJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\ipt_topTenPercent_count.jrxml";
-    private static String topTenTotCntReportJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\ipt_topTenPercent_total.jrxml";
-    private static String targetReportJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\ipt_topTenPercent_target.jrxml";
-    private static String summaryHistPerformanceJrxml = "C:\\Users\\USX25908\\IdeaWorkspace\\IntegrityPerformanceTool"
-            +"\\ReportBuildingData\\hist_performance.jrxml";
-
-    //percentage that the latest historical entry of a statistic must have changed by in order for a detailed report
-    //  about the statistic to be created.
-    private static Float histDeltaThreshold = 0.1F;
-
+    private static String topTenAvgValReportJrxml = masterDir +"\\ReportBuildingData\\ipt_topTenPercent_avg.jrxml";
+    private static String topTenMaxValReportJrxml = masterDir +"\\ReportBuildingData\\ipt_topTenPercent_max.jrxml";
+    private static String topTenCountReportJrxml = masterDir +"\\ReportBuildingData\\ipt_topTenPercent_count.jrxml";
+    private static String topTenTotCntReportJrxml = masterDir +"\\ReportBuildingData\\ipt_topTenPercent_total.jrxml";
+    private static String targetReportJrxml = masterDir +"\\ReportBuildingData\\ipt_topTenPercent_target.jrxml";
+    private static String detailHistPerformanceJrxml = masterDir +"\\ReportBuildingData\\ipt_detailedPerformanceReport.jrxml";
+    private static String summaryHistPerformanceJrxml = masterDir +"\\ReportBuildingData\\ipt_summarizedPerformanceReport.jrxml";
 
     public static void main(String args[]){
 
@@ -75,7 +70,7 @@ public class PerformanceTool {
         //// Get all statistics from the master data file
         /////////////////////////////////////////////
         //String masterDataFilePath = masterDir + "\\Input\\Statistics_PROD_10-1-2015_10-14-2015.csv";
-        // String masterDataFilePath = masterDir + "\\Input\\Statistics_PROD_10-15-2015_11-1-2015.csv";
+        //String masterDataFilePath = masterDir + "\\Input\\Statistics_PROD_10-15-2015_11-1-2015.csv";
         String masterDataFilePath = masterDir + "\\Input\\Statistics_PROD_11-1-2015_11-15-2015.csv";
         StatisticsLibrary masterDataLib = getStatsLibraryFromFile(masterDataFilePath, ",",1);
         masterLog.info("Source Data File: " +  masterDataFilePath);
@@ -155,6 +150,12 @@ public class PerformanceTool {
     private static void processStatisticsGroup(String arg_grpName, StatisticsLibrary arg_library){
 
         masterLog.info("About to process statistics group: " + arg_grpName);
+
+        //prep file destinations for report building functionality
+        String reportOutFileBase = masterDir + "\\Output\\"+arg_grpName+"\\Reports\\";
+        File dir = new File(reportOutFileBase);
+        if(!dir.exists()) dir.mkdir();
+
         ///////////////////////////////////////////////
         /// Get only the specific Statistic Group data from the master lib
         ///////////////////////////////////////////////
@@ -178,7 +179,7 @@ public class PerformanceTool {
 
             //get all unique names for cumulative trigger stats
             HashMap<String,String> cumulativeUniqueNames = statGrp_cumulative.getAllUniqueNameGroupPairs();
-            int counter = 0;
+
             for(String name : cumulativeUniqueNames.keySet()){
                 StatisticsCollection temp_collection = new StatisticsCollection("Trigger: " + name + " Cumulative Stats");
                 for(IntegrityStatisticBean isb : statGrp_cumulative.getCollection()){
@@ -192,13 +193,18 @@ public class PerformanceTool {
                 if (!temp_dir.exists()) temp_dir.mkdirs();
                 filePath.append(cleanString(name));
                 filePath.append(".csv");
-                counter++;
                 temp_collection.writeToFile(filePath.toString(), false);
+                try{
+                    analyzeHistoricalTrends(filePath.toString(), arg_grpName, name, "Detailed");
+                } catch(Exception e){
+                    masterLog.warn("WARNING: Exception during history analysis: " + e);
+                }
+
                 masterLog.info("\t" + arg_grpName + " - processed data for statistic: " + name);
             }
 
             String sortedTotalsFileBase = masterDir + "\\Output\\"+arg_grpName+"\\Totals\\";
-            File dir = new File(sortedTotalsFileBase);
+            dir = new File(sortedTotalsFileBase);
             if(!dir.exists()) dir.mkdir();
 
             String topTenFileBase = masterDir + "\\Output\\"+arg_grpName+"\\TopTenPercent\\";
@@ -224,18 +230,13 @@ public class PerformanceTool {
                 currCumulativeStats.collapseAllStatistics();
                 currCumulativeStats.computeAllCollectionStatistics();
                 currCumulativeStats.writeCollectionTotalsToFile(currStatTotalsFile);
+            // disabled for now...   analyzeHistoricalTrends(currStatTotalsFile, arg_grpName, name, "Summarized");
             }
 
             masterLog.info("");
             masterLog.info("Appended all summarized entries to historical summarized results file for: " + arg_grpName);
             masterLog.info("\t " + currStatTotalsFile);
             masterLog.info("");
-
-            ///////////////////////////////////////////////////
-            //// Send the historical data file for analysis to find
-            // those performance which has changed beyond a percentage.
-            //////////////////////////////////////////////////
-            analyzeHistoricalTrends(currStatTotalsFile, arg_grpName);
 
             ///////////////////////////////////////////////////
             //// Gather unsorted total statistics and sort. run various sort functions. save output as files.
@@ -245,18 +246,12 @@ public class PerformanceTool {
             StatisticsCollection unsortedStatistics = unsortedTotalsLibrary.getStatisticsGroupName(arg_grpName);
 
             unsortedStatistics.collapseAllStatistics();
-            //StatisticsCollection now has all finalized, unique stats for the group with no duplicate stat names.
-
-            //prep file destinations for report building functionality
-            String reportOutFileBase = masterDir + "\\Output\\"+arg_grpName+"\\Reports\\";
-            dir = new File(reportOutFileBase);
-            if(!dir.exists()) dir.mkdir();
-
 
             /////////////////////////////////////////////////////
             ///// Compute, sort, and build reports for data sets
             ////////////////////////////////////////////////////
             masterLog.info("About to Build Reports for " + arg_grpName + "...");
+
             //sort by average value and save to file
             String avgValFile = sortedTotalsFileBase + "All " + arg_grpName + " - Total Results - By Average Value.csv";
             unsortedStatistics.orderByIsbAverageValue();
@@ -382,9 +377,10 @@ public class PerformanceTool {
             targetListStats.clear();
             allTopTenStatNames.clear();
 
-            masterLog.info("");
-            masterLog.info("Done creating reports for " + arg_grpName);
+            //combine all pdf reports into a single pdf doc.
+            createReportPdfBook(arg_grpName);
 
+            masterLog.info("Done processing statistics and creating reports for Group: " + arg_grpName);
         } catch(Exception e) {
             masterLog.info("WARNING: ISSUE PROCESSING GROUP : " + arg_grpName + " - " + e);
             e.printStackTrace();
@@ -392,6 +388,27 @@ public class PerformanceTool {
 
 
 
+    }
+
+    private static void createReportPdfBook(String arg_grpName){
+        String reportDirStr = masterDir + "\\Output\\"+arg_grpName+"\\Reports\\DetailedPerformanceReports\\";
+        File reportDir = new File(reportDirStr);
+        ArrayList<String> pdfFileNames = new ArrayList<String>(Arrays.asList(reportDir.list()));
+        PDFMergerUtility pdfUtil = new PDFMergerUtility();
+
+        for(String fileName : pdfFileNames) { pdfUtil.addSource(reportDirStr + fileName); }
+
+        try{
+            String masterReportBookStr = masterDir + "\\Integrity Performance Tool - " + arg_grpName + " - " + fmt.print(runTime).replace(":","-") + ".pdf";
+            pdfUtil.setDestinationFileName(masterReportBookStr);
+            pdfUtil.mergeDocuments();
+            masterLog.info("");
+            masterLog.info("Combined all " + arg_grpName + " Reports into master report book!");
+            masterLog.info(masterReportBookStr);
+            masterLog.info("");
+        } catch(Exception e){
+            masterLog.warn("ERROR: Problem writing all reports to final PDF: " + e);
+        }
     }
 
     private static void computeTopTen(String arg_srcFile, String arg_destFile, String arg_grpName){
@@ -459,63 +476,36 @@ public class PerformanceTool {
         }
     }
 
-    private static void analyzeHistoricalTrends(String arg_historyFilePath, String arg_grpName){
-        //for the provided statistics group, read the  "All <Group Name> - Summarized Results - Historical Data.csv"
-        //determine all unique statistic names
-        //for each:
-        // 1) get all unique entries in the historical file.
-        // 2) compare the statistic entries for each unique name and determine how much they have changed
-        // 3) determine if any have changed outside of a standard percentage
-        // 4) for any who have changed beyond a standard percentage, generate a report:
-        //     - Report will give the statistic group, name, and charts of how each statistic
-        //      has performed over time.
-        //     - Report will be saved as ..\Reports\<Group Name>\<Group Name> Performance To Review.pdf
-        masterLog.info("Analysing Historical data within file: " + arg_historyFilePath);
+    private static void analyzeHistoricalTrends(String arg_historyFilePath, String arg_grpName, String arg_statName, String arg_analysisType){
+        //arg_analysisType is one of either "Detailed" or "Summarized" and determines the report built and save location.
+        if(arg_analysisType.equals("Detailed") || arg_analysisType.equals("Summarized")) {
 
-        //controls output of warnings related to arithmetic.
-        //currently turns off due to "sum" usually being null for data and outputting a warning
-        // everytime it's percent change is calculated.
-        boolean verboseArtithmetic = false;
+            masterLog.info("\t Analysing Historical data within file: " + arg_historyFilePath);
+            masterLog.info("\t Analysis Type: " + arg_analysisType);
 
-        //prep file destinations for report building functionality
-        String reportOutFileBase = masterDir + "\\Output\\"+arg_grpName+"\\Reports\\Summarized Performance\\";
-        File dir = new File(reportOutFileBase);
-        if(!dir.exists()) dir.mkdir();
+            //controls output of warnings related to arithmetic.
+            //currently turns off due to "sum" usually being null for data and outputting a warning
+            // everytime it's percent change is calculated.
+            boolean verboseArtithmetic = false;
 
-        StatisticsFileReader history = new StatisticsFileReader(arg_historyFilePath);
-        StatisticsLibrary hist_lib = history.executeStatisticsRetrieval();
-        StatisticsCollection hist_statColl = hist_lib.getStatisticsGroupName(arg_grpName);
+            StatisticsFileReader history = new StatisticsFileReader(arg_historyFilePath);
+            StatisticsLibrary hist_lib = history.executeStatisticsRetrieval();
+            StatisticsCollection hist_statColl = hist_lib.getStatisticsGroupName(arg_grpName);
 
-        //calculate and store the group's unique statistic computations.
-        Long[] groupComputationValues = new Long[6];
-        StatisticsCollection tempGrpComputeCollection = new StatisticsCollection();
-        for(IntegrityStatisticBean isb : hist_statColl.getCollection()) tempGrpComputeCollection.addToCollection(isb);
-
-        tempGrpComputeCollection.collapseAllStatistics();
-        tempGrpComputeCollection.computeAllCollectionStatistics();
-
-        groupComputationValues[0] = tempGrpComputeCollection.getCollectionCountValue();
-        groupComputationValues[1] = tempGrpComputeCollection.getCollectionTotalCountValue();
-        groupComputationValues[2] = tempGrpComputeCollection.getCollectionSumValue();
-        groupComputationValues[3] = tempGrpComputeCollection.getCollectionMinimumValue();
-        groupComputationValues[4] = tempGrpComputeCollection.getCollectionMaximumValue();
-        groupComputationValues[5] = tempGrpComputeCollection.getCollectionAverageValue();
-
-        //get all unique names of stats to iterate through
-        HashMap<String, String> uniqueHistNames = hist_statColl.getAllUniqueNameGroupPairs();
-
-        for(String name : uniqueHistNames.keySet()){ //iterate through unique names in collection
-            StatisticsCollection temp_collection = new StatisticsCollection();
-
-            for(IntegrityStatisticBean isb : hist_statColl.getCollection()){
-                if (isb.getName().equals(name)) {
-                    temp_collection.addToCollection(isb);
+            //if analyzing summarized stats, get only the IntegrityStatisticBeans related to the statistic name provided
+            if (arg_analysisType.equals("Summarized")) {
+                StatisticsCollection temp_collection = new StatisticsCollection();
+                for(IntegrityStatisticBean isb : hist_statColl.getCollection()){
+                    if(isb.getName().equals(arg_statName) && isb.getGroup().equals(arg_grpName)){
+                        temp_collection.addToCollection(isb);
+                    }
                 }
+                hist_statColl.clearCollection();
+                for(IntegrityStatisticBean isb : temp_collection.getCollection()) hist_statColl.addToCollection(isb);
             }
 
-            if(temp_collection.getCollectionSize()>1) {
-
-                int collectionSize = temp_collection.getCollectionSize();
+            if(hist_statColl.getCollectionSize()>0) {
+                int collectionSize = hist_statColl.getCollectionSize();
                 DateTime[] startDates = new DateTime[collectionSize];
                 DateTime[] endDates = new DateTime[collectionSize];
                 Long[] countTracker = new Long[collectionSize];
@@ -524,93 +514,111 @@ public class PerformanceTool {
                 Long[] minTracker = new Long[collectionSize];
                 Long[] maxTracker = new Long[collectionSize];
                 Long[] avgTracker = new Long[collectionSize];
-                Float[] percChange_count = new Float[collectionSize];
-                Float[] percChange_totalCount = new Float[collectionSize];
-                Float[] percChange_sum = new Float[collectionSize];
-                Float[] percChange_min = new Float[collectionSize];
-                Float[] percChange_max = new Float[collectionSize];
-                Float[] percChange_avg = new Float[collectionSize];
+                Double[] percChange_count = new Double[collectionSize];
+                Double[] percChange_totalCount = new Double[collectionSize];
+                Double[] percChange_sum = new Double[collectionSize];
+                Double[] percChange_min = new Double[collectionSize];
+                Double[] percChange_max = new Double[collectionSize];
+                Double[] percChange_avg = new Double[collectionSize];
+                String stat_unit = hist_statColl.getCollectionObject(0).getUnit();
 
-                for(int i=0;i<collectionSize;i++){
-                    countTracker[i] = temp_collection.getCollectionObject(i).getCount();
-                    totalCountTracker[i] = temp_collection.getCollectionObject(i).getTotalCount();
-                    sumTracker[i] = temp_collection.getCollectionObject(i).getSum();
-                    minTracker[i] = temp_collection.getCollectionObject(i).getMin();
-                    maxTracker[i] = temp_collection.getCollectionObject(i).getMax();
-                    avgTracker[i] = temp_collection.getCollectionObject(i).getAverage();
-                    startDates[i] = temp_collection.getCollectionObject(i).getStartDate();
-                    endDates[i] = temp_collection.getCollectionObject(i).getEndDate();
+                for (int i = 0; i < collectionSize; i++) {
 
-                    if (i>=1){
-                        try{
-                            percChange_count[i] = ( (countTracker[i]-countTracker[i-1]) /
-                                    (countTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if (verboseArtithmetic) masterLog.warn("    WARNING: could not compute Count percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_count[i] = 0.0F;
+                    countTracker[i] = hist_statColl.getCollectionObject(i).getCount();
+                    totalCountTracker[i] = hist_statColl.getCollectionObject(i).getTotalCount();
+                    sumTracker[i] = hist_statColl.getCollectionObject(i).getSum();
+                    minTracker[i] = hist_statColl.getCollectionObject(i).getMin();
+                    maxTracker[i] = hist_statColl.getCollectionObject(i).getMax();
+                    avgTracker[i] = hist_statColl.getCollectionObject(i).getAverage();
+                    startDates[i] = hist_statColl.getCollectionObject(i).getStartDate();
+                    endDates[i] = hist_statColl.getCollectionObject(i).getEndDate();
+
+
+                    if (i >= 1) {
+                        try {
+                            percChange_count[i] = ((new Double(countTracker[i]) - new Double(countTracker[i - 1])) /
+                                    (new Double(countTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Count percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_count[i] = 0.00;
                         }
-                        try{
-                            percChange_totalCount[i] = ( (totalCountTracker[i]-totalCountTracker[i-1]) /
-                                    (totalCountTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if (verboseArtithmetic) masterLog.warn("    WARNING: could not compute Total Count percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_totalCount[i] = 0.0F;
+                        try {
+                            percChange_totalCount[i] = ((new Double(totalCountTracker[i]) - new Double(totalCountTracker[i - 1])) /
+                                    (new Double(totalCountTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Total Count percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_totalCount[i] = 0.00;
                         }
-                        try{
-                            percChange_sum[i] = ( (sumTracker[i]-sumTracker[i-1]) /
-                                    (sumTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if(verboseArtithmetic) masterLog.warn("    WARNING: could not compute Total Sum percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_sum[i] = 0.0F;
+                        try {
+                            percChange_sum[i] = ((new Double(sumTracker[i]) - new Double(sumTracker[i - 1])) /
+                                    (new Double(sumTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Total Sum percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_sum[i] = 0.00;
                         }
-                        try{
-                            percChange_min[i] = ( (minTracker[i]-minTracker[i-1]) /
-                                    (minTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if (verboseArtithmetic) masterLog.warn("    WARNING: could not compute Total Min percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_min[i] = 0.0F;
+                        try {
+                            percChange_min[i] = ((new Double(minTracker[i]) - new Double(minTracker[i - 1])) /
+                                    (new Float(minTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Total Min percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_min[i] = 0.00;
                         }
-                        try{
-                            percChange_max[i] = ( (maxTracker[i]-maxTracker[i-1]) /
-                                    (maxTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if (verboseArtithmetic) masterLog.warn("    WARNING: could not compute Total Max percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_max[i] = 0.0F;
+                        try {
+                            percChange_max[i] = ((new Double(maxTracker[i]) - new Double(maxTracker[i - 1])) /
+                                    (new Float(maxTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Total Max percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_max[i] = 0.00;
                         }
-                        try{
-                            percChange_avg[i] = ( (avgTracker[i]-avgTracker[i-1]) /
-                                    (avgTracker[i-1]) )*100.0F;
-                        } catch(ArithmeticException ae){
-                            if (verboseArtithmetic) masterLog.warn("    WARNING: could not compute Total Avg percent change for "
-                                    + arg_grpName + " '" + temp_collection.getCollectionObject(0).getName() + "' due to arithmetic error: "
-                                    + ae);
-                            percChange_avg[i] = 0.0F;
+                        try {
+                            percChange_avg[i] = ((new Double(avgTracker[i]) - new Double(avgTracker[i - 1])) /
+                                    (new Double(avgTracker[i - 1]))) * 100.00;
+                        } catch (ArithmeticException ae) {
+                            if (verboseArtithmetic)
+                                masterLog.warn("    WARNING: could not compute Total Avg percent change for "
+                                        + arg_grpName + " '" + arg_statName + "' due to arithmetic error: "
+                                        + ae);
+                            percChange_avg[i] = 0.00;
                         }
                     } else {
-                        percChange_count[i] = 0.0F;
-                        percChange_totalCount[i] = 0.0F;
-                        percChange_sum[i] = 0.0F;
-                        percChange_min[i] = 0.0F;
-                        percChange_max[i] = 0.0F;
-                        percChange_avg[i] = 0.0F;
+                        percChange_count[i] = 0.00;
+                        percChange_totalCount[i] = 0.00;
+                        percChange_sum[i] = 0.00;
+                        percChange_min[i] = 0.00;
+                        percChange_max[i] = 0.00;
+                        percChange_avg[i] = 0.00;
                     }
+
                 }// end for loop through this statistic's data entries
 
-                String histPerfDir = masterDir + "\\Output\\" + arg_grpName + "\\Historical Performance\\";
-                dir = new File(histPerfDir);
-                if(!dir.exists()) dir.mkdir();
+                String histPerfFile;
 
-                String histPerfFile = histPerfDir + name + ".csv";
+                if (arg_analysisType.equals("Detailed")) {
+                    String histPerfDir = masterDir + "\\Output\\" + arg_grpName + "\\HistoricalDetailedPerformance\\";
+                    File dir = new File(histPerfDir);
+                    if (!dir.exists()) dir.mkdir();
+                    histPerfFile = histPerfDir + arg_statName + ".csv";
+                } else {
+                    String histPerfDir = masterDir + "\\Output\\" + arg_grpName + "\\HistoricalSummarizedPerformance\\";
+                    File dir = new File(histPerfDir);
+                    if (!dir.exists()) dir.mkdir();
+                    histPerfFile = histPerfDir + arg_statName + ".csv";
+                }
 
                 ArrayList<Long[]> masterStatHist = new ArrayList();
                 masterStatHist.add(countTracker);
@@ -620,7 +628,7 @@ public class PerformanceTool {
                 masterStatHist.add(maxTracker);
                 masterStatHist.add(avgTracker);
 
-                ArrayList<Float[]> masterPercChange = new ArrayList();
+                ArrayList<Double[]> masterPercChange = new ArrayList();
                 masterPercChange.add(percChange_count);
                 masterPercChange.add(percChange_totalCount);
                 masterPercChange.add(percChange_sum);
@@ -628,49 +636,106 @@ public class PerformanceTool {
                 masterPercChange.add(percChange_max);
                 masterPercChange.add(percChange_avg);
 
-                writeToHistoricalPerformanceFile(histPerfFile,
-                        masterStatHist,
-                        masterPercChange,
-                        groupComputationValues,
-                        startDates,
-                        endDates);
+                //calculate and store the group's unique statistic computations.
+                Long[] groupComputationValues = new Long[6];
 
-                //build the summarized historical report
-                ReportBuilder summaryHistPerfReport = new ReportBuilder(arg_grpName+ " - Summarized Performance Report - " + name,
-                        "Summarized Historical Performance for statistic: " + arg_grpName + " - " + name,
-                        summaryHistPerformanceJrxml,
-                        histPerfFile,
-                        reportOutFileBase + arg_grpName + " - Summarized Performance Report - " + name + ".pdf",
-                        name,
-                        arg_grpName);
-                summaryHistPerfReport.generateReport();
-                masterLog.info("    Successfully created report: " + arg_grpName + "- Summarized Performance Report - " + name);
+                hist_statColl.computeAllCollectionStatistics();
 
-                masterLog.info("    Historical analysis done for statistic: "+ arg_grpName
-                        + " - " + name);
-                masterLog.info("");
-            } else { //end if temp_collection has more than one entry.
-                masterLog.warn("    Could not conduct historical analysis, only one entry for statistic: " + arg_grpName
-                        + " - " + name);
-                masterLog.info("");
+                groupComputationValues[0] = hist_statColl.getCollectionCountValue();
+                groupComputationValues[1] = hist_statColl.getCollectionTotalCountValue();
+                groupComputationValues[2] = hist_statColl.getCollectionSumValue();
+                groupComputationValues[3] = hist_statColl.getCollectionMinimumValue();
+                groupComputationValues[4] = hist_statColl.getCollectionMaximumValue();
+                groupComputationValues[5] = hist_statColl.getCollectionAverageValue();
+
+                try {
+                    writeToHistoricalPerformanceFile(histPerfFile,
+                            masterStatHist,
+                            masterPercChange,
+                            groupComputationValues,
+                            startDates,
+                            endDates);
+                } catch (Exception e) {
+                    masterLog.warn("\t WARNING: Error writing historical performance file for: " + arg_statName);
+                    masterLog.warn("\t " + e);
+                }
+
+                String reportOut = masterDir + "\\Output\\" + arg_grpName + "\\Reports\\";
+                File dir = new File(reportOut);
+                if (!dir.exists()) dir.mkdir();
+
+                //prep file destinations for report building functionalit
+                String reportOutHist;
+                if (arg_analysisType.equals("Detailed")) {
+                    reportOutHist = reportOut + "\\DetailedPerformanceReports\\";
+                    dir = new File(reportOutHist);
+                    if (!dir.exists()) dir.mkdir();
+                } else {
+                    reportOutHist = reportOut + "\\SummarizedPerformanceReports\\";
+                    dir = new File(reportOutHist);
+                    if (!dir.exists()) dir.mkdir();
+                }
+
+
+                try {
+                    //build the summarized historical report
+                    if(arg_analysisType.equals("Detailed")) {
+                        ReportBuilder summaryHistPerfReport = new ReportBuilder(arg_grpName + " - Detailed Performance Report - " + arg_statName,
+                                "Historical Performance for statistic: " + arg_grpName + " - " + arg_statName,
+                                detailHistPerformanceJrxml,
+                                histPerfFile,
+                                reportOutHist + arg_statName + ".pdf",
+                                arg_statName,
+                                arg_grpName,
+                                groupComputationValues,
+                                stat_unit);
+                        summaryHistPerfReport.generateReport();
+                        masterLog.info("    Successfully created report: " + arg_grpName + "- Detailed Performance Report - "
+                                + arg_statName);
+                    } else {
+                        ReportBuilder summaryHistPerfReport = new ReportBuilder(arg_grpName + " - Summarized Performance Report - " + arg_statName,
+                                "Historical Performance for statistic: " + arg_grpName + " - " + arg_statName,
+                                summaryHistPerformanceJrxml,
+                                histPerfFile,
+                                reportOutHist + arg_statName + ".pdf",
+                                arg_statName,
+                                arg_grpName,
+                                groupComputationValues,
+                                stat_unit);
+                        summaryHistPerfReport.generateReport();
+                        masterLog.info("    Successfully created report: " + arg_grpName + "- Summarized Performance Report - "
+                                + arg_statName);
+                    }
+                } catch (Exception e) {
+                    masterLog.warn("\t WARNING: Error creating historical performance report for: " + arg_statName);
+                    masterLog.warn("\t " + e);
+                }
             }
-            temp_collection.clearCollection();
+        } else {
+            masterLog.warn("WARNING: INVALID value '" + arg_analysisType + " for 'arg_analysisType' in analyzeHistoricalTrends() invocation. No analysis"
+                   + " or reports generated!");
+        }
 
-        } //end for loop iteration through unique names in collection.
+
+        masterLog.info("    Historical analysis done for statistic: "+ arg_statName
+                + " - " + arg_statName);
+        masterLog.info("");
     }
 
 
     public static void writeToHistoricalPerformanceFile(String arg_destinationFilePath,
                                                         ArrayList<Long[]> arg_statHistEntries,
-                                                        ArrayList<Float[]> arg_percChangeEntries,
+                                                        ArrayList<Double[]> arg_percChangeEntries,
                                                         Long[] arg_grpComputeEntries,
                                                         DateTime[] arg_startDates,
                                                         DateTime[] arg_endDates){
 
         File file = new File(arg_destinationFilePath);
         StringBuilder fileContent = new StringBuilder();
+        DecimalFormat df = new DecimalFormat("#.##");
 
-        if(!file.exists()) fileContent.append("Start Date,End Date,Count, delta_Count, group_Count, Total Count, delta_Total Count, group_Total Count, "
+
+       fileContent.append("Start Date,End Date,Count, delta_Count, group_Count, Total Count, delta_Total Count, group_Total Count, "
                 + "Sum, delta_Sum, group_Sum, Min, delta_Min, group_Min, Max, delta_Max, group_Max, Avg, delta_Avg, "
                 + "group_avg" + "\n");
 
@@ -678,24 +743,26 @@ public class PerformanceTool {
             fileContent.append(fmt.print(arg_startDates[i]) + ",");
             fileContent.append(fmt.print(arg_endDates[i]) + ",");
             fileContent.append(arg_statHistEntries.get(0)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(0)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(0)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[0] + ",");
             fileContent.append(arg_statHistEntries.get(1)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(1)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(1)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[1] + ",");
             fileContent.append(arg_statHistEntries.get(2)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(2)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(2)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[2] + ",");
             fileContent.append(arg_statHistEntries.get(3)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(3)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(3)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[3] + ",");
             fileContent.append(arg_statHistEntries.get(4)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(4)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(4)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[4] + ",");
             fileContent.append(arg_statHistEntries.get(5)[i] + ",");
-            fileContent.append(arg_percChangeEntries.get(5)[i] + ",");
+            fileContent.append(df.format(arg_percChangeEntries.get(5)[i]) + ",");
             fileContent.append(arg_grpComputeEntries[5]);
             fileContent.append("\n");
+
+            //System.out.println(i+":"+fileContent.toString());
         }
 
         if (fileContent.toString().length()!=0){
@@ -703,11 +770,11 @@ public class PerformanceTool {
 
             try {
 
-                if(file.exists()){
-                    Files.write(filePath, fileContent.toString().getBytes(), StandardOpenOption.APPEND);
-                } else{
+              //  if(file.exists()){
+              //      Files.write(filePath, fileContent.toString().getBytes(), StandardOpenOption.APPEND);
+              //  } else{
                     Files.write(filePath, fileContent.toString().getBytes());
-                }
+              //  }
                 masterLog.info("    Sucessfully wrote file: " + arg_destinationFilePath);
             } catch (IOException x) {
                 masterLog.warn("    IOException: %s%n", x);

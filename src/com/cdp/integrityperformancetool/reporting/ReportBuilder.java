@@ -59,7 +59,8 @@ public class ReportBuilder {
     }
 
     public ReportBuilder(String arg_name, String arg_description, String arg_reportFile, String arg_dataSrcFile,
-                         String arg_reportOutputFile, String arg_statName, String arg_statGrp) {
+                         String arg_reportOutputFile, String arg_statName, String arg_statGrp, Long[] arg_grpComputeVals,
+                         String arg_unit) {
         this.name = arg_name;
         this.description = arg_description;
         this.reportFile = arg_reportFile;
@@ -69,12 +70,22 @@ public class ReportBuilder {
         this.reportParams.put("ReportDescription", this.description);
         this.reportParams.put("STATISTIC_NAME", arg_statName);
         this.reportParams.put("STATISTIC_GROUP", arg_statGrp);
+        this.reportParams.put("GRP_COUNT", arg_grpComputeVals[0]);
+        this.reportParams.put("GRP_TOT_COUNT", arg_grpComputeVals[1]);
+        this.reportParams.put("GRP_SUM", arg_grpComputeVals[2]);
+        this.reportParams.put("GRP_MIN", arg_grpComputeVals[3]);
+        this.reportParams.put("GRP_MAX", arg_grpComputeVals[4]);
+        this.reportParams.put("GRP_AVG", arg_grpComputeVals[5]);
+        this.reportParams.put("STATISTIC_UNIT", arg_unit);
+
+
+
     }
 
     public void generateReport(){
         try{
 
-            System.out.println("About to create report: " + this.name);
+            //System.out.println("About to create report: " + this.name);
             String jasperFile = JasperCompileManager.compileReportToFile(this.reportFile);
 
             JasperReport jReport = JasperCompileManager.compileReport(this.reportFile);
@@ -85,7 +96,7 @@ public class ReportBuilder {
             JasperPrint jasperPrint = JasperFillManager.fillReport(jReport, this.reportParams, jReportCsvSource);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, this.reportOutputFile);
-            System.out.println("Successfully created report!");
+            //System.out.println("Successfully created report!");
         }  catch (JRException e) {
             e.printStackTrace();
         }

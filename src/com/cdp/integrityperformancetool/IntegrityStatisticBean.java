@@ -57,6 +57,7 @@ public class IntegrityStatisticBean {
         arg_s = arg_s.replace("<", "");
         arg_s = arg_s.replace("=", "");
         arg_s = arg_s.replace(".", "");
+        arg_s = arg_s.replace("?", "");
         return arg_s;
     }
 
