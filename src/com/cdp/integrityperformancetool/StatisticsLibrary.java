@@ -40,14 +40,18 @@ public class StatisticsLibrary {
 
     /**
      * Adds a StatisticsCollection object to the library if the group name does not already exist.
-     * TODO - what to do if the name exists?
+     * If a StatisticsCollection object already exists in the library with the same group name provided,
+     * then the two StatitsticsColleciton objects are merged into one holding all data from both.
      * @param arg_statGroupName (String) - the group name of the StatisticsCollection being added.
      * @param arg_inputCollection (StatisticsCollection) - the StatisticsCollection object to add.
      */
     public void addToLibrary(String arg_statGroupName, StatisticsCollection arg_inputCollection){
         if(!this.containsGroupName(arg_statGroupName)) this.library.put(arg_statGroupName, arg_inputCollection);
         else{
-            //TODO: error logging and catching
+            StatisticsCollection existing_sc = this.getStatisticsGroupName(arg_statGroupName);
+            for(IntegrityStatisticBean isb : existing_sc.getCollection()){
+                existing_sc.addToCollection(isb);
+            }
         }
     }
 

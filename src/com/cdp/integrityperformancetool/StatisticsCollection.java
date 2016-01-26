@@ -137,7 +137,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 *
+	 * Return boolean true if no computational fields need to be updated before they should be returned.
 	 * @return (boolean) - <b>true</b> if none of the StatisticsCollection's group computation values need to be
 	 * recomputed. <b>false</b> if any of the group computation values need to be recomputed.
 	 */
@@ -198,10 +198,6 @@ public class StatisticsCollection {
 	 *                      the same name, but different groupings.
 	 */
 	public void collapseStatistic(String arg_statName, String arg_statGroup){
-		//this method identifies all statistics that have identical names and groups.
-		//for each, the statistics are combined into a single statistic in the collection
-		//deleting all the other instances. the minimum start date and maximum end date
-		//are stored for this collapsed statistic
 
 		StatisticsCollection temp_collection = new StatisticsCollection();
 		Long cumulative_count = 0L;
@@ -283,16 +279,16 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * groups IntegrityStatisticBeans by start and end date. Those that have the same start and end date are combined
+	 * Groups IntegrityStatisticBeans by start and end date. Those that have the same start and end date are combined
 	 * into a single IntegrityStatisticBean.
 	 */
 	public void collapseStatisticsByDate(){
 
 		StatisticsCollection temp_collection = new StatisticsCollection();
 
-		for(int i=0;i<getCollectionSize();i++){
-			DateTime endDate = getCollectionObject(i).getEndDate();
-			DateTime startDate = getCollectionObject(i).getStartDate();
+		for(int i=0;i<this.getCollectionSize();i++){
+			DateTime endDate = this.getCollectionObject(i).getEndDate();
+			DateTime startDate = this.getCollectionObject(i).getStartDate();
 			DateTime next_endDate;
 			DateTime next_startDate;
 
@@ -301,11 +297,11 @@ public class StatisticsCollection {
 			int[] nextEndDateID_array = new int[3];
 			int[] nextStartDateID_array = new int[3];
 
-			if((i+1)<getCollectionSize()){
+			if((i+1)<this.getCollectionSize()){
 				int increment = 1;
 				do {
-					next_endDate = getCollectionObject(i + increment).getEndDate();
-					next_startDate = getCollectionObject(i + increment).getStartDate();
+					next_endDate = this.getCollectionObject(i + increment).getEndDate();
+					next_startDate = this.getCollectionObject(i + increment).getStartDate();
 
 					nextEndDateID_array[0] = next_endDate.getYear();
 					nextEndDateID_array[1] = next_endDate.getMonthOfYear();
@@ -326,6 +322,7 @@ public class StatisticsCollection {
 						(i+increment)<getCollectionSize());
 
 				int endIndex = i + increment - 1;
+				//int endIndex = i + increment - 1;
 				//System.out.println("i: " + i +  ", increment: " + increment + ", endIndex: " + endIndex);
 
 				if(endIndex>i){ //then combine the IntegrityStatisticBeans
@@ -362,6 +359,9 @@ public class StatisticsCollection {
 				} else { //just add the single Integrity StatisticBean back
 					temp_collection.addToCollection(getCollectionObject(i));
 				}
+			} else {
+				//just add the single Integrity StatisticBean back
+				temp_collection.addToCollection(getCollectionObject(i));
 			}
 		}
 		//finally, replace the collapsed collection as this.collection
@@ -398,7 +398,7 @@ public class StatisticsCollection {
 	 */
 	public void computeCollectionAverageValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getAverage();
 		}
 		this.collectionAverageValue = (cumulativeSum)/this.getCollectionSize();
@@ -411,7 +411,7 @@ public class StatisticsCollection {
 	 */
 	public void computeCollectionCountValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getCount();
 		}
 		this.collectionCountValue = cumulativeSum;
@@ -425,7 +425,7 @@ public class StatisticsCollection {
 	public void computeCollectionEarliestEndDate() {
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.collection) {
+			for (IntegrityStatisticBean isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getEndDate();
 				} else {
@@ -450,7 +450,7 @@ public class StatisticsCollection {
 	public void computeCollectionEarliestStartDate(){
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.collection) {
+			for (IntegrityStatisticBean isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getStartDate();
 				} else {
@@ -460,7 +460,7 @@ public class StatisticsCollection {
 				}
 			}
 		} else if (this.getCollectionSize() == 1) {
-			test_date = this.collection.get(0).getStartDate();
+			test_date = this.getCollectionObject(0).getStartDate();
 		} else {
 			//there is nothing in the collection to work with...
 		}
@@ -475,7 +475,7 @@ public class StatisticsCollection {
 	public void computeCollectionLatestEndDate() {
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.collection) {
+			for (IntegrityStatisticBean isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getEndDate();
 				} else {
@@ -485,7 +485,7 @@ public class StatisticsCollection {
 				}
 			}
 		} else if (this.getCollectionSize() == 1) {
-			test_date = this.collection.get(0).getEndDate();
+			test_date = getCollectionObject(0).getEndDate();
 		} else {
 			//there is nothing in the collection to work with...
 		}
@@ -500,7 +500,7 @@ public class StatisticsCollection {
 	public void computeCollectionLatestStartDate(){
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.collection) {
+			for (IntegrityStatisticBean isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getStartDate();
 				} else {
@@ -510,7 +510,7 @@ public class StatisticsCollection {
 				}
 			}
 		} else if (this.getCollectionSize() == 1) {
-			test_date = this.collection.get(0).getStartDate();
+			test_date = this.getCollectionObject(0).getStartDate();
 		} else {
 			//there is nothing in the collection to work with...
 		}
@@ -525,12 +525,13 @@ public class StatisticsCollection {
 	 * of the collection.
 	 */
 	public void computeCollectionMaximumObject(){
-		if(this.requireMaxValRecompute) {
-			computeCollectionMaximumValue();
+
+		if(this.getRequireMaxObjRecompute()) {
+			this.computeCollectionMaximumValue();
 		}
 
 		ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			//use known max of collection to return the object(s) equal to this max.
 			if (isb.getMax()==this.collectionMaximumValue) temp_isb_arrayList.add(isb);
 		}
@@ -543,11 +544,11 @@ public class StatisticsCollection {
 	 * the collectionMaximumValue attribute.
 	 */
 	public void computeCollectionMaximumValue() {
-		if (getCollectionSize()>1) {
+		if (this.getCollectionSize()>1) {
 			//retrieve all individual maximums into Long[]
 			Long[] allMaxVals = new Long[this.getCollectionSize()];
-			for (int i = 0; i < getCollectionSize(); i++) {
-				allMaxVals[i] = this.collection.get(i).getMax();
+			for (int i = 0; i < this.getCollectionSize(); i++) {
+				allMaxVals[i] = this.getCollectionObject(i).getMax();
 			}
 
 			//use the Mergesort algorithm to determine the maximum value
@@ -556,7 +557,7 @@ public class StatisticsCollection {
 			this.collectionMaximumValue = allMaxVals[allMaxVals.length-1];
 
 		} else if (this.getCollectionSize()==1){
-			this.collectionMaximumValue = this.collection.get(0).getMax();
+			this.collectionMaximumValue = this.getCollectionObject(0).getMax();
 		} else {
 			System.out.println("WARNING: COMPUTE MAX VALUE METHOD CALLED WITH NO COLLECTION");
 			//was called with an empty collection
@@ -573,12 +574,12 @@ public class StatisticsCollection {
 	 * of the collection.
 	 */
 	public void computeCollectionMinimumObject(){
-		if(this.requireMinValRecompute) {
-			computeCollectionMinimumValue();
+		if(this.getRequireMinValRecompute()) {
+			this.computeCollectionMinimumValue();
 		}
 
 		ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			//use known min of collection to return the object(s) equal to this min.
 			if(isb.getMin()==this.collectionMinimumValue) temp_isb_arrayList.add(isb);
 		}
@@ -591,11 +592,11 @@ public class StatisticsCollection {
 	 * the collectionMinimumValue attribute.
 	 */
 	public void computeCollectionMinimumValue(){
-		if (getCollectionSize()>1) {
+		if (this.getCollectionSize()>1) {
 			//retrieve all individual minimums into Long[]
 			Long[] allMinVals = new Long[this.getCollectionSize()];
-			for (int i = 0; i < getCollectionSize(); i++) {
-				allMinVals[i] = this.collection.get(i).getMin();
+			for (int i = 0; i < this.getCollectionSize(); i++) {
+				allMinVals[i] = this.getCollectionObject(i).getMin();
 			}
 
 			//use the Mergesort algorithm to determine the minimum value
@@ -604,7 +605,7 @@ public class StatisticsCollection {
 			this.collectionMinimumValue = allMinVals[0];
 
 		} else if (this.getCollectionSize()==1){
-			this.collectionMinimumValue = this.collection.get(0).getMin();
+			this.collectionMinimumValue = this.getCollectionObject(0).getMin();
 		} else {
 			System.out.println("WARNING: COMPUTE MIN VALUE METHOD CALLED WITH NO COLLECTION");
 			//was called with an empty collection...
@@ -619,7 +620,7 @@ public class StatisticsCollection {
 	 */
 	public void computeCollectionSumValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getSum();
 		}
 		this.collectionSumValue = cumulativeSum;
@@ -632,7 +633,7 @@ public class StatisticsCollection {
 	 */
 	public void computeCollectionTotalCountValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.collection){
+		for (IntegrityStatisticBean isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getTotalCount();
 		}
 		this.collectionTotalCountValue = cumulativeSum;
@@ -644,10 +645,9 @@ public class StatisticsCollection {
 	 * @return HashMap {String: String} representing all unique name-group pairs of IntegrityStatisticBean objects in the collection.
 	 */
 	public HashMap<String, String> getAllUniqueNameGroupPairs(){
-		//returns a HashMap of all unique statistic {name: group} pairs in the collection
 		HashMap<String, String> uniqueNames = new HashMap<String, String>();
 
-		for(IntegrityStatisticBean isb : this.collection) {
+		for(IntegrityStatisticBean isb : this.getCollection()) {
 			if (!uniqueNames.containsKey(isb.getName())) {
 				uniqueNames.put(isb.getName(), isb.getGroup());
 			}
@@ -666,8 +666,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the value of the StatisticsCollection's average value.
 	 */
 	public Long getCollectionAverageValue(){
-		if(this.requireAvgValRecompute) {
-			computeCollectionAverageValue();
+		if(this.getRequireAvgValRecompute()) {
+			this.computeCollectionAverageValue();
 		}
 		return this.collectionAverageValue;
 	}
@@ -677,8 +677,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the value of the StatisticsCollection's count value.
 	 */
 	public Long getCollectionCountValue(){
-		if(this.requireCntValRecompute) {
-			computeAllCollectionStatistics();
+		if(this.getRequireCntValRecompute()) {
+			this.computeAllCollectionStatistics();
 		}
 		return this.collectionCountValue;
 	}
@@ -688,8 +688,8 @@ public class StatisticsCollection {
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's earliest end date.
 	 */
 	public DateTime getCollectionEarliestEndDate(){
-		if(this.requireEarliestEndDateRecompute) {
-			computeCollectionEarliestEndDate();
+		if(this.getRequireEarliestEndDateRecompute()) {
+			this.computeCollectionEarliestEndDate();
 		}
 		return this.collectionEarliestEndDate;
 
@@ -700,8 +700,8 @@ public class StatisticsCollection {
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's earliest start date.
 	 */
 	public DateTime getCollectionEarliestStartDate(){
-		if(this.requireEarliestStartDateRecompute) {
-			computeCollectionEarliestStartDate();
+		if(this.getRequireEarliestStartDateRecompute()) {
+			this.computeCollectionEarliestStartDate();
 		}
 		return this.collectionEarliestStartDate;
 	}
@@ -711,8 +711,8 @@ public class StatisticsCollection {
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's latest end date.
 	 */
 	public DateTime getCollectionLatestEndDate(){
-		if(this.requiresLatestEndDateRecompute) {
-			computeCollectionLatestEndDate();
+		if(this.getRequireLatestEndDateRecompute()) {
+			this.computeCollectionLatestEndDate();
 		}
 		return this.collectionLatestEndDate;
 
@@ -723,8 +723,8 @@ public class StatisticsCollection {
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's latest start date.
 	 */
 	public DateTime getCollectionLatestStartDate(){
-		if(this.requiresLatestStartDateRecompute) {
-			computeCollectionEarliestStartDate();
+		if(this.getRequireLatestStartDateRecompute()) {
+			this.computeCollectionEarliestStartDate();
 		}
 		return this.collectionLatestStartDate;
 
@@ -736,8 +736,8 @@ public class StatisticsCollection {
 	 * the collection.
 	 */
 	public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbArrayList(){
-		if(this.requireMaxObjRecompute) {
-			computeCollectionMaximumObject();
+		if(this.getRequireMaxObjRecompute()) {
+			this.computeCollectionMaximumObject();
 		}
 		return this.collectionMaximumIsbObjectArrayList;
 	}
@@ -747,8 +747,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the maximum value in the collection.
 	 */
 	public Long getCollectionMaximumValue(){
-		if(this.requireMaxValRecompute) {
-			computeCollectionMaximumValue();
+		if(this.getRequireMaxValRecompute()) {
+			this.computeCollectionMaximumValue();
 		}
 		return this.collectionMaximumValue;
 	}
@@ -759,8 +759,8 @@ public class StatisticsCollection {
 	 * the collection.
 	 */
 	public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbArrayList(){
-		if(this.requireMinObjRecompute) {
-			computeCollectionMinimumObject();
+		if(this.getRequireMinObjRecompute()) {
+			this.computeCollectionMinimumObject();
 		}
 		return this.collectionMinimumIsbObjectArrayList;
 	}
@@ -770,8 +770,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the minimum value in the collection.
 	 */
 	public Long getCollectionMinimumValue(){
-		if(this.requireMinValRecompute) {
-			computeCollectionMinimumValue();
+		if(this.getRequireMinValRecompute()) {
+			this.computeCollectionMinimumValue();
 		}
 		return this.collectionMinimumValue;
 	}
@@ -791,7 +791,8 @@ public class StatisticsCollection {
 		try{
 			return this.collection.get(index);
 		} catch(IndexOutOfBoundsException ioobe){
-			//TODO: error logging/handling.
+			System.out.println("StatisticsCollection.getCollectionObject() - ERROR: " + ioobe);
+			System.out.println("Returning new default IntegrityStatisticBean!");
 			return new IntegrityStatisticBean();
 		}
 	}
@@ -808,8 +809,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the cumulative sum of  the "sum" attribute for all IntegrityStatisticBean objects in the collection.
 	 */
 	public Long getCollectionSumValue(){
-		if(this.requiresSumValRecompute) {
-			computeCollectionSumValue();
+		if(this.getRequiredSumValRecompute()) {
+			this.computeCollectionSumValue();
 		}
 		return this.collectionSumValue;
 	}
@@ -820,8 +821,8 @@ public class StatisticsCollection {
 	 * @return (Long) - the cumulative sum of the "totalCount" attribute for all IntegrityStatisticBean objects in the collection.
 	 */
 	public Long getCollectionTotalCountValue(){
-		if(this.requireTotCntValRecompute) {
-			computeCollectionTotalCountValue();
+		if(this.getRequireTotCntValRecompute()) {
+			this.computeCollectionTotalCountValue();
 		}
 		return this.collectionTotalCountValue;
 	}
@@ -863,9 +864,9 @@ public class StatisticsCollection {
 		String[] allNames = new String[this.getCollectionSize()];
 		ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
 
-		for (int i=0; i<getCollectionSize();i++){
-			IntegrityStatisticBean currIsb = this.collection.get(i);
-			String currName = this.collection.get(i).getName();
+		for (int i=0; i<this.getCollectionSize();i++){
+			IntegrityStatisticBean currIsb = this.getCollectionObject(i);
+			String currName = this.getCollectionObject(i).getName();
 			allNames[i] = currName;
 			if (name_isb_hashtable.containsKey(currName)){
 				ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
@@ -934,7 +935,7 @@ public class StatisticsCollection {
 		ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
 
 		for (int i=0; i<this.getCollectionSize();i++){
-			IntegrityStatisticBean currIsb = this.collection.get(i);
+			IntegrityStatisticBean currIsb = this.getCollectionObject(i);
 			Long currVal;
 			switch(arg_attribute){
 				case "Average":
@@ -979,21 +980,15 @@ public class StatisticsCollection {
 
 		MergeSort valSorter = new MergeSort();
 		allFinalVals = valSorter.sort(allFinalVals);
-		int counter = 0;
+
 		for(Long val : allFinalVals){
 			ArrayList<IntegrityStatisticBean> temp_isb_arrayList = isb_hashtable.get(val);
 			for (IntegrityStatisticBean isb : temp_isb_arrayList){
 				ordered_isb_arrayList.add(isb);
-				counter++;
 			}
 		}
-		// for (int j=0;j<allFinalVals.length-1;j++){
-		//     ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-		//     temp_isb_arrayList = isb_hashtable.get(allFinalVals[j]);
-		//  }
+
 		this.collection = ordered_isb_arrayList;
-		//for (int k=0;k<ordered_isb_arrayList.size()-1;k++) this.collection.set(k, ordered_isb_arrayList.get(k));
-		//collection is now in order of objects from lowest to highest average value
 		return;
 	}
 
@@ -1029,9 +1024,9 @@ public class StatisticsCollection {
 		try{
 			this.collection.removeAll(remove_collection.getCollection());
 		} catch(IndexOutOfBoundsException ioobe){
-			//TODO: error logging and catching
+			System.out.println("StatisticsCollection.removeFromCollection(int[]) - ERROR: " + ioobe);
 		} catch (Exception e){
-			//TODO: error logging and catching
+			System.out.println("StatisticsCollection.removeFromCollection(int[]) - ERROR: " + e);
 		}
 		remove_collection.clearCollection();
 
@@ -1054,11 +1049,11 @@ public class StatisticsCollection {
 	 */
 	public void removeFromCollection(int index){
 		try{
-			this.collection.remove(index);
+			this.removeFromCollection(index);
 		} catch(IndexOutOfBoundsException ioobe){
-			//TODO: error logging and catching
+			System.out.println("StatisticsCollection.removeFromCollection(int) - ERROR: " + ioobe);
 		} catch (Exception e){
-			//TODO: error logging and catching
+			System.out.println("StatisticsCollection.removeFromCollection(int) - ERROR: " + e);
 		}
 	}
 
@@ -1085,7 +1080,7 @@ public class StatisticsCollection {
 		StringBuffer fileContents = new StringBuffer();
 		if(!file.exists() || arg_forceOverwrite) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
 
-		for(IntegrityStatisticBean isb : this.collection){
+		for(IntegrityStatisticBean isb : this.getCollection()){
 			fileContents.append(fmt.print(isb.getStartDate()) + ","
 					+ fmt.print(isb.getEndDate()) + ","
 					+ isb.getGroup() + ","
@@ -1103,11 +1098,9 @@ public class StatisticsCollection {
 		}
 
 		if (fileContents.toString().length()!=0){
-			//Charset charset = Charset.forName("US-ASCII");
 			Path filePath = Paths.get(arg_filePath);
 
 			try {
-
 				if(file.exists() && !arg_forceOverwrite){
 					Files.write(filePath, fileContents.toString().getBytes(), StandardOpenOption.APPEND);
 				} else{
@@ -1115,12 +1108,10 @@ public class StatisticsCollection {
 				}
 
 			} catch (IOException x) {
-				System.out.format("IOException: %s%n", x);
+				System.out.format("StatisticsCollection.writeToFile() - WARNING: IOException: %s%n", x);
 			}
 		} else {
-			System.out.println("WARNING: EMPTY DATA WRITTEN TO FILE...");
-			//fileContents is empty
-			//TODO: throw error or warn?
+			System.out.println("StatisticsCollection.writeToFile() - WARNING: EMPTY DATA WRITTEN TO FILE...");
 		}
 	}
 
@@ -1137,9 +1128,6 @@ public class StatisticsCollection {
 	 */
 	public void writeCollectionTotalsToFile(String arg_filePath) {
 
-		//write collection totals to a .csv file.
-		//will append to the file w/o column names if the file already contains data
-
 		File file = new File(arg_filePath);
 		StringBuffer fileContents = new StringBuffer();
 		if(!file.exists()) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
@@ -1147,40 +1135,33 @@ public class StatisticsCollection {
 
 		fileContents.append(fmt.print(this.getCollectionEarliestStartDate()) + ","
 				+ fmt.print(this.getCollectionLatestEndDate()) + ","
-				+ this.collection.get(0).getGroup() + ","
-				+ this.collection.get(0).getName() + ","
-				+ this.collection.get(0).getKind() + ","
-				+ this.collection.get(0).getUnit() + ","
+				+ this.getCollectionObject(0).getGroup() + ","
+				+ this.getCollectionObject(0).getName() + ","
+				+ this.getCollectionObject(0).getKind() + ","
+				+ this.getCollectionObject(0).getUnit() + ","
 				+ this.getCollectionCountValue() + ","
 				+ this.getCollectionTotalCountValue() + ","
 				+ this.getCollectionSumValue() + ","
-				+ this.collection.get(0).getUsed() + ","
+				+ this.getCollectionObject(0).getUsed() + ","
 				+ this.getCollectionMinimumValue() + ","
 				+ this.getCollectionMaximumValue() + ","
 				+ this.getCollectionAverageValue()  + ","
-				+ this.collection.get(0).getMode() + "\n");
+				+ this.getCollectionObject(0).getMode() + "\n");
 
 
 		if (fileContents.toString().length()!=0){
-			Charset charset = Charset.forName("US-ASCII");
 			Path filePath = Paths.get(arg_filePath);
-
-
 			try {
-
 				if(file.exists()){
 					Files.write(filePath, fileContents.toString().getBytes(), StandardOpenOption.APPEND);
 				} else{
 					Files.write(filePath, fileContents.toString().getBytes());
 				}
-
 			} catch (IOException x) {
 				System.out.format("IOException: %s%n", x);
 			}
 		} else {
-			System.out.println("WARNING: EMPTY DATA WRITTEN TO FILE...");
-			//fileContents is empty
-			//TODO: throw error or warn?
+			System.out.println("StatisticsCollection.writeCollectionTotalsToFile() - WARNING: EMPTY DATA WRITTEN TO FILE...");
 		}
 	}
 
@@ -1197,7 +1178,7 @@ public class StatisticsCollection {
 		int entry_counter = 1;
 
 		fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, total, Sum, Used, Min, Max, Average, Mode"+"\n");
-		for(IntegrityStatisticBean isb : this.collection){
+		for(IntegrityStatisticBean isb : this.getCollection()){
 			fileContents.append(entry_counter + ": "
 					+ fmt.print(isb.getStartDate()) + ","
 					+ fmt.print(isb.getEndDate()) + ","

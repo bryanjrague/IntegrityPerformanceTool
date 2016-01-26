@@ -29,42 +29,45 @@ public class StatisticsFileReader {
     //private static Path path_filePath;
     private String str_value_separator;
     private int int_skipLines;
+    private String[] statGrpsInScope;
 
     public StatisticsFileReader(){
-        this.str_filePath = " ";
-        this.str_value_separator = ",";
-        this.int_skipLines = 1;
+        this.setFilePath(" ");
+        this.setValueSeparator(",");
+        this.setSkipLines(1);
+        this.setStatGrpsInScope(new String[0]);
     }
 
     public StatisticsFileReader(String arg_filePath){
-        this.str_filePath  = arg_filePath;
-        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
-        this.str_value_separator = ",";
-        this.int_skipLines = 1;
+        this();
+        this.setFilePath(arg_filePath);
     }
 
-    public StatisticsFileReader(String arg_filePath, String arg_value_separator){
-        this.str_filePath  = arg_filePath;
-        //     this.path_filePath = Paths.get(URI.create(arg_filePath));
-        this.str_value_separator = arg_value_separator;
-        this.int_skipLines = 1;
+    public StatisticsFileReader(String arg_filePath, String[] arg_grpsInScope){
+        this();
+        this.setFilePath(arg_filePath);
+        this.setStatGrpsInScope(arg_grpsInScope);
     }
 
-    public StatisticsFileReader(String arg_filePath, int arg_skipLines){
-        this.str_filePath  = arg_filePath;
-        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
-        this.str_value_separator = ",";
-        this.int_skipLines = arg_skipLines;
+    public StatisticsFileReader(String arg_filePath, String arg_value_separator, String[] arg_grpsInScope){
+        this.setFilePath(arg_filePath);
+        this.setValueSeparator(arg_value_separator);
+        this.setSkipLines(1);
+        this.setStatGrpsInScope(arg_grpsInScope);
     }
 
-    public StatisticsFileReader(String arg_filePath, String arg_value_separator, int arg_skipLines){
-        this.str_filePath  = arg_filePath;
-        //    this.path_filePath = Paths.get(URI.create(arg_filePath));
-        this.str_value_separator = arg_value_separator;
-        this.int_skipLines = arg_skipLines;
+    public StatisticsFileReader(String arg_filePath, int arg_skipLines, String[] arg_grpsInScope){
+        this.setFilePath(arg_filePath);
+        this.setValueSeparator(",");
+        this.setSkipLines(arg_skipLines);
+        this.setStatGrpsInScope(arg_grpsInScope);
     }
 
-    //takes in a String[] created from a single .csv file line and creates a new isb item from the data.
+    public StatisticsFileReader(String arg_filePath, String arg_value_separator, int arg_skipLines, String[] arg_grpsInScope){
+        this(arg_filePath, arg_value_separator, arg_grpsInScope);
+        this.setSkipLines(arg_skipLines);
+    }
+
     private IntegrityStatisticBean arrayToIsb(String[] arg_str_array){
 
         IntegrityStatisticBean isb = new IntegrityStatisticBean();
@@ -91,9 +94,10 @@ public class StatisticsFileReader {
         return isb;
     }
 
-    //accounts for some statistic names containing the str_value_separator. in this case, the name may be
-    //split into more than one column unnecessarily, which creates more columns than expected causing issues
-    //later on with data processing. This method reconfigures the columns to correct for the situation.
+    /** Accounts for some statistic names containing the str_value_separator. in this case, the name may be
+     *  split into more than one column unnecessarily, which creates more columns than expected causing issues
+     *  later on with data processing. This method reconfigures the columns to correct for the situation.
+     */
     private String[] correctColumnFormatting(String[] arg_stringArray){
         int combineThrough = (arg_stringArray.length-14)+3;
         //combineThrough represents the highest column number which the name of the statistic
@@ -110,12 +114,6 @@ public class StatisticsFileReader {
                 offset += 1;
             } else arg_stringArray[col-offset] = arg_stringArray[col];
         }
-        //System.out.println("offset: " + offset);
-        //the above loop is working to correct the unintended splitting of the name
-        //value into more than one String[] index due to the presence of the value
-        //separator in the name. It combines columns 4 through combineThrough and
-        //shifts the remaining columns back into their expected column positions.
-
         return arg_stringArray;
     }
 
@@ -148,12 +146,27 @@ public class StatisticsFileReader {
 
                     IntegrityStatisticBean temp_isb = arrayToIsb(currStatsArray);
 
-                    if (lib_stat_mapper.containsGroupName(temp_isb.getGroup())) {
-                        lib_stat_mapper.getStatisticsGroupName(temp_isb.getGroup()).addToCollection(temp_isb);
-                    } else {
-                        StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup());
-                        temp_collection.addToCollection(temp_isb);
-                        lib_stat_mapper.addToLibrary(temp_isb.getGroup(), temp_collection);
+                    if(statGrpsInScope.length>0){
+                        for(String g: statGrpsInScope) {
+                            if (temp_isb.getGroup().equals(g)) {
+                                if (lib_stat_mapper.containsGroupName(temp_isb.getGroup())) {
+                                    lib_stat_mapper.getStatisticsGroupName(temp_isb.getGroup()).addToCollection(temp_isb);
+                                } else {
+                                    StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup());
+                                    temp_collection.addToCollection(temp_isb);
+                                    lib_stat_mapper.addToLibrary(temp_isb.getGroup(), temp_collection);
+                                }
+                                break;
+                            }
+                        }
+                    } else{
+                        if (lib_stat_mapper.containsGroupName(temp_isb.getGroup())) {
+                            lib_stat_mapper.getStatisticsGroupName(temp_isb.getGroup()).addToCollection(temp_isb);
+                        } else {
+                            StatisticsCollection temp_collection = new StatisticsCollection(temp_isb.getGroup());
+                            temp_collection.addToCollection(temp_isb);
+                            lib_stat_mapper.addToLibrary(temp_isb.getGroup(), temp_collection);
+                        }
                     }
                 }
                 lineCount +=1;
@@ -162,20 +175,22 @@ public class StatisticsFileReader {
                 sc.computeAllCollectionStatistics();
             }
 
-
         }catch(FileNotFoundException fnfe){
-            //TODO: error catching
-            System.out.println("WARNING: FILE NOT FOUND - " + fnfe);
+            System.out.println("StatisticsFileReader.executeStatisticsRetrieval - WARNING: FILE NOT FOUND - " + fnfe);
         }catch(IOException ioe){
-            //TODO: error catching
-            System.out.println("WARNING: IOEXCEPTION - " + ioe);
+            System.out.println("StatisticsFileReader.executeStatisticsRetrieval - WARNING: IOEXCEPTION - " + ioe);
         } catch(Exception e){
-            //TODO: error catching
-            System.out.println("WARNING: GENERAL EXCEPTION - " + e);
+            System.out.println("StatisticsFileReader.executeStatisticsRetrieval - WARNING: GENERAL EXCEPTION - " + e);
         }
 
         return lib_stat_mapper;
     }
+
+    /**
+     * Returns the current list of Statistic Group names which are in scope for retrieval, analysis and reporting.
+     * @return (String[]) Array of Statistic Group names in scope for.
+     */
+    public String[] getStatGrpsInScope(){ return this.statGrpsInScope; }
 
     /**
      * Returns the current filepath to the source .csv file.
@@ -201,6 +216,13 @@ public class StatisticsFileReader {
      * @param arg_filePath (String) - the full filepath to the source .csv file to be read.
      */
     public void setFilePath(String arg_filePath){ this.str_filePath = arg_filePath; }
+
+    /**
+     * Sets a String[] as the current list of Statistic Groups that are in scope for retrieval, analysis, and
+     * reporting.
+     * @param arg_grpsInScope (String[]) Array of Statistic Groups that are in scope.
+     */
+    public void setStatGrpsInScope(String[] arg_grpsInScope){ this.statGrpsInScope = arg_grpsInScope; }
 
     /**
      * Sets the number of lines to skip reading in the source .csv file.

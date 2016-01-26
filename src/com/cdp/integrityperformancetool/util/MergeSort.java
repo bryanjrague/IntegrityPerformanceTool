@@ -8,9 +8,7 @@ public class MergeSort {
     private Long[] long_array;
     private Long[] long_helper_array;
 
-    public MergeSort(){
-        //System.out.println("Initialized MergeSort...");
-    }
+    public MergeSort(){}
 
     public Long[] sort(Long[] input){
         this.long_array = input;
