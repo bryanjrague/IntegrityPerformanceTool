@@ -158,7 +158,7 @@ public class PerformanceTool {
     private static Double computePercentChange(Long arg_origVal, Long arg_newVal, boolean verbose,
                                                String arg_grpName, String arg_statName){
         try {
-            return ((new Double(arg_newVal) - new Double(arg_origVal)) /
+            return (Math.abs(new Double(arg_newVal) - new Double(arg_origVal)) /
                     (new Double(arg_origVal))) * 100.00;
         } catch (ArithmeticException ae) {
             if (verbose)
