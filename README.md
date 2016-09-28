@@ -9,8 +9,13 @@ Each line of the statistics .csv file is translated into an IntegrityStatistic o
 The application's output, analysis, and report building is highly configurable by modifying the PerformanceTool class main() method and supporting methods. 
 
 The Statistics.csv file to be processed need to be placed in the ./Input folder.
+
 Output reports and .csv files are generated in the ./Output folder.
+
 New or modified JasperReports .jrxml templates must exist in the ./ReportBuildingData folder.
+
 Logging of application activities is generated in the ./Logging folder.
+
 Please review the config.properties prior to execution to setup the files and statistic groups to be processed.
+
 JavaDocs and additional documentation material can be found in the ./Documentation folder.
