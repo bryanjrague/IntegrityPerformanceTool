@@ -21,22 +21,22 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * The main executable class of the IntegrityPerformanceTool project. This class can be modified to create the procedure
+ * The main executable class of the Integrity Performance Tool project. This class's main procedure can be modified as
  * required to process statistics and create files, reports, etc. All methods provided can be
  * customized to reporting and analysis needs.
  *
- * The "..\Properties\config.properties" files is referenced a number of key directory references. This properties file
- * should be reviewed for accuracy prior to running the PerformanceTool class main() method.
+ * The "..\Properties\config.properties" files is referenced for a number of key directories. This file
+ * should be reviewed for accuracy prior to executing the PerformanceTool class.
  */
 public class PerformanceTool {
 
     private static final DateTime runTime = new DateTime();
 
-    //using for logging via log4j
+    //masterLog logging outputs to .\Logging\PerformanceTool.log
     private static final Logger masterLog = Logger.getLogger("PerformanceTool");
     private static DateTimeFormatter fmt = DateTimeFormat.forPattern("EEE MMM-dd-yyyy HH:mm:ss");
 
-    //masterDir stores the current working directory of the IntegrityPerformanceTool project
+    //masterDir stores the current working directory of the Integrity Performance Tool project
     private static final Path currentRelativePath = Paths.get("");
     private static final String masterDir = currentRelativePath.toAbsolutePath().toString();
 
@@ -48,7 +48,7 @@ public class PerformanceTool {
     private static final String summarizedPerformanceJrxml = masterDir +"\\ReportBuildingData\\ipt_summarizedPerformanceReport.jrxml";
 
     /**
-     * Main method of PerformanceTool class. Executes the procedure as programmed.
+     * Main method of PerformanceTool class. Executes the procedure to process statistics anc create reports
      * @param args - Expects no arguments. Arguments will not be processed, even if they are provided.
      */
     public static void main(String args[]){
@@ -70,9 +70,9 @@ public class PerformanceTool {
         }
         String log4jProp = appProps.getProperty("log4jPropFilePath");
         String[] statGroups = appProps.getProperty("statGroupsInScope").split(",");
-        String[] rawDataFiles = appProps.getProperty("inputDataFilePath").split(",");
+        String rawDataFile = appProps.getProperty("inputDataFilePath");
 
-        if(rawDataFiles.length<1){
+        if(rawDataFile==null || rawDataFile.length()<1){
             masterLog.warn("ERROR: No input data file provided. Please populate the 'inputDataFilePath'"
                     + " property of .\\Properties\\config.properties with the file path to the input data.");
             masterLog.warn("Exiting application...");
@@ -90,16 +90,16 @@ public class PerformanceTool {
 
         StatisticsLibrary masterDataLib = new StatisticsLibrary();
 
-        for(String file : rawDataFiles) {
-            //////////////////////////////////////////////
-            //// Get all statistics from the master data file
-            /////////////////////////////////////////////
-            String masterDataFilePath = masterDir + file;
-            masterLog.info("Retrieving data from Source file: " + masterDataFilePath);
-            masterDataLib = getStatsLibraryFromFile(masterDataFilePath, ",", 1, statGroups);
-            masterLog.info("Successfully retrieved data.");
-            masterLog.info("");
-        }
+
+        //////////////////////////////////////////////
+        //// Get all statistics from the input data file
+        /////////////////////////////////////////////
+        String masterDataFilePath = masterDir + rawDataFile;
+        masterLog.info("Retrieving data from Source file: " + masterDataFilePath);
+        masterDataLib = getStatsLibraryFromFile(masterDataFilePath, ",", 1, statGroups);
+        masterLog.info("Successfully retrieved data.");
+        masterLog.info("");
+
 
         //////////////////////////////////////////////
         //// Send statistics group(s) for processing
@@ -110,7 +110,6 @@ public class PerformanceTool {
         }
 
         DateTime endTime = new DateTime();
-        masterLog.info("Done processing all statistics!");
         masterLog.info("");
         masterLog.info(" ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **");
         masterLog.info(" END EXECUTION OF INTEGRITY PERFORMANCE TOOL AT: " + fmt.print(endTime));
@@ -158,8 +157,8 @@ public class PerformanceTool {
     private static Double computePercentChange(Long arg_origVal, Long arg_newVal, boolean verbose,
                                                String arg_grpName, String arg_statName){
         try {
-            return (Math.abs(new Double(arg_newVal) - new Double(arg_origVal)) /
-                    (new Double(arg_origVal))) * 100.00;
+            return Math.abs( (new Double(arg_newVal) - new Double(arg_origVal)) /
+                    (new Double(arg_origVal)) ) * 100.00;
         } catch (ArithmeticException ae) {
             if (verbose)
                 masterLog.warn("    WARNING: could not compute Count percent change for "
@@ -223,20 +222,20 @@ public class PerformanceTool {
     }
 
     /**
-     * Processes the Statistics and compares the performance of new statistic data to previous
+     * Processes statistics and compares the performance of each row of statistic data to previous
      * performance. Creates reports and .csv files of statistic performance.
-     * @param arg_delta_statColl - (StatisticsCollecton) The Statistics Collection representing the delta statistics
+     * @param arg_statColl - (StatisticsCollecton) The Statistics Collection representing the delta statistics
      *                           for the statistic.
      * @param arg_grpName - (String) The Statistics Group name of the statistic.
      * @param arg_statName - (String) The name of the statistic being analyzed.
      */
-    private static void performHistoryAnalysis(StatisticsCollection arg_delta_statColl,
+    private static void performHistoryAnalysis(StatisticsCollection arg_statColl,
                                                String arg_grpName,
                                                String arg_statName){
         boolean verboseArtithmetic = true;
 
-        String stat_unit = arg_delta_statColl.getCollectionObject(0).getUnit();
-        int deltaCollectionSize = arg_delta_statColl.getCollectionSize();
+        String stat_unit = arg_statColl.getCollectionObject(0).getUnit();
+        int deltaCollectionSize = arg_statColl.getCollectionSize();
         DateTime[] startDates = new DateTime[deltaCollectionSize];
         DateTime[] endDates = new DateTime[deltaCollectionSize];
         Long[] countTracker = new Long[deltaCollectionSize];
@@ -249,19 +248,16 @@ public class PerformanceTool {
         Double[] percChange_max = new Double[deltaCollectionSize];
 
         for (int i = 0; i < deltaCollectionSize; i++) {
-            startDates[i] = arg_delta_statColl.getCollectionObject(i).getStartDate();
-            endDates[i] = arg_delta_statColl.getCollectionObject(i).getEndDate();
-            countTracker[i] = arg_delta_statColl.getCollectionObject(i).getCount();
-            avgTracker[i] = arg_delta_statColl.getCollectionObject(i).getAverage();
-            minTracker[i] = arg_delta_statColl.getCollectionObject(i).getMin();
-            maxTracker[i] = arg_delta_statColl.getCollectionObject(i).getMax();
+            startDates[i] = arg_statColl.getCollectionObject(i).getStartDate();
+            endDates[i] = arg_statColl.getCollectionObject(i).getEndDate();
+            countTracker[i] = arg_statColl.getCollectionObject(i).getCount();
+            avgTracker[i] = arg_statColl.getCollectionObject(i).getAverage();
+            minTracker[i] = arg_statColl.getCollectionObject(i).getMin();
+            maxTracker[i] = arg_statColl.getCollectionObject(i).getMax();
 
             if (i >= 1) {
-
-
                 percChange_count[i] = computePercentChange(countTracker[i], countTracker[i-1],verboseArtithmetic,
                         arg_grpName, arg_statName);
-
                 percChange_avg[i] = computePercentChange(avgTracker[i], avgTracker[i-1],verboseArtithmetic,
                         arg_grpName, arg_statName);
                 percChange_min[i] = computePercentChange(minTracker[i], minTracker[i-1],verboseArtithmetic,
@@ -274,7 +270,6 @@ public class PerformanceTool {
                 percChange_min[i] = 0.00;
                 percChange_max[i] = 0.00;
             }
-
         }
 
         String histPerfDir = masterDir + "\\Output\\" + cleanString(arg_grpName) + "\\ComparativeHistoricalPerformanceFiles\\";
@@ -296,37 +291,37 @@ public class PerformanceTool {
 
         //calculate and store the group's unique statistic group computations.
         Long[] groupComputationValues = {0L, 0L, 0L, 0L};
-        //total count
+        //group total count
         for(Long l : countTracker) { groupComputationValues[0] += l; }
 
-        //absolute minimum
+        //group minimum
         MergeSort minSorter = new MergeSort();
         Long[] sortedMinArray = new Long[minTracker.length];
         for(int i=0;i<minTracker.length;i++) { sortedMinArray[i] = minTracker[i]; }
         minSorter.sort(sortedMinArray);
         groupComputationValues[1] = sortedMinArray[0];
 
-        //absolute maximum
+        //group maximum
         MergeSort maxSorter = new MergeSort();
         Long[] sortedMaxArray = new Long[maxTracker.length];
         for(int i=0;i<maxTracker.length;i++) { sortedMaxArray[i] = maxTracker[i]; }
         minSorter.sort(sortedMaxArray);
         groupComputationValues[2] = sortedMaxArray[sortedMaxArray.length-1];
 
-        //absolute average
+        //group average
         Long total = 0L;
         for(Long l : avgTracker) {
             total += l;
         } groupComputationValues[3] = (total/(avgTracker.length));
 
         //add group computation summary to statTotalComputationsColl
-        IntegrityStatisticBean total_isb = new IntegrityStatisticBean();
-        total_isb.setStartDate(arg_delta_statColl.getCollectionEarliestStartDate());
-        total_isb.setEndDate(arg_delta_statColl.getCollectionLatestEndDate());
+        IntegrityStatistic total_isb = new IntegrityStatistic();
+        total_isb.setStartDate(arg_statColl.getCollectionEarliestStartDate());
+        total_isb.setEndDate(arg_statColl.getCollectionLatestEndDate());
         total_isb.setGroup(arg_grpName);
         total_isb.setName(arg_statName);
-        total_isb.setKind(arg_delta_statColl.getCollectionObject(0).getKind());
-        total_isb.setUnit(arg_delta_statColl.getCollectionObject(0).getUnit());
+        total_isb.setKind(arg_statColl.getCollectionObject(0).getKind());
+        total_isb.setUnit(arg_statColl.getCollectionObject(0).getUnit());
         total_isb.setCount(groupComputationValues[0]);
         total_isb.setMin(groupComputationValues[1]);
         total_isb.setMax(groupComputationValues[2]);
@@ -372,7 +367,7 @@ public class PerformanceTool {
         } catch (Exception e) {
             masterLog.warn("\t WARNING: Error creating historical performance report for: " + arg_statName);
             masterLog.warn("\t " + e);
-           // e.printStackTrace();
+            // e.printStackTrace();
         }
         masterLog.info("");
 
@@ -388,9 +383,9 @@ public class PerformanceTool {
      */
     private static void processStatisticsGroup(String arg_grpName, StatisticsLibrary arg_library){
 
-        masterLog.info(" -- -- -- -- ");
+        masterLog.info(" -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --");
         masterLog.info(" About to process statistics group: " + arg_grpName);
-        masterLog.info(" -- -- -- -- ");
+        masterLog.info(" -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --");
 
         String outputDirStr = masterDir + "\\Output\\";
         File outputDir = new File(outputDirStr);
@@ -420,7 +415,7 @@ public class PerformanceTool {
             StatisticsCollection statGrp_delta = new StatisticsCollection("All " + arg_grpName + " - Delta only");
 
             //iterate through all group statistics and sort into either the cumulative or delta collections
-            for(IntegrityStatisticBean isb : statGrp_allStats.getCollection()){
+            for(IntegrityStatistic isb : statGrp_allStats.getCollection()){
                 if(isb.getMode().equals("cumulative")){
                     statGrp_cumulative.addToCollection(isb);
                 } else if(isb.getMode().equals("delta")){
@@ -451,29 +446,38 @@ public class PerformanceTool {
             File deltaCollapsedDir = new File(deltaCollapsedDirStr);
             if(!deltaCollapsedDir.exists()) deltaCollapsedDir.mkdir();
 
-            writeToHistoricalFile(statGrp_cumulative, arg_grpName, cumulativeDirStr);
-            writeToHistoricalFile(statGrp_delta, arg_grpName, deltaDirStr);
-
             String dailyPerformanceDirStr = masterDir + "\\Output\\"+cleanString(arg_grpName)+"\\DailyPerformanceHistoryFiles\\";
             File dailyCumulativeDir = new File(dailyPerformanceDirStr);
             if(!dailyCumulativeDir.exists()) dailyCumulativeDir.mkdir();
 
+            /////////////////
+            //For each uniquely named statistic in the cumulative and delta StatisticsCollection objects,
+            // write a separate file containing all cumulative or delta entries for that specific statistics
+            // that are contained within the StatisticsCollection.
+            ///////////////////
+            writeToHistoricalFile(statGrp_cumulative, cumulativeDirStr);
+            writeToHistoricalFile(statGrp_delta, deltaDirStr);
+
+            ///////////////////
+            ///get a list of all .csv files created for both delta and cumulative data
+            ///////////////////
             ArrayList<String> cumulativeFileNamesList = new ArrayList<String>(Arrays.asList(cumulativeDir.list()));
             ArrayList<String> deltaFileNamesList = new ArrayList<String>(Arrays.asList(deltaDir.list()));
 
 
-
+            //iterate through the uniquely named statistic cumulative files
             for(int i=0;i<cumulativeFileNamesList.size();i++){
-            //for(int i=0;i<3;i++){
+                //for(int i=0;i<3;i++){
                 String currFileName = cumulativeFileNamesList.get(i);
                 String[] currStatNameArray = currFileName.split("\\.");
                 String currStatName = currStatNameArray[0];
                 masterLog.info("(" + (i+1) + " of " + cumulativeFileNamesList.size() + ")"
                         + " Working on group '" + arg_grpName + "' statistic: '" + currStatName + "' ");
 
-
+                //Performance analysis of each uniquely named statistic can only be done if there is both a
+                // delta and cumulative file to reference.
                 if(deltaFileNamesList.contains(cumulativeFileNamesList.get(i))){
-                    //there is both a cumulative and delta file entry, history analysis can be done
+
                     StatisticsFileReader cumulativeHistory = new StatisticsFileReader(cumulativeDirStr + currFileName);
                     StatisticsLibrary cumulativeHist_lib = cumulativeHistory.executeStatisticsRetrieval();
                     StatisticsCollection cumulativeHist_statColl = cumulativeHist_lib.getStatisticsGroupName(arg_grpName);
@@ -482,27 +486,39 @@ public class PerformanceTool {
                     StatisticsLibrary deltaHist_lib = deltaHistory.executeStatisticsRetrieval();
                     StatisticsCollection deltaHist_statColl = deltaHist_lib.getStatisticsGroupName(arg_grpName);
 
+                    /////////////////////////////////////////
+                    //The raw data sometimes contains multiple statistics entries for the same date-time periods.
+                    //the collapseStatisticsByDate() method combines all statistics of the same name, Start Date, and
+                    //End Date into a single statistic.
+                    ////////////////////////////////////
                     cumulativeHist_statColl.collapseStatisticsByDate();
                     deltaHist_statColl.collapseStatisticsByDate();
 
+                    //write the collapsed data to file.
                     cumulativeHist_statColl.writeToFile(cumulativeCollapsedDirStr+currFileName, false);
                     deltaHist_statColl.writeToFile(deltaCollapsedDirStr+currFileName, false);
 
+
+                    //create a new StatisticsCollection to hold the combined cumulative/delta data as a single
+                    //IntegrityStatistic object.
                     StatisticsCollection dailyPerformanceCollection = new StatisticsCollection();
-                    for(IntegrityStatisticBean isb_c : cumulativeHist_statColl.getCollection()){
-                        for(IntegrityStatisticBean isb_d : deltaHist_statColl.getCollection()){
-                            if( (isb_c.getStartDate().getDayOfYear()==isb_d.getStartDate().getDayOfYear()) &&
-                                    (isb_c.getEndDate().getDayOfYear()==isb_d.getEndDate().getDayOfYear()) ){
-                                isb_d.setMin(isb_c.getMin());
-                                isb_d.setMax(isb_c.getMax());
-                                isb_d.setMode("custom");
-                                dailyPerformanceCollection.addToCollection(isb_d);
+                    for(IntegrityStatistic is_c : cumulativeHist_statColl.getCollection()){
+                        for(IntegrityStatistic is_d : deltaHist_statColl.getCollection()){
+                            if( (is_c.getStartDate().getDayOfYear()==is_d.getStartDate().getDayOfYear()) &&
+                                    (is_c.getEndDate().getDayOfYear()==is_d.getEndDate().getDayOfYear()) ){
+                                is_d.setMin(is_c.getMin());
+                                is_d.setMax(is_c.getMax());
+                                is_d.setMode("custom");
+                                dailyPerformanceCollection.addToCollection(is_d);
                             }
                         }
                     }
 
-                    writeToHistoricalFile(dailyPerformanceCollection, cleanString(arg_grpName), dailyPerformanceDirStr);
+                    //write the combined data to file
+                    writeToHistoricalFile(dailyPerformanceCollection, dailyPerformanceDirStr);
 
+
+                    //if there is data to work with, do analysis on daily performance and change in performance.
                     try {
                         if (dailyPerformanceCollection.getCollectionSize()>0){
                             performHistoryAnalysis(dailyPerformanceCollection, arg_grpName, currStatName);
@@ -519,17 +535,15 @@ public class PerformanceTool {
                     }
                 } else{
                     //there is only a cumulative file entry
-                   masterLog.warn("There is only a single historical entry for this statistic. " +
-                           "History cannot be analyzed.");
+                    masterLog.warn("There is only a single historical entry for this statistic. " +
+                            "History cannot be analyzed.");
                 }
-
             }
-
         } catch(Exception e) {
             masterLog.info("WARNING: ISSUE PROCESSING GROUP : " + arg_grpName + " - " + e);
-            //e.printStackTrace();
         }
 
+        //prepare data for high level report output
         String totalsReportFileStr = reportOutFileBase + cleanString(arg_grpName) + " - High Level Historical Review.csv";
         statTotalComputationsColl.orderByIsbNameValue();
         statTotalComputationsColl.writeToFile(totalsReportFileStr, true);
@@ -543,7 +557,7 @@ public class PerformanceTool {
                     reportOutFileBase + cleanString(arg_grpName) + " - High Level Historical Review.pdf",
                     statTotalComputationsColl.getCollectionObject(0).getUnit(),
                     statTotalComputationsColl.getCollectionObject(0).getGroup()
-                    );
+            );
             highLevelReview.generateReport();
             masterLog.info("    Successfully created report: " + arg_grpName + "- High Level Historical Review.pdf");
 
@@ -553,22 +567,24 @@ public class PerformanceTool {
             //e.printStackTrace();
         }
 
-        masterLog.info(" -- -- -- -- ");
+        masterLog.info(" -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
         masterLog.info(" Done processing statistics group: " + arg_grpName);
-        masterLog.info(" -- -- -- -- ");
+        masterLog.info(" -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- ");
     }
 
-
-
-
     /**
-     * Writes the data of a StatisticsCollection object to a .csv file. See the StatisticsCollection.writeToFile()
-     * method for details on .csv column formatting.
+     * Writes the data of each uniquely named statistic found in a StatisticsCollection object to a .csv file. The
+     * output .csv file contains all entries of each uniquely named statisitc within the StatisticsCollection object.
+     * Output .csv File formatting is as follows :
+     * Start Date (Earliest Collection Start Date), End Date (Latest Collection End Date), Group (group value of 1st collection
+     * item), Statistic (name value of 1st collection item), Kind (kind value of 1st collection item, Unit (unit value of 1st
+     * collection item), Count (collection count), Total (collection total count), Sum (collection sum), Used (used value of
+     * 1st collection item), Min (collection min), Max (collection max), Average (collection average), Mode (mode value of
+     * 1st collection item).
      * @param arg_sc - (StatisticsCollection) The StatisticsCollection object containing data to write to a file.
-     * @param arg_grpName - (String) The Statistics Group name of all the data in the StatisticsCollection (String).
      * @param arg_targetDir - (String) The destination directory for the file once created.
      */
-    private static void writeToHistoricalFile(StatisticsCollection arg_sc, String arg_grpName, String arg_targetDir){
+    private static void writeToHistoricalFile(StatisticsCollection arg_sc, String arg_targetDir){
 
         //get all unique statistic names in the collection arg_sc
         HashMap<String,String> uniqueNames = arg_sc.getAllUniqueNameGroupPairs();
@@ -578,7 +594,7 @@ public class PerformanceTool {
             try{
                 StatisticsCollection temp_collection = new StatisticsCollection();
                 //if a statistic in the collection arg_sc matches the current name, add it to the temp collection
-                for(IntegrityStatisticBean isb : arg_sc.getCollection()){
+                for(IntegrityStatistic isb : arg_sc.getCollection()){
                     if(isb.getName().equals(name)) temp_collection.addToCollection(isb);
                 }
 
@@ -622,22 +638,22 @@ public class PerformanceTool {
      * @param arg_endDates - (DateTime[]) Array of DateTime End Date values for the historical data.
      */
     private static void writeToHistoricalPerformanceFile(String arg_destinationFilePath,
-                                                        ArrayList<Long[]> arg_statHistEntries,
-                                                        ArrayList<Double[]> arg_percChangeEntries,
-                                                        Long[] arg_grpComputeEntries,
-                                                        DateTime[] arg_startDates,
-                                                        DateTime[] arg_endDates){
+                                                         ArrayList<Long[]> arg_statHistEntries,
+                                                         ArrayList<Double[]> arg_percChangeEntries,
+                                                         Long[] arg_grpComputeEntries,
+                                                         DateTime[] arg_startDates,
+                                                         DateTime[] arg_endDates){
 
         File file = new File(arg_destinationFilePath);
         StringBuilder fileContent = new StringBuilder();
         DecimalFormat df = new DecimalFormat("#.##");
 
 
-       fileContent.append("Start Date,End Date,"
-               + "Count,delta_Count,group_Count,"
-               + "Min,delta_Min,group_Min,"
-               + "Max,delta_Max,group_Max,"
-               + "Avg,delta_Avg,group_avg" + "\n");
+        fileContent.append("Start Date,End Date,"
+                + "Count,delta_Count,group_Count,"
+                + "Min,delta_Min,group_Min,"
+                + "Max,delta_Max,group_Max,"
+                + "Avg,delta_Avg,group_avg" + "\n");
 
         for(int i=0;i<arg_statHistEntries.get(0).length;i++) {
             fileContent.append(fmt.print(arg_startDates[i]) + ",");
@@ -663,11 +679,11 @@ public class PerformanceTool {
 
             try {
 
-              //  if(file.exists()){
-              //      Files.write(filePath, fileContent.toString().getBytes(), StandardOpenOption.APPEND);
-              //  } else{
-                    Files.write(filePath, fileContent.toString().getBytes());
-              //  }
+                //  if(file.exists()){
+                //      Files.write(filePath, fileContent.toString().getBytes(), StandardOpenOption.APPEND);
+                //  } else{
+                Files.write(filePath, fileContent.toString().getBytes());
+                //  }
                 masterLog.info("    Sucessfully wrote file: " + arg_destinationFilePath);
             } catch (IOException x) {
                 masterLog.warn("    IOException: %s%n", x);

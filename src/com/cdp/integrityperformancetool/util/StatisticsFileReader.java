@@ -1,32 +1,25 @@
 package com.cdp.integrityperformancetool.util;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.cdp.integrityperformancetool.StatisticsLibrary;
 import org.joda.time.Instant;
-import org.joda.time.DateTime;
 
-import com.cdp.integrityperformancetool.IntegrityStatisticBean;
+import com.cdp.integrityperformancetool.IntegrityStatistic;
 import com.cdp.integrityperformancetool.StatisticsCollection;
 import org.joda.time.format.DateTimeFormat;
 
 /**
  * The StatisticsFileReader class reads a provided .csv file and converts it to a StatisticsLibrary, containing a
- * StatisticsCollection for every unique "Group" column in the source .csv file. See the <i>executeStatisticsRetrieval</i>
- * method for more information about the output StatisticsLibrary object.
+ * StatisticsCollection for every unique "Group" column in the source .csv file. The .csv file to be read
+ * must be in the expected formatting of the Integrity Server Statistics .csv output file with columns matching:
+ * Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode
+ *
+ * See the <i>executeStatisticsRetrieval()</i> method for more information about the output StatisticsLibrary object.
  */
 public class StatisticsFileReader {
 
-    private String str_filePath; //** file being read must meet expected column formatting **
-    //private static Path path_filePath;
+    private String str_filePath;
     private String str_value_separator;
     private int int_skipLines;
     private String[] statGrpsInScope;
@@ -68,9 +61,9 @@ public class StatisticsFileReader {
         this.setSkipLines(arg_skipLines);
     }
 
-    private IntegrityStatisticBean arrayToIsb(String[] arg_str_array){
+    private IntegrityStatistic arrayToIsb(String[] arg_str_array){
 
-        IntegrityStatisticBean isb = new IntegrityStatisticBean();
+        IntegrityStatistic isb = new IntegrityStatistic();
         Instant start_instant = new Instant().parse(arg_str_array[0],
                 DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss zzz YYYY"));
         Instant end_instant = new Instant().parse(arg_str_array[1],
@@ -100,12 +93,6 @@ public class StatisticsFileReader {
      */
     private String[] correctColumnFormatting(String[] arg_stringArray){
         int combineThrough = (arg_stringArray.length-14)+3;
-        //combineThrough represents the highest column number which the name of the statistic
-        //has been spread out through (col 4 through combineThrough) due to one or more
-        //of the designated str_valueSeparator characters appearing in the name of
-        //the statistic. Here it is assumed that the csv file being read meets the
-        //format of 13 columns, where the 4th from the left, starting with column 1, is the
-        //"Statistic" column representing the name of the statistic.
         int offset = 0;
 
         for(int col=4;col<arg_stringArray.length;col++){
@@ -121,10 +108,10 @@ public class StatisticsFileReader {
      * Reads the .csv file stored as the StatisticsFileReader class' "str_filePath" attribute. Processes all the
      * statistics and exports them as a single StatisticsLirary object. Contained within the StatisticsLibrary is
      * a StatisticsCollection object for each unique Group name in the source file. Each StatisticsCollection object
-     * contains IntegrityStatisticBean objects of the group name, where each IntegrityStatisticBean object holds data from a
+     * contains IntegrityStatistic objects of the group name, where each IntegrityStatistic object holds data from a
      * single line of the source .csv file.
      * @return (StatisticsLibrary) - the processed statistics in the form of a StatisticsLibrary, holding StatisticsCollection
-     * objects, each holding IntegrityStatisticBean Objects.
+     * objects, each holding IntegrityStatistic Objects.
      */
     public StatisticsLibrary executeStatisticsRetrieval() {
 
@@ -136,7 +123,7 @@ public class StatisticsFileReader {
             String current_line;
             int lineCount = 1;
             while ((current_line = br.readLine()) != null) {
-                String current_stats = current_line.replace(",,", ", ,").replace("\"", ""); //this is to prevent null values when creating the String[]
+                String current_stats = current_line.replace(",,", ", ,").replace("\"", "");
                 if (lineCount > this.int_skipLines) {
                     String[] currStatsArray = current_stats.split(this.str_value_separator);
 
@@ -144,7 +131,7 @@ public class StatisticsFileReader {
                         currStatsArray = correctColumnFormatting(currStatsArray);
                     }
 
-                    IntegrityStatisticBean temp_isb = arrayToIsb(currStatsArray);
+                    IntegrityStatistic temp_isb = arrayToIsb(currStatsArray);
 
                     if(statGrpsInScope.length>0){
                         for(String g: statGrpsInScope) {

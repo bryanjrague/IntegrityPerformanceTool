@@ -171,8 +171,6 @@ public class ReportBuilder {
      */
     public void generateReport() {
         try {
-            //System.out.println("About to create report: " + this.name);
-            String jasperFile = JasperCompileManager.compileReportToFile(this.reportFile);
 
             JasperReport jReport = JasperCompileManager.compileReport(this.reportFile);
 
@@ -182,7 +180,7 @@ public class ReportBuilder {
             JasperPrint jasperPrint = JasperFillManager.fillReport(jReport, this.reportParams, jReportCsvSource);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, this.reportOutputFile);
-            //System.out.println("Successfully created report!");
+
         } catch (JRException e) {
             e.printStackTrace();
         }
@@ -238,7 +236,7 @@ public class ReportBuilder {
             return getReportParams().get(arg_reportParam);
         } catch(Exception e){
             System.out.println("ReportBuilder.getReportParam() - ERROR: Report Parameter "
-                + "provided does not exist. ");
+                    + "provided does not exist. ");
             return null;
         }
     }

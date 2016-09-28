@@ -8,7 +8,7 @@ import java.util.HashMap;
  * created for each Integrity Server Statistics source file as output from the <i>executeStatisticsRetrieval</i> method,
  * and contains a StatisticsCollection object for each unique Group value existing in the source .csv data.
  *
- * The main feature of the StatisticsLibrary is the library attribute. This attribute is a HashMap storing String
+ * The main feature of the StatisticsLibrary is the library instance variable. It is a HashMap storing String
  * group name as the key, and a StatisticsCollection object as the value. The data is meant to be organized
  * such that a StatisticsCollection object can be organized under a single group name within the Library,
  * and extracted for use by requesting the group name key.
@@ -41,7 +41,7 @@ public class StatisticsLibrary {
     /**
      * Adds a StatisticsCollection object to the library if the group name does not already exist.
      * If a StatisticsCollection object already exists in the library with the same group name provided,
-     * then the two StatitsticsColleciton objects are merged into one holding all data from both.
+     * then the two StatitsticsCollection objects are merged into one holding all data from both.
      * @param arg_statGroupName (String) - the group name of the StatisticsCollection being added.
      * @param arg_inputCollection (StatisticsCollection) - the StatisticsCollection object to add.
      */
@@ -49,7 +49,7 @@ public class StatisticsLibrary {
         if(!this.containsGroupName(arg_statGroupName)) this.library.put(arg_statGroupName, arg_inputCollection);
         else{
             StatisticsCollection existing_sc = this.getStatisticsGroupName(arg_statGroupName);
-            for(IntegrityStatisticBean isb : existing_sc.getCollection()){
+            for(IntegrityStatistic isb : existing_sc.getCollection()){
                 existing_sc.addToCollection(isb);
             }
         }

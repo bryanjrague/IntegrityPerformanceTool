@@ -10,32 +10,29 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 /**
- * The StatisticsCollection class abstracts a logical grouping of IntegrityStatisticBean objects. The grouping of
- * IntegrityStatisticBean objects are stored in the StatisticsCollection's "collection" attribute as an
- * ArrayList of IntegrityStatisticBeans. The StatisticsColleciton is capable of computing group totals for most of the
- * IntegrityStatisticBean attributes. For example, the StatisticsColleciton can compute and store the collection's
- * Average value, which is computed as the average of all IntegrityStatisticBean average values existing in the colleciton.
+ * The StatisticsCollection class abstracts a logical grouping of IntegrityStatistic objects. The grouping of
+ * IntegrityStatistic objects are stored in the StatisticsCollection's "collection" instance variable as an
+ * ArrayList of IntegrityStatistics.
  *
  * The StatisticCollection has many group computation and sort methods,
- * as well as methods to add, remove, and get IntegrityStatisticBean objects from the collection attribute.
- * Standard <i>get</i> and <i>set</i> methods exist to access the instance attributes.
+ * as well as methods to add, remove, and get IntegrityStatistic objects from the collection attribute.
+ * Standard <i>get</i> and <i>set</i> methods exist to access the instance variables.
  *
  */
 public class StatisticsCollection {
 
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern("EEE MMM dd HH:mm:ss zzz YYYY");
 
-	private ArrayList<IntegrityStatisticBean> collection;
+	private ArrayList<IntegrityStatistic> collection;
 	private Long collectionAverageValue;
 	private Long collectionCountValue;
-	private ArrayList<IntegrityStatisticBean> collectionMaximumIsbObjectArrayList;
+	private ArrayList<IntegrityStatistic> collectionMaximumIsbObjectArrayList;
 	private Long collectionMaximumValue;
-	private ArrayList<IntegrityStatisticBean> collectionMinimumIsbObjectArrayList;
+	private ArrayList<IntegrityStatistic> collectionMinimumIsbObjectArrayList;
 	private Long collectionMinimumValue;
 	private String collectionName;
 	private Long collectionTotalCountValue;
@@ -63,20 +60,20 @@ public class StatisticsCollection {
 	private boolean requireTotCntValRecompute = false;
 
 	public StatisticsCollection(){
-		this("New Integrity Statistics Collection", new ArrayList<IntegrityStatisticBean>());
+		this("New Integrity Statistics Collection", new ArrayList<IntegrityStatistic>());
 	}
 
 	public StatisticsCollection(String arg_collectionName){
-		this(arg_collectionName, new ArrayList<IntegrityStatisticBean>());
+		this(arg_collectionName, new ArrayList<IntegrityStatistic>());
 	}
 
-	public StatisticsCollection(String arg_collectionName, ArrayList<IntegrityStatisticBean> arg_collection){
+	public StatisticsCollection(String arg_collectionName, ArrayList<IntegrityStatistic> arg_collection){
 		this.collection = arg_collection;
 		this.collectionAverageValue = 0L;
 		this.collectionCountValue = 0L;
-		this.collectionMaximumIsbObjectArrayList = new ArrayList<IntegrityStatisticBean>();
+		this.collectionMaximumIsbObjectArrayList = new ArrayList<IntegrityStatistic>();
 		this.collectionMaximumValue = 0L;
-		this.collectionMinimumIsbObjectArrayList = new ArrayList<IntegrityStatisticBean>();
+		this.collectionMinimumIsbObjectArrayList = new ArrayList<IntegrityStatistic>();
 		this.collectionMinimumValue = 0L;
 		this.collectionName = arg_collectionName;
 		this.collectionTotalCountValue = 0L;
@@ -91,12 +88,12 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Adds a single IntegrityStatisticBean object to the collection.
+	 * Adds a single IntegrityStatistic object to the collection.
 	 * This action causes for all "recompute" flags to be raised, so that all previously computed
 	 * StatisticsCollection values will be recomputed before being returned or used.
-	 * @param arg_isb (IntegrityStatisticBean) - The IntegrityStatisticBean to add to the existing collection.
+	 * @param arg_isb (IntegrityStatistic) - The IntegrityStatistic to add to the existing collection.
 	 */
-	public void addToCollection(IntegrityStatisticBean arg_isb){
+	public void addToCollection(IntegrityStatistic arg_isb){
 		this.collection.add(arg_isb);
 		this.requireAvgValRecompute = true;
 		this.requireCntValRecompute = true;
@@ -113,13 +110,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Adds an ArrayList of IntegrityStatisticBean objects to the collection.
+	 * Adds an ArrayList of IntegrityStatistic objects to the collection.
 	 * This action causes for all "recompute" flags to be raised, so that all previously computed
 	 * StatisticsCollection values will be recomputed before being returned or used.
-	 * @param arg_isb_arrayList (IntegrityStatisticBean) - The IntegrityStatisticBean to add to the existing collection.
+	 * @param arg_isb_arrayList (IntegrityStatistic) - The IntegrityStatistic to add to the existing collection.
 	 */
-	public void addToCollection(ArrayList<IntegrityStatisticBean> arg_isb_arrayList){
-		for(IntegrityStatisticBean isb : arg_isb_arrayList){
+	public void addToCollection(ArrayList<IntegrityStatistic> arg_isb_arrayList){
+		for(IntegrityStatistic isb : arg_isb_arrayList){
 			this.collection.add(isb);
 		}
 		this.requireAvgValRecompute = true;
@@ -157,6 +154,9 @@ public class StatisticsCollection {
 		return false;
 	}
 
+	/**
+	 * Creates a Comparator object for use in sorting a group of String objects by alphabetical order.
+	 */
 	private static Comparator<String> ALPHABETICAL_ORDER = new Comparator<String>() {
 		public int compare(String str1, String str2) {
 			int res = String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
@@ -168,9 +168,9 @@ public class StatisticsCollection {
 	};
 
 	/**
-	 * Clears the current collection attribute of all IntegrityStatisticBean objects.
-	 * This effectively removes all IntegrityStatisticBean objects from the StatisticsCollection and raises all
-	 * group value recomputation flags.
+	 * Clears the current collection attribute of all IntegrityStatistic objects.
+	 * <b>This effectively removes all IntegrityStatistic objects from the StatisticsCollection and raises all
+	 * group value recomputation flags.</b>
 	 */
 	public void clearCollection(){
 		this.collection.clear();
@@ -189,11 +189,23 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Combines all duplicate named IntegrityStatisticBean objects in the collection into a single IntegrityStatisticBean
-	 * object in the collection, and removes the duplicates. Each individual IntegrityStatisticBean's values are combined
-	 * and recomputed appropriately into the final collapsed Statistic.
-	 * @param arg_statName (String) - The name attribute value of the IntegrityStatisticBean to combine all duplicates of.
-	 * @param arg_statGroup (String) - The group attribute value of the IntegrityStatisticBean to combine all duplicates of.
+	 * Combines all duplicate named IntegrityStatistic objects in the collection into a single summarized IntegrityStatistic
+	 * object containing summarized statistics of all. All IntegrityStatistic objects used in creating the summarized
+	 * IntegrityStatistic object are removed from the StatisticsCollection and the summarized IntegrityStatistic is
+	 * added to it. The summarized IntegrityStatistic object has:
+	 * <ul>
+	 *     <li>Start Date = earliest Start Date for the statistic name.</li>
+	 *     <li>End Date = latest End Date for the statistic name.</li>
+	 *     <li>Group = the statistic Group value shared by all IntegrityStatistics being combined.</li>
+	 *     <li>Name = the statistic Name value shared by all IntegrityStatistics being combined.</li>
+	 *     <li>Count = cumulative sum of all Count values.</li>
+	 *     <li>Total Count = cumulative sum of all Total Count values.</li>
+	 *     <li>Minimum = the lowest value Minimum of all IntegrityStatistics with the same name.</li>
+	 *     <li>Maximum = the greatest value Maximum of all IntegrityStatistics with the same name.</li>
+	 *     <li>Average = the average of Average values of all IntegrityStatistics with the same name.</li>
+	 * </ul>
+	 * @param arg_statName (String) - The name attribute value of the IntegrityStatistic to combine all duplicates of.
+	 * @param arg_statGroup (String) - The group attribute value of the IntegrityStatistic to combine all duplicates of.
 	 *                      This is used to ensure that only exact duplicates are combined, and not any statistics that have
 	 *                      the same name, but different groupings.
 	 */
@@ -203,13 +215,13 @@ public class StatisticsCollection {
 		Long cumulative_count = 0L;
 		Long cumulative_totalCount = 0L;
 		Long cumulative_sum = 0L;
-		ArrayList<IntegrityStatisticBean> remove_isbs = new ArrayList<IntegrityStatisticBean>();
+		ArrayList<IntegrityStatistic> remove_isbs = new ArrayList<IntegrityStatistic>();
 		int counter = 1;
 		DateTime startDate = new DateTime();
 		DateTime endDate = new DateTime();
 
 
-		for(IntegrityStatisticBean isb : this.getCollection()){
+		for(IntegrityStatistic isb : this.getCollection()){
 			if (isb.getName().equals(arg_statName) && isb.getGroup().equals(arg_statGroup)){
 				temp_collection.addToCollection(isb);
 				cumulative_count = cumulative_count + isb.getCount();
@@ -233,22 +245,17 @@ public class StatisticsCollection {
 			}
 		}
 
-		//temp_collection.writeToString();
 		temp_collection.computeAllCollectionStatistics();
-		IntegrityStatisticBean collapsedStatistic = temp_collection.getCollectionMaximumIsbArrayList().get(0);
+		IntegrityStatistic collapsedStatistic = temp_collection.getCollectionMaximumIsbArrayList().get(0);
 		collapsedStatistic.setAverage(temp_collection.getCollectionAverageValue());
-		//System.out.println("avg: " + temp_collection.getCollectionAverageValue());
 		collapsedStatistic.setCount(cumulative_count);
 		collapsedStatistic.setGroup(arg_statGroup);
 		collapsedStatistic.setName(arg_statName);
 		collapsedStatistic.setMin(temp_collection.getCollectionMinimumValue());
-		//System.out.println("min: " + temp_collection.getCollectionMinimumValue());
 		collapsedStatistic.setMax(temp_collection.getCollectionMaximumValue());
-		//System.out.println("max: " +temp_collection.getCollectionMaximumValue());
 		collapsedStatistic.setTotalCount(cumulative_totalCount);
 		collapsedStatistic.setStartDate(startDate);
 		collapsedStatistic.setEndDate(endDate);
-		//System.out.println("start:" + startDate + ", endDate: " + endDate);
 		collapsedStatistic.setSum(cumulative_sum);
 		collapsedStatistic.setStartDate(temp_collection.getCollectionEarliestStartDate());
 		collapsedStatistic.setEndDate(temp_collection.getCollectionLatestEndDate());
@@ -259,16 +266,13 @@ public class StatisticsCollection {
 
 		this.addToCollection(collapsedStatistic);
 		remove_isbs.clear();
-		//writeToString();
 	}
 
 	/**
-	 * Executes the <i>collapseStatistic</i> method against all IntegrityStatisticBean objects existing in the
+	 * Executes the <i>collapseStatistic()</i> method against all IntegrityStatistic objects existing in the
 	 * collection.
 	 */
 	public void collapseAllStatistics(){
-		//performs the same operation as collapseStatistic, except for all Statistics
-		//in the collection.
 
 		HashMap<String, String> allNames = this.getAllUniqueNameGroupPairs();
 
@@ -279,8 +283,18 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Groups IntegrityStatisticBeans by start and end date. Those that have the same start and end date are combined
-	 * into a single IntegrityStatisticBean.
+	 * Combines IntegrityStatistic objects that have the same exact Start Date, End Date, and Name. All individual
+	 * IntegrityStatic objects that were used in creating the summarized IntegrityStatisic object are removed from
+	 * the StatisticsCollection, and the summarized IntegrityStatistic object is added to it.
+	 * The summarized IntegrityStatistic object has:
+	 * <ul>
+	 *     <li>Count = cumulative sum of all Count values within the same time period.</li>
+	 *     <li>Total Count = cumulative sum of all Total Count values within the same time period.</li>
+	 *     <li>Minimum = the lowest value Minimum of all IntegrityStatistics within the same time period.</li>
+	 *     <li>Maximum = the greatest value Maximum of all IntegrityStatistics within the same time period.</li>
+	 *     <li>Average = the average of Average values of all IntegrityStatistics within the same time period.</li>
+	 * </ul>
+	 *
 	 */
 	public void collapseStatisticsByDate(){
 
@@ -322,14 +336,12 @@ public class StatisticsCollection {
 						(i+increment)<getCollectionSize());
 
 				int endIndex = i + increment - 1;
-				//int endIndex = i + increment - 1;
-				//System.out.println("i: " + i +  ", increment: " + increment + ", endIndex: " + endIndex);
 
-				if(endIndex>i){ //then combine the IntegrityStatisticBeans
+				if(endIndex>i){ //then combine the IntegrityStatistics
 					StatisticsCollection temp_collection2 = new StatisticsCollection();
 					for(int j=i;j<endIndex;j++) { temp_collection2.addToCollection(getCollectionObject(j)); }
 
-					IntegrityStatisticBean temp_isb = new IntegrityStatisticBean();
+					IntegrityStatistic temp_isb = new IntegrityStatistic();
 
 					temp_isb.setStartDate(temp_collection2.getCollectionEarliestStartDate());
 					temp_isb.setEndDate(temp_collection2.getCollectionLatestEndDate());
@@ -339,7 +351,7 @@ public class StatisticsCollection {
 					temp_isb.setUnit(getCollectionObject(i).getUnit());
 
 					Long runningCount = 0L;
-					for(IntegrityStatisticBean isb : temp_collection2.getCollection()) {
+					for(IntegrityStatistic isb : temp_collection2.getCollection()) {
 						runningCount += isb.getCount();
 					}
 
@@ -351,33 +363,25 @@ public class StatisticsCollection {
 					temp_isb.setMax(temp_collection2.getCollectionMaximumValue());
 					temp_isb.setAverage(temp_collection2.getCollectionAverageValue());
 					temp_isb.setMode(getCollectionObject(i).getMode());
-					//System.out.println("wrote to temp");
 					temp_collection.addToCollection(temp_isb);
 
 					i = endIndex-1;
 
-				} else { //just add the single Integrity StatisticBean back
+				} else {
 					temp_collection.addToCollection(getCollectionObject(i));
 				}
 			} else {
-				//just add the single Integrity StatisticBean back
 				temp_collection.addToCollection(getCollectionObject(i));
 			}
 		}
-		//finally, replace the collapsed collection as this.collection
 		this.clearCollection();
-		for(IntegrityStatisticBean isb : temp_collection.getCollection()) { this.addToCollection(isb); }
-		//System.out.println(" ** ** temp ** **");
-		//temp_collection.writeToString();
-		//System.out.println(" ** ** temp ** **");
-		//this.writeToString();
+		for(IntegrityStatistic isb : temp_collection.getCollection()) { this.addToCollection(isb); }
 	}
 
 	/**
 	 * Executes all StatisticsCollection group computation methods.
 	 */
 	public void computeAllCollectionStatistics(){
-		//run all computation methods so that the collection has updated field values.
 		this.computeCollectionAverageValue();
 		this.computeCollectionCountValue();
 		this.computeCollectionMaximumValue();
@@ -394,11 +398,11 @@ public class StatisticsCollection {
 
 	/**
 	 * Computes the StatisticsCollection collectionAverageValue attribute value by averaging the average value of all
-	 * IntegrityStatisticBean objects in the collection.
+	 * IntegrityStatistic objects in the collection.
 	 */
 	public void computeCollectionAverageValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.getCollection()){
+		for (IntegrityStatistic isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getAverage();
 		}
 		this.collectionAverageValue = (cumulativeSum)/this.getCollectionSize();
@@ -407,11 +411,11 @@ public class StatisticsCollection {
 
 	/**
 	 * Computes the StatisticsCollection collectionCountValue attribute value by computing the total of all
-	 * IntegrityStatisticBean objects count values in the collection.
+	 * IntegrityStatistic objects count values in the collection.
 	 */
 	public void computeCollectionCountValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.getCollection()){
+		for (IntegrityStatistic isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getCount();
 		}
 		this.collectionCountValue = cumulativeSum;
@@ -419,13 +423,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Determines the earliest endDate used by an IntegrityStatisticBean object in the StatisticsCollection's collection
+	 * Determines the earliest End Date used by an IntegrityStatistic object in the StatisticsCollection's collection
 	 * and stores this value as a org.joda.time.DateTime object in the collectionEarliestEndDate attribute.
 	 */
 	public void computeCollectionEarliestEndDate() {
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.getCollection()) {
+			for (IntegrityStatistic isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getEndDate();
 				} else {
@@ -444,13 +448,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Determines the earliest startDate used by an IntegrityStatisticBean object in the StatisticsCollection's collection
+	 * Determines the earliest Start Date used by an IntegrityStatistic object in the StatisticsCollection's collection
 	 * and stores this value as a org.joda.time.DateTime object in the collectionEarliestStartDate attribute.
 	 */
 	public void computeCollectionEarliestStartDate(){
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.getCollection()) {
+			for (IntegrityStatistic isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getStartDate();
 				} else {
@@ -469,13 +473,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Determines the latest endDate used by an IntegrityStatisticBean object in the StatisticsCollection's collection
+	 * Determines the latest End Date used by an IntegrityStatistic object in the StatisticsCollection's collection
 	 * and stores this value as a org.joda.time.DateTime object in the collectionLatestEndDate attribute.
 	 */
 	public void computeCollectionLatestEndDate() {
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.getCollection()) {
+			for (IntegrityStatistic isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getEndDate();
 				} else {
@@ -494,13 +498,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Determines the latest startDate used by an IntegrityStatisticBean object in the StatisticsCollection's collection
+	 * Determines the latest Start Date used by an IntegrityStatistic object in the StatisticsCollection's collection
 	 * and stores this value as a org.joda.time.DateTime object in the collectionEarliestStartDate attribute.
 	 */
 	public void computeCollectionLatestStartDate(){
 		DateTime test_date = null;
 		if (this.getCollectionSize() > 1) {
-			for (IntegrityStatisticBean isb : this.getCollection()) {
+			for (IntegrityStatistic isb : this.getCollection()) {
 				if (test_date == null) {
 					test_date = isb.getStartDate();
 				} else {
@@ -520,8 +524,8 @@ public class StatisticsCollection {
 
 	/**
 	 * Determines the IntegrityStatistic object(s) in the collection which have the greatest max value. The object(s)
-	 * are saved as an ArrayList in the collectionMaximumIsbObjectArrayList attribute, which will contain more than
-	 * one IntegrityStatisticBean object if more than one have the same max value that is also the absolute max value
+	 * are saved as an ArrayList in the collectionMaximumIsbObjectArrayList instance variable, which will contain more than
+	 * one IntegrityStatistic object if more than one have the same max value that is also the absolute max value
 	 * of the collection.
 	 */
 	public void computeCollectionMaximumObject(){
@@ -530,8 +534,8 @@ public class StatisticsCollection {
 			this.computeCollectionMaximumValue();
 		}
 
-		ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-		for (IntegrityStatisticBean isb : this.getCollection()){
+		ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
+		for (IntegrityStatistic isb : this.getCollection()){
 			//use known max of collection to return the object(s) equal to this max.
 			if (isb.getMax()==this.collectionMaximumValue) temp_isb_arrayList.add(isb);
 		}
@@ -540,28 +544,24 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Computes the greatest max value for all IntegrityStatisticBean objects in the collection and saves this value as
-	 * the collectionMaximumValue attribute.
+	 * Computes the greatest max value for all IntegrityStatistic objects in the collection and saves this value as
+	 * the collectionMaximumValue instance variable.
 	 */
 	public void computeCollectionMaximumValue() {
 		if (this.getCollectionSize()>1) {
-			//retrieve all individual maximums into Long[]
 			Long[] allMaxVals = new Long[this.getCollectionSize()];
 			for (int i = 0; i < this.getCollectionSize(); i++) {
 				allMaxVals[i] = this.getCollectionObject(i).getMax();
 			}
 
-			//use the Mergesort algorithm to determine the maximum value
 			MergeSort maxSorter = new MergeSort();
-			maxSorter.sort(allMaxVals); //max values are now sorted lowest to highest
+			maxSorter.sort(allMaxVals);
 			this.collectionMaximumValue = allMaxVals[allMaxVals.length-1];
 
 		} else if (this.getCollectionSize()==1){
 			this.collectionMaximumValue = this.getCollectionObject(0).getMax();
 		} else {
 			System.out.println("WARNING: COMPUTE MAX VALUE METHOD CALLED WITH NO COLLECTION");
-			//was called with an empty collection
-			//**TODO: throw error or assign default value?
 		}
 		this.requireMaxValRecompute = false;
 
@@ -569,8 +569,8 @@ public class StatisticsCollection {
 
 	/**
 	 * Determines the IntegrityStatistic object(s) in the collection which have the lowest min value. The object(s)
-	 * are saved as an ArrayList in the collectionMinimumIsbObjectArrayList attribute, which will contain more than
-	 * one IntegrityStatisticBean object if more than one have the same min value that is also the absolute min value
+	 * are saved as an ArrayList in the collectionMinimumIsbObjectArrayList instance variable, which will contain more than
+	 * one IntegrityStatistic object if more than one have the same min value that is also the absolute min value
 	 * of the collection.
 	 */
 	public void computeCollectionMinimumObject(){
@@ -578,9 +578,8 @@ public class StatisticsCollection {
 			this.computeCollectionMinimumValue();
 		}
 
-		ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
-		for (IntegrityStatisticBean isb : this.getCollection()){
-			//use known min of collection to return the object(s) equal to this min.
+		ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
+		for (IntegrityStatistic isb : this.getCollection()){
 			if(isb.getMin()==this.collectionMinimumValue) temp_isb_arrayList.add(isb);
 		}
 		this.collectionMinimumIsbObjectArrayList = temp_isb_arrayList;
@@ -588,39 +587,35 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Computes the lowest min value for all IntegrityStatisticBean objects in the collection and saves this value as
-	 * the collectionMinimumValue attribute.
+	 * Computes the lowest min value for all IntegrityStatistic objects in the collection and saves this value as
+	 * the collectionMinimumValue instance variable.
 	 */
 	public void computeCollectionMinimumValue(){
 		if (this.getCollectionSize()>1) {
-			//retrieve all individual minimums into Long[]
 			Long[] allMinVals = new Long[this.getCollectionSize()];
 			for (int i = 0; i < this.getCollectionSize(); i++) {
 				allMinVals[i] = this.getCollectionObject(i).getMin();
 			}
 
-			//use the Mergesort algorithm to determine the minimum value
 			MergeSort minSorter = new MergeSort();
-			minSorter.sort(allMinVals); //min values are now sorted lowest to highest
+			minSorter.sort(allMinVals);
 			this.collectionMinimumValue = allMinVals[0];
 
 		} else if (this.getCollectionSize()==1){
 			this.collectionMinimumValue = this.getCollectionObject(0).getMin();
 		} else {
 			System.out.println("WARNING: COMPUTE MIN VALUE METHOD CALLED WITH NO COLLECTION");
-			//was called with an empty collection...
-			//**TODO: throw error or assign default value?
 		}
 		this.requireMinValRecompute = false;
 	}
 
 	/**
-	 * Computes the collectionSumValue attribute value by adding together all IntegrityStatisticBean sum values in the
+	 * Computes the collectionSumValue instance variable value by adding together all IntegrityStatistic sum values in the
 	 * collection.
 	 */
 	public void computeCollectionSumValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.getCollection()){
+		for (IntegrityStatistic isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getSum();
 		}
 		this.collectionSumValue = cumulativeSum;
@@ -628,12 +623,12 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Computes the collectionTotalCountValue attribute value by adding together all IntegrityStatisticBean totalCount
+	 * Computes the collectionTotalCountValue attribute value by adding together all IntegrityStatistic totalCount
 	 * values in the collection.
 	 */
 	public void computeCollectionTotalCountValue(){
 		Long cumulativeSum = 0L;
-		for (IntegrityStatisticBean isb : this.getCollection()){
+		for (IntegrityStatistic isb : this.getCollection()){
 			cumulativeSum = cumulativeSum + isb.getTotalCount();
 		}
 		this.collectionTotalCountValue = cumulativeSum;
@@ -641,13 +636,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns a HashMap of {name: group} for all unique IntegrityStatisticBean name-group pairs existing in the collection.
-	 * @return HashMap {String: String} representing all unique name-group pairs of IntegrityStatisticBean objects in the collection.
+	 * Returns a HashMap of {name: group} for all unique IntegrityStatistic name-group pairs existing in the collection.
+	 * @return HashMap {String: String} representing all unique name-group pairs of IntegrityStatistic objects in the collection.
 	 */
 	public HashMap<String, String> getAllUniqueNameGroupPairs(){
 		HashMap<String, String> uniqueNames = new HashMap<String, String>();
 
-		for(IntegrityStatisticBean isb : this.getCollection()) {
+		for(IntegrityStatistic isb : this.getCollection()) {
 			if (!uniqueNames.containsKey(isb.getName())) {
 				uniqueNames.put(isb.getName(), isb.getGroup());
 			}
@@ -656,13 +651,13 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns an ArrayList of all IntegrityStatisticBean objects currently in the StatisticsCollection's collection.
-	 * @return ArrayList
+	 * Returns an ArrayList of all IntegrityStatistic objects currently in the StatisticsCollection's collection.
+	 * @return ArrayList of IntegrityStatistic objects in the collection
 	 */
-	public ArrayList<IntegrityStatisticBean> getCollection(){ return this.collection; }
+	public ArrayList<IntegrityStatistic> getCollection(){ return this.collection; }
 
 	/**
-	 * Returns the Long value representing the collectionAverageValue attribute.
+	 * Returns the Long value representing the collectionAverageValue instance variable.
 	 * @return (Long) - the value of the StatisticsCollection's average value.
 	 */
 	public Long getCollectionAverageValue(){
@@ -673,7 +668,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the Long value representing the collectionCountValue attribute.
+	 * Returns the Long value representing the collectionCountValue instance variable.
 	 * @return (Long) - the value of the StatisticsCollection's count value.
 	 */
 	public Long getCollectionCountValue(){
@@ -684,7 +679,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the DateTime value representing the collectionEarliestEndDate attribute.
+	 * Returns the DateTime value representing the collectionEarliestEndDate instance variable.
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's earliest end date.
 	 */
 	public DateTime getCollectionEarliestEndDate(){
@@ -696,7 +691,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the DateTime value representing the collectionEarliestStartDate attribute.
+	 * Returns the DateTime value representing the collectionEarliestStartDate instance variable.
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's earliest start date.
 	 */
 	public DateTime getCollectionEarliestStartDate(){
@@ -707,7 +702,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the DateTime value representing the collectionLatestEndDate attribute.
+	 * Returns the DateTime value representing the collectionLatestEndDate instance variable.
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's latest end date.
 	 */
 	public DateTime getCollectionLatestEndDate(){
@@ -719,7 +714,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the DateTime value representing the collectionLatestStartDate attribute.
+	 * Returns the DateTime value representing the collectionLatestStartDate instance variable.
 	 * @return (org.joda.time.DateTime) - the value of the StatisticsCollection's latest start date.
 	 */
 	public DateTime getCollectionLatestStartDate(){
@@ -731,11 +726,11 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the StatisticsCollection's IntegrityStatisticBean object(s) holding the greatest max value in the collection.
-	 * @return ArrayList(IntegrityStatisticBean) - the IntegrityStatisticBean(s) with the greatest max value in
+	 * Returns the StatisticsCollection's IntegrityStatistic object(s) holding the greatest max value in the collection.
+	 * @return ArrayList(IntegrityStatistic) - the IntegrityStatistic(s) with the greatest max value in
 	 * the collection.
 	 */
-	public ArrayList<IntegrityStatisticBean> getCollectionMaximumIsbArrayList(){
+	public ArrayList<IntegrityStatistic> getCollectionMaximumIsbArrayList(){
 		if(this.getRequireMaxObjRecompute()) {
 			this.computeCollectionMaximumObject();
 		}
@@ -754,11 +749,11 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the StatisticsCollection's IntegrityStatisticBean object(s) holding the lowest min value in the collection.
-	 * @return ArrayList(IntegrityStatisticBean) - the IntegrityStatisticBean(s) with the lowest min value in
+	 * Returns the StatisticsCollection's IntegrityStatistic object(s) holding the lowest min value in the collection.
+	 * @return ArrayList(IntegrityStatistic) - the IntegrityStatistic(s) with the lowest min value in
 	 * the collection.
 	 */
-	public ArrayList<IntegrityStatisticBean> getCollectionMinimumIsbArrayList(){
+	public ArrayList<IntegrityStatistic> getCollectionMinimumIsbArrayList(){
 		if(this.getRequireMinObjRecompute()) {
 			this.computeCollectionMinimumObject();
 		}
@@ -777,36 +772,36 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Returns the current value of the StatisticsCollection collectionName attribute.
+	 * Returns the current value of the StatisticsCollection collectionName instance variable.
 	 * @return (String) - returns the name of the StatisticsCollection.
 	 */
 	public String getCollectionName(){ return this.collectionName; }
 
 	/**
-	 * Returns a single IntegrityStatisticBean object found at the provided integer index.
+	 * Returns a single IntegrityStatistic object found at the provided integer index.
 	 * @param index (int) - the index within the collection to retrieve.
-	 * @return IntegrityStatisticBean at the collection index requested.
+	 * @return IntegrityStatistic at the collection index requested.
 	 */
-	public IntegrityStatisticBean getCollectionObject(int index){
+	public IntegrityStatistic getCollectionObject(int index){
 		try{
 			return this.collection.get(index);
 		} catch(IndexOutOfBoundsException ioobe){
 			System.out.println("StatisticsCollection.getCollectionObject() - ERROR: " + ioobe);
-			System.out.println("Returning new default IntegrityStatisticBean!");
-			return new IntegrityStatisticBean();
+			System.out.println("Returning new default IntegrityStatistic!");
+			return new IntegrityStatistic();
 		}
 	}
 
 	/**
-	 * Returns the number of IntegrityStatisticBean objects in the collection.
-	 * @return (int) - Integer number of IntegrityStatisticBean objects in the collection.
+	 * Returns the number of IntegrityStatistic objects in the collection.
+	 * @return (int) - Integer number of IntegrityStatistic objects in the collection.
 	 */
 	public int getCollectionSize(){ return this.collection.size(); }
 
 	/**
 	 * Returns the collectionSumValue attribute for the StatisticsCollection object.
 	 * Recomputes the attribute value first if needed.
-	 * @return (Long) - the cumulative sum of  the "sum" attribute for all IntegrityStatisticBean objects in the collection.
+	 * @return (Long) - the cumulative sum of  the "sum" attribute for all IntegrityStatistic objects in the collection.
 	 */
 	public Long getCollectionSumValue(){
 		if(this.getRequiredSumValRecompute()) {
@@ -818,7 +813,7 @@ public class StatisticsCollection {
 	/**
 	 * Returns the collectionTotalCountValue attribute for the StatisticsCollection object.
 	 * Recomputes the attribute value first if needed.
-	 * @return (Long) - the cumulative sum of the "totalCount" attribute for all IntegrityStatisticBean objects in the collection.
+	 * @return (Long) - the cumulative sum of the "totalCount" attribute for all IntegrityStatistic objects in the collection.
 	 */
 	public Long getCollectionTotalCountValue(){
 		if(this.getRequireTotCntValRecompute()) {
@@ -841,7 +836,7 @@ public class StatisticsCollection {
 	private boolean getRequireTotCntValRecompute(){ return this.requireTotCntValRecompute; }
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest average value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest average value
 	 * to greatest average value.
 	 */
 	public void orderByIsbAverageValue() {
@@ -849,7 +844,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest count value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest count value
 	 * to greatest count value.
 	 */
 	public void orderByIsbCountValue() {
@@ -857,47 +852,44 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed in aplhabetical order.
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed in aplhabetical order.
 	 */
 	public void orderByIsbNameValue() {
-		Hashtable<String, ArrayList<IntegrityStatisticBean>> name_isb_hashtable = new Hashtable<String, ArrayList<IntegrityStatisticBean>>();
+		Hashtable<String, ArrayList<IntegrityStatistic>> name_isb_hashtable = new Hashtable<String, ArrayList<IntegrityStatistic>>();
 		String[] allNames = new String[this.getCollectionSize()];
-		ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+		ArrayList<IntegrityStatistic> ordered_isb_arrayList = new ArrayList<IntegrityStatistic>();
 
 		for (int i=0; i<this.getCollectionSize();i++){
-			IntegrityStatisticBean currIsb = this.getCollectionObject(i);
+			IntegrityStatistic currIsb = this.getCollectionObject(i);
 			String currName = this.getCollectionObject(i).getName();
 			allNames[i] = currName;
 			if (name_isb_hashtable.containsKey(currName)){
-				ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+				ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
 				temp_isb_arrayList = name_isb_hashtable.get(currName);
 				temp_isb_arrayList.add(currIsb);
 				name_isb_hashtable.put(currName, temp_isb_arrayList);
 			} else {
-				ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+				ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
 				temp_isb_arrayList.add(currIsb);
 				name_isb_hashtable.put(currName, temp_isb_arrayList);
 			}
 		}
 
-		Arrays.sort(allNames, ALPHABETICAL_ORDER); //TODO: check if this really works...
-		//names are now sorted alphabetically
-		//iterate through array and place isbs into new ArrayList
+		Arrays.sort(allNames, ALPHABETICAL_ORDER);
 		for (int j=0;j<this.getCollectionSize();j++){
-			ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+			ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
 			temp_isb_arrayList = name_isb_hashtable.get(allNames[j]);
-			for (IntegrityStatisticBean isb : temp_isb_arrayList){
+			for (IntegrityStatistic isb : temp_isb_arrayList){
 				ordered_isb_arrayList.add(isb);
 			}
 		}
 
 		for (int k=0;k<this.getCollectionSize();k++) this.collection.set(k, ordered_isb_arrayList.get(k));
-		//collection is now in order of names according to alphabetical order
 		return;
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest max value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest max value
 	 * to greatest max value.
 	 */
 	public void orderByIsbMaximumValue() {
@@ -905,7 +897,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest min value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest min value
 	 * to greatest min value.
 	 */
 	public void orderByIsbMinimumValue() {
@@ -913,7 +905,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest sum value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest sum value
 	 * to greatest sum value.
 	 */
 	public void orderByIsbSumValue() {
@@ -921,7 +913,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Reorders the IntegrityStatisticBean objects in the collection so that they are listed from lowest total count value
+	 * Reorders the IntegrityStatistic objects in the collection so that they are listed from lowest total count value
 	 * to greatest total count value.
 	 */
 	public void orderByIsbTotalCountValue() {
@@ -930,12 +922,12 @@ public class StatisticsCollection {
 
 
 	private void orderByAttributeValue(String arg_attribute){
-		Hashtable<Long, ArrayList<IntegrityStatisticBean>> isb_hashtable = new Hashtable<Long, ArrayList<IntegrityStatisticBean>>();
+		Hashtable<Long, ArrayList<IntegrityStatistic>> isb_hashtable = new Hashtable<Long, ArrayList<IntegrityStatistic>>();
 		ArrayList<Long> allUniqueVals = new ArrayList<Long>();
-		ArrayList<IntegrityStatisticBean> ordered_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+		ArrayList<IntegrityStatistic> ordered_isb_arrayList = new ArrayList<IntegrityStatistic>();
 
 		for (int i=0; i<this.getCollectionSize();i++){
-			IntegrityStatisticBean currIsb = this.getCollectionObject(i);
+			IntegrityStatistic currIsb = this.getCollectionObject(i);
 			Long currVal;
 			switch(arg_attribute){
 				case "Average":
@@ -964,12 +956,12 @@ public class StatisticsCollection {
 			if (!allUniqueVals.contains(currVal)) { allUniqueVals.add(currVal); }
 
 			if (isb_hashtable.containsKey(currVal)){
-				ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+				ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
 				temp_isb_arrayList = isb_hashtable.get(currVal);
 				temp_isb_arrayList.add(currIsb);
 				isb_hashtable.put(currVal, temp_isb_arrayList);
 			} else {
-				ArrayList<IntegrityStatisticBean> temp_isb_arrayList = new ArrayList<IntegrityStatisticBean>();
+				ArrayList<IntegrityStatistic> temp_isb_arrayList = new ArrayList<IntegrityStatistic>();
 				temp_isb_arrayList.add(currIsb);
 				isb_hashtable.put(currVal, temp_isb_arrayList);
 			}
@@ -982,8 +974,8 @@ public class StatisticsCollection {
 		allFinalVals = valSorter.sort(allFinalVals);
 
 		for(Long val : allFinalVals){
-			ArrayList<IntegrityStatisticBean> temp_isb_arrayList = isb_hashtable.get(val);
-			for (IntegrityStatisticBean isb : temp_isb_arrayList){
+			ArrayList<IntegrityStatistic> temp_isb_arrayList = isb_hashtable.get(val);
+			for (IntegrityStatistic isb : temp_isb_arrayList){
 				ordered_isb_arrayList.add(isb);
 			}
 		}
@@ -993,11 +985,11 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Removes a single IntegrityStatisticBean object from the collection.
-	 * Raises recompute flags to recompute all StatisticsCollection attribute values.
-	 * @param arg_isb (IntegrityStatisticBean) - the object to remove.
+	 * Removes a single IntegrityStatistic object from the collection.
+	 * Raises recompute flags to recompute all StatisticsCollection instance variables.
+	 * @param arg_isb (IntegrityStatistic) - the object to remove.
 	 */
-	public void removeFromCollection(IntegrityStatisticBean arg_isb){
+	public void removeFromCollection(IntegrityStatistic arg_isb){
 		this.collection.remove(arg_isb);
 		this.requireAvgValRecompute = true;
 		this.requireCntValRecompute = true;
@@ -1013,7 +1005,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Removes one or more IntegrityStatisticBean objects from the collection.
+	 * Removes one or more IntegrityStatistic objects from the collection.
 	 * @param indicesToRemove (int[]) - array of integers representing the collection indices to remove.
 	 */
 	public void removeFromCollection(int[] indicesToRemove){
@@ -1044,7 +1036,7 @@ public class StatisticsCollection {
 	}
 
 	/**
-	 * Removes the IntegrityStatisticBean in the collection index provided.
+	 * Removes the IntegrityStatistic in the collection index provided.
 	 * @param index (int) - integer index to remove from the collection.
 	 */
 	public void removeFromCollection(int index){
@@ -1065,7 +1057,7 @@ public class StatisticsCollection {
 
 	/**
 	 * Creates a .csv file of all collection contents.
-	 * Each IntegrityStatisticBean's data is printed to a single line with the columns:
+	 * Each IntegrityStatistic's data is printed to a single line with the columns:
 	 * Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode
 	 * @param arg_filePath (String) - the complete system file path to create the .csv file.
 	 * @param arg_forceOverwrite (boolean) - if true and the file already exists, the existing file content will be
@@ -1073,14 +1065,13 @@ public class StatisticsCollection {
 	 */
 	public void writeToFile(String arg_filePath, boolean arg_forceOverwrite) {
 
-		//write to file as CSV following the same format as the output Server Statistics .csv file
-		//cols: Start Date, End Date, Group, Statistic (Name), Kind, Unit, Count, total, Sum, Min, Max, Average, Mode
-
 		File file = new File(arg_filePath);
 		StringBuffer fileContents = new StringBuffer();
-		if(!file.exists() || arg_forceOverwrite) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
+		if(!file.exists() || arg_forceOverwrite)
+			fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, "+
+					"Total, Sum, Used, Min, Max, Average, Mode"+"\n");
 
-		for(IntegrityStatisticBean isb : this.getCollection()){
+		for(IntegrityStatistic isb : this.getCollection()){
 			fileContents.append(fmt.print(isb.getStartDate()) + ","
 					+ fmt.print(isb.getEndDate()) + ","
 					+ isb.getGroup() + ","
@@ -1130,8 +1121,8 @@ public class StatisticsCollection {
 
 		File file = new File(arg_filePath);
 		StringBuffer fileContents = new StringBuffer();
-		if(!file.exists()) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
-
+		if(!file.exists()) fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, "+
+				"Count, Total, Sum, Used, Min, Max, Average, Mode"+"\n");
 
 		fileContents.append(fmt.print(this.getCollectionEarliestStartDate()) + ","
 				+ fmt.print(this.getCollectionLatestEndDate()) + ","
@@ -1147,7 +1138,6 @@ public class StatisticsCollection {
 				+ this.getCollectionMaximumValue() + ","
 				+ this.getCollectionAverageValue()  + ","
 				+ this.getCollectionObject(0).getMode() + "\n");
-
 
 		if (fileContents.toString().length()!=0){
 			Path filePath = Paths.get(arg_filePath);
@@ -1168,17 +1158,17 @@ public class StatisticsCollection {
 	/**
 	 * Utility method for troubleshooting or debugging.
 	 * Prints the contents of the collection to the system console, with one collection object per line.
-	 * IntegrityStatisticBean data is printed in the format:
+	 * IntegrityStatistic data is printed in the format:
 	 * Start Date, End Date, Group, Statistic, Kind, Unit, Count, total, Sum, Used, Min, Max, Average, Mode
 	 */
 	public void writeToString() {
-		//write to file as CSV following the same format as the output Server Statistics .csv file
-		//cols: Start Date, End Date, Group, Statistic (Name), Kind, Unit, Count, total, Sum, Min, Max, Average, Mode
+
 		StringBuffer fileContents = new StringBuffer();
 		int entry_counter = 1;
 
-		fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, total, Sum, Used, Min, Max, Average, Mode"+"\n");
-		for(IntegrityStatisticBean isb : this.getCollection()){
+		fileContents.append("Start Date, End Date, Group, Statistic, Kind, Unit, Count, "+
+				"Total, Sum, Used, Min, Max, Average, Mode"+"\n");
+		for(IntegrityStatistic isb : this.getCollection()){
 			fileContents.append(entry_counter + ": "
 					+ fmt.print(isb.getStartDate()) + ","
 					+ fmt.print(isb.getEndDate()) + ","
